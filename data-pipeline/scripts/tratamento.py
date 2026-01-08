@@ -110,9 +110,7 @@ class ArquivodeTratamento():
             arquivos_na_pasta = os.listdir(caminho_arquivos)
             for arquivo in arquivos_na_pasta:   
                 if arquivo.endswith('SAGICAD.csv'):
-                    print(arquivo)
                     caminho_arquivo = caminho_arquivos / arquivo
-                    print(caminho_arquivo)
                     df = pd.read_csv(caminho_arquivo, sep=',', encoding='latin1')
                     coluna_codigo_municipal = df[df.columns[0]]
                     colunas_dataframe = df.columns
@@ -143,11 +141,9 @@ class ArquivodeTratamento():
                     df['Referência'] = df['Referência'].astype(str)
                     
                     
-                    print(df.head())
-                    
                     nome_arquivo_formatado_e_limpo = arquivo.replace('.csv','_limpo.json')
                     nova_pasta_dados_tratados = self.diretorio_dados_tratados / pasta
-                    print(nova_pasta_dados_tratados)
+                    
                     nova_pasta_dados_tratados.mkdir(exist_ok=True)
                                 
                     diretorio_salvamento = nova_pasta_dados_tratados / nome_arquivo_formatado_e_limpo
