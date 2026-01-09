@@ -5,12 +5,17 @@ import json
 import time
 
 class ColetaESalvamento:
+    
     def __init__(self):
+        
         self.base_dir = Path(__file__).resolve().parent
+        
         self.fontes_dir = self.base_dir.parent / 'fontes'
+        
         self.dados_brutos_dir = self.base_dir.parent / 'dados' / 'dados-brutos'
 
     async def salvar_dados(self, dados, nome_do_arquivo, subpasta):
+        
         pasta_destino = self.dados_brutos_dir / subpasta.replace('.json', '')
         
         pasta_destino.mkdir(parents=True, exist_ok=True)

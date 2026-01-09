@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 from numpy import int64
 import unicodedata
+from pandas import DataFrame
 
 class ArquivodeTratamento():
     
@@ -22,13 +23,13 @@ class ArquivodeTratamento():
         
         self.diretorio_dados_tratados  = self.diretorio_atual / '..' / 'dados' / 'dados-tratados'
     
-    def remover_acentos(self, texto):
+    def remover_acentos(self, texto:str) -> str:
         
         nfkd_form = unicodedata.normalize('NFKD', texto)
         
         return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
     
-    def definir_unidade_SAGICAD(self, indicador):
+    def definir_unidade_SAGICAD(self, indicador: str) -> str:
         unidades_previstas = [
             'percentual',
             'numero de pessoas',
@@ -51,19 +52,21 @@ class ArquivodeTratamento():
             
             if prevista in indicador_para_comparar:
                 
+                prevista = prevista.replace(' ', '_')
+                
                 unidade = prevista
                 
                 break
             
         return unidade
 
-    def salvar_arquivo_tratado_SAGICAD(self, indicador, fonte, diretorio_salvamento, dataframe):
+    def salvar_arquivo_tratado_SAGICAD(self, indicador: str, fonte: str, diretorio_salvamento: str, dataframe: DataFrame) -> None:
         
         nome_arquivo = f'{diretorio_salvamento}/{str(indicador)}_{str(fonte)}_municipal_ano_long.json'
         
         dataframe.to_json(nome_arquivo, orient='records', force_ascii=False, indent=4, double_precision=3)
 
-    def organizar_dataframe_SAGICAD(self, fonte, indicador, dataframe):
+    def organizar_dataframe_SAGICAD(self, fonte: str, indicador: str, dataframe: DataFrame) -> DataFrame:
         
         novo_df = dataframe.copy()
         
@@ -102,7 +105,7 @@ class ArquivodeTratamento():
         
         return novo_df
     
-    def tratamento_valores_nulos_SAGICAD(self, dataframe):
+    def tratamento_valores_nulos_SAGICAD(self, dataframe: DataFrame) -> DataFrame:
         colunas_com_valores_nulos = dataframe.isnull().any()
         df_apenas_com_colunas_nulas = dataframe.loc[:,colunas_com_valores_nulos]
         colunas_nulas = df_apenas_com_colunas_nulas.columns
@@ -120,7 +123,7 @@ class ArquivodeTratamento():
         dataframe['referencia'] = dataframe['referencia'].astype(str)
         return dataframe
     
-    def arquivos_SIDRA(self): 
+    def arquivos_SIDRA(self) -> None: 
         for pasta in self.pastas_em_dados_brutos:
             
             caminho_arquivos = self.diretorio_dados_brutos / pasta
@@ -238,7 +241,7 @@ class ArquivodeTratamento():
                     except Exception as e:
                         pass
     
-    def arquivos_SAGICAD(self):
+    def arquivos_SAGICAD(self) -> None:
         
         for pasta in self.pastas_em_dados_brutos:
             
