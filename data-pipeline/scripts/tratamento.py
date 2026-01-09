@@ -119,7 +119,10 @@ class ArquivodeTratamento():
                     if contagem_valores_nulos == quantidade_de_valores_nulos[0]:
                         dataframe[colunas_nulas] = dataframe[colunas_nulas].fillna(0, axis = 1)
                         dataframe[colunas_nulas] = dataframe[colunas_nulas].astype(int64)
+                        
+        # Resolver problema dos valores no formato float e int 64 
         dataframe['valor'] = dataframe['valor'].astype(str).str.replace(',', '.')
+        #dataframe['valor'] = dataframe['valor'].astype('float64')
         dataframe['referencia'] = dataframe['referencia'].astype(str)
         return dataframe
     
