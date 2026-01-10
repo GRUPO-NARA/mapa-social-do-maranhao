@@ -22,6 +22,9 @@ def inicializar_API():
 @app.get('/indicadores')
 async def buscar_indicadores():
     
+    if not pastas_nos_dados_tratados:
+        raise HTTPException(status_code=500, detail="Diretório de dados não encontrado ou vazio.")
+    
     quantidade_de_indicadores = 0
     
     lista_de_indicadores = []
@@ -124,6 +127,9 @@ def verificar_referencia(arquivo: json, referencia: str):
 @app.get('/dados')
 def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
     
+    if not pastas_nos_dados_tratados:
+        raise HTTPException(status_code=500, detail="Diretório de dados não encontrado ou vazio.")
+    
     formato_da_referencia_de_entrada = definir_formato_da_referencia(referencia)
     
     if referencia[-1] == '-':
@@ -195,7 +201,9 @@ def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
                 # Mudar o formato dos valores para int64 ou float64
                 # Adicionar quando nao for encontrado o indicador
                 return corpo_da_requisicao  
-        
+            
+    raise HTTPException(status_code=404, detail="Indicador não encontrado.")
+    
 if __name__ == '__main__':
     inicializar_API()
     #buscar_por_indicador_e_referencia('quantidade_de_pessoas_do_sexo_masculino_inscritas_no_cadastro_unico', '2025-12')
