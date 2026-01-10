@@ -22,7 +22,12 @@ class ArquivodeTratamento():
         self.codigos_municipais = self.diretorio_dados / 'codigos_municipais.csv'
         
         self.diretorio_dados_tratados  = self.diretorio_atual / '..' / 'dados' / 'dados-tratados'
-    
+        self.diretorio_dados_tratados.mkdir(parents=True, exist_ok=True)
+        
+    def executar_processo_de_tratamento(self):
+        self.arquivos_SIDRA()
+        self.arquivos_SAGICAD()
+
     def remover_acentos(self, texto:str) -> str:
         
         nfkd_form = unicodedata.normalize('NFKD', texto)
@@ -344,8 +349,8 @@ class ArquivodeTratamento():
             
                         self.salvar_arquivo_tratado_SAGICAD(indicador, fonte, diretorio_salvamento, novo_df)
                         
-if __name__ == '__main__':
+#if __name__ == '__main__':
+    #pass
+    #ArquivodeTratamento().arquivos_SIDRA()
     
-    ArquivodeTratamento().arquivos_SIDRA()
-    
-    ArquivodeTratamento().arquivos_SAGICAD()
+    #ArquivodeTratamento().arquivos_SAGICAD()

@@ -4,14 +4,34 @@ import os
 from pathlib import Path
 import json
 from fastapi.exceptions import HTTPException
+from coleta import ColetaESalvamento
+from tratamento import ArquivodeTratamento
+import asyncio
+
 app = FastAPI()
 
-diretorio_atual = Path(__file__).resolve().parent
+try:
+
+    # Quando a API for inicializada, é realizado a coleta e tratamento dos dados
+    asyncio.run(ColetaESalvamento().realizar_coleta())
+    ArquivodeTratamento().executar_processo_de_tratamento()
+
+    diretorio_atual = Path(__file__).resolve().parent
         
-diretorio_dados_tratados = diretorio_atual / '..' / 'dados' / 'dados-tratados'
-        
-pastas_nos_dados_tratados = os.listdir(diretorio_dados_tratados)
-        
+    diretorio_dados_tratados = diretorio_atual / '..' / 'dados' / 'dados-tratados'
+
+    pastas_nos_dados_tratados = os.listdir(diretorio_dados_tratados)
+
+except FileNotFoundError:
+    raise HTTPException(status_code=500, detail="Diretório de dados não encontrado ou vazio.")
+
+except Exception as e:
+    raise HTTPException(status_code=500, detail=f"Erro genérico: {e}")
+
+
+
+
+      
 def inicializar_API():
         
     uvicorn.run(
@@ -21,9 +41,6 @@ def inicializar_API():
     
 @app.get('/indicadores')
 async def buscar_indicadores():
-    
-    if not pastas_nos_dados_tratados:
-        raise HTTPException(status_code=500, detail="Diretório de dados não encontrado ou vazio.")
     
     quantidade_de_indicadores = 0
     
@@ -126,9 +143,6 @@ def verificar_referencia(arquivo: json, referencia: str):
 
 @app.get('/dados')
 def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
-    
-    if not pastas_nos_dados_tratados:
-        raise HTTPException(status_code=500, detail="Diretório de dados não encontrado ou vazio.")
     
     formato_da_referencia_de_entrada = definir_formato_da_referencia(referencia)
     
