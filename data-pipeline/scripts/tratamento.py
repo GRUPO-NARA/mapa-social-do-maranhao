@@ -2,8 +2,10 @@ import pandas as pd
 from pathlib import Path
 import os
 from numpy import int64
+from numpy import float64
 import unicodedata
 from pandas import DataFrame
+import numpy as np
 
 class ArquivodeTratamento():
     
@@ -94,8 +96,9 @@ class ArquivodeTratamento():
         
         novo_df = novo_df[formato_df]
         
-        novo_df['referencia'] = pd.to_datetime(novo_df['referencia']).dt.to_period('M')
-        
+        novo_df['referencia'] = pd.to_datetime(novo_df['referencia'], format='%m/%Y',errors='coerce').dt.to_period('M')
+        novo_df['referencia'] = novo_df['referencia'].astype(str)
+
         colunas = ['cod_municipio']
         
         outras_colunas = [coluna for coluna in novo_df.columns if coluna != 'cod_municipio']
@@ -111,25 +114,35 @@ class ArquivodeTratamento():
         return novo_df
     
     def tratamento_valores_nulos_SAGICAD(self, dataframe: DataFrame) -> DataFrame:
-        colunas_com_valores_nulos = dataframe.isnull().any()
-        df_apenas_com_colunas_nulas = dataframe.loc[:,colunas_com_valores_nulos]
-        colunas_nulas = df_apenas_com_colunas_nulas.columns
-        lista_da_coluna_com_valores_nulos = dataframe[colunas_nulas].values
-        quantidade_de_valores_nulos = dataframe[colunas_nulas].count()
-        contagem_valores_nulos = 0
-        if len(colunas_nulas) > 0:
-            for valor in lista_da_coluna_com_valores_nulos:
-                if str(valor[0]).endswith('.0'):
-                    contagem_valores_nulos += 1
-                    if contagem_valores_nulos == quantidade_de_valores_nulos[0]:
-                        dataframe[colunas_nulas] = dataframe[colunas_nulas].fillna(0, axis = 1)
-                        dataframe[colunas_nulas] = dataframe[colunas_nulas].astype(int64)
-                        
-        # Resolver problema dos valores no formato float e int 64 
-        dataframe['valor'] = dataframe['valor'].astype(str).str.replace(',', '.')
-        #dataframe['valor'] = dataframe['valor'].astype('float64')
-        dataframe['referencia'] = dataframe['referencia'].astype(str)
+        
+        dataframe['valor'] = dataframe['valor'].astype(str).str.replace(',','.')
+       
+        if dataframe['indicador'].iloc[0] == 'quantidade_de_pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil':
+            
+            dataframe['valor'] = dataframe['valor'].astype(str).str.replace('.0', ' ')
+
+            dataframe['valor'] = dataframe['valor'].astype(str).str.replace('nan', '-1')
+
+       
+        unidades_previstas = [
+            'numero_de_pessoas',
+            'responsaveis_familiares',
+            'familias_beneficiarias',
+            'pessoas_beneficiarias',
+            'quantidade_total',
+            'total_de_familias',
+            'quantidade_de_familias',
+            'quantidade_de_pessoas'
+        ]
+        
+        if dataframe['unidade'].iloc[0] in unidades_previstas:
+            dataframe['valor'] = dataframe['valor'].astype(int64)    
+        else:
+            dataframe['valor'] = dataframe['valor'].astype(float64)
+        
+        
         return dataframe
+        
     
     def arquivos_SIDRA(self) -> None: 
         for pasta in self.pastas_em_dados_brutos:
@@ -327,6 +340,7 @@ class ArquivodeTratamento():
                             
                             novo_df.rename(columns={'codigo':'cod_municipio'}, inplace = True)
                             
+                            
                             novo_df = self.organizar_dataframe_SAGICAD(fonte, indicador, novo_df)
                             
                             novo_df = self.tratamento_valores_nulos_SAGICAD(novo_df)
@@ -342,15 +356,17 @@ class ArquivodeTratamento():
                             'codigo' : 'cod_municipio',
                             novo_df.columns[-1] : 'valor'
                         }, inplace = True)
-
+                        
                         novo_df = self.organizar_dataframe_SAGICAD(fonte, indicador, novo_df)
                         
                         novo_df = self.tratamento_valores_nulos_SAGICAD(novo_df)
-            
+                        
                         self.salvar_arquivo_tratado_SAGICAD(indicador, fonte, diretorio_salvamento, novo_df)
                         
-#if __name__ == '__main__':
-    #pass
+if __name__ == '__main__':
+    
+    #ArquivodeTratamento().executar_processo_de_tratamento()
+
     #ArquivodeTratamento().arquivos_SIDRA()
     
-    #ArquivodeTratamento().arquivos_SAGICAD()
+    ArquivodeTratamento().arquivos_SAGICAD()
