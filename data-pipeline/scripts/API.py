@@ -1,11 +1,11 @@
-from fastapi import FastAPI
-import uvicorn
+from fastapi import FastAPI # type: ignore
+import uvicorn # type: ignore
 import os
 from pathlib import Path
 import json
-from fastapi.exceptions import HTTPException
-from coleta import ColetaESalvamento
-from tratamento import ArquivodeTratamento
+from fastapi.exceptions import HTTPException # type: ignore
+from coleta import ColetaESalvamento # type: ignore
+from tratamento import ArquivodeTratamento # type: ignore
 import asyncio
 
 app = FastAPI()
@@ -218,6 +218,6 @@ def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
             
     raise HTTPException(status_code=404, detail="Indicador não encontrado.")
     
-if __name__ == '__main__':
-    inicializar_API()
+#if __name__ == '__main__':
+    #inicializar_API()
     #buscar_por_indicador_e_referencia('quantidade_de_pessoas_do_sexo_masculino_inscritas_no_cadastro_unico', '2025-12')

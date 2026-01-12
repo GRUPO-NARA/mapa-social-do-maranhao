@@ -1,6 +1,6 @@
 from pathlib import Path
 import asyncio
-import aiohttp
+import aiohttp # type: ignore
 import json
 import time
 
@@ -56,8 +56,8 @@ class ColetaESalvamento:
             if tarefas:
                 await asyncio.gather(*tarefas)
 
-#if __name__ == '__main__':
-    #coleta = ColetaESalvamento()
-    #t1 = time.time()
-    #asyncio.run(coleta.realizar_coleta())
-    #print(f"Tempo total: {time.time() - t1:.2f} segundos")
+if __name__ == '__main__':
+    coleta = ColetaESalvamento()
+    t1 = time.time()
+    asyncio.run(coleta.realizar_coleta())
+    print(f"Tempo total: {time.time() - t1:.2f} segundos")
