@@ -39,6 +39,7 @@ class ArquivodeTratamento:
         """
         self.arquivos_SIDRA()
         self.arquivos_SAGICAD()
+        self.arquivos_taxas_de_rendimento_AI_QEDU()
 
     def arquivos_SIDRA(self) -> None: 
         """
@@ -178,6 +179,80 @@ class ArquivodeTratamento:
                         df = classe_das_funcoes_auxiliares.tratamento_valores_nulos_SAGICAD(df)
                         classe_das_funcoes_auxiliares.salvar_arquivo_tratado_SAGICAD(indicador, fonte, nova_pasta_dados_tratados, df)
                         
-if __name__ == '__main__':
+    def arquivos_taxas_de_rendimento_AI_QEDU(self) -> None:
+        diretorio_dados_educacao = self.diretorio_dados_brutos / "dados-educacao"
+
+        dataframe_completo = classe_das_funcoes_auxiliares.agrupar_dataframes_QEDU(diretorio_dados_educacao)
+
+        mapeamento_das_localizacoes = {
+            0   : 'total',
+            1   : 'urbana',
+            2   : 'rural'
+        }
+        mapeamento_das_series = {
+            1 : 'primeiro_ano',
+            2 : 'segundo_ano',
+            3 : 'terceiro_ano',
+            4 : 'quarto_ano',
+            5 : 'quinto_ano'
+        }
+        dataframe_completo['serie'] = dataframe_completo['serie_id'].map(mapeamento_das_series)
+        dataframe_completo['regiao'] = dataframe_completo['localizacao_id'].map(mapeamento_das_localizacoes)
+        colunas_selecionadas_para_remocao = [
+            'localizacao_id',
+            'serie_id',
+            'matriculas'
+        ]
+        dataframe_completo = dataframe_completo.drop(columns=colunas_selecionadas_para_remocao)
+        renomeador_de_colunas = {
+            'ibge_id' : 'cod_municipio',
+            'ano' : 'referencia'
+        }
+        dataframe_completo.rename(columns=renomeador_de_colunas, inplace=True)
+        agrupamento_por_regiao_total = dataframe_completo[dataframe_completo['dependencia_id'] == 0]
+        agrupamento_por_regiao_total.drop(columns=['dependencia_id'], inplace=True)
+        colunas_formato_inicial = [
+            'cod_municipio',
+            'referencia',
+            'serie',
+            'regiao',
+            'aprovados',
+            'reprovados',
+            'abandonos'
+        ]
+        agrupamento_por_regiao_total = agrupamento_por_regiao_total[colunas_formato_inicial]
+        colunas_disponiveis_no_agrupamento = agrupamento_por_regiao_total.columns
+        colunas_taxas = colunas_disponiveis_no_agrupamento[4:]
+        for coluna in colunas_taxas:
+            indicador = f"percentual_de_{coluna}"
+            dataframe_sem_as_colunas_das_taxas = agrupamento_por_regiao_total.drop(columns=colunas_taxas)
+            novo_dataframe = dataframe_sem_as_colunas_das_taxas.copy()
+            novo_dataframe[coluna] = agrupamento_por_regiao_total[coluna]
+            novo_dataframe.rename(columns={coluna : 'valor'}, inplace=True)
+            novo_dataframe['fonte'] = 'QEDU'
+            novo_dataframe['indicador'] = indicador
+            novo_dataframe['unidade'] = '%'
+            formato_final_do_dataframe = [
+                'cod_municipio',
+                'referencia',
+                'indicador',
+                'fonte',
+                'serie',
+                'regiao',
+                'valor',
+                'unidade'
+            ]
+            novo_dataframe = novo_dataframe[formato_final_do_dataframe]
+            novo_dataframe = novo_dataframe.sort_values(by='referencia', ascending=True)
+            novo_dataframe['referencia'] = novo_dataframe['referencia'].astype(str)
+            nome_do_arquivo_de_salvamento = f"{indicador}_AI_QEDU_municipal_ano_long.json"
+            diretorio_salvamento = self.diretorio_dados_tratados / 'dados-educacao'
+            diretorio_salvamento.mkdir(parents=True, exist_ok=True)
+            caminho_salvamento = diretorio_salvamento / nome_do_arquivo_de_salvamento
+            novo_dataframe.to_json(caminho_salvamento, orient='records',
+                  force_ascii=False, indent=4, double_precision=3)
+
+#if __name__ == '__main__':
     # Inicia o processo completo
-    ArquivodeTratamento().executar_processo_de_tratamento()
+    #ArquivodeTratamento().executar_processo_de_tratamento()
+    #ArquivodeTratamento().arquivos_taxas_de_rendimento_AI_QEDU()

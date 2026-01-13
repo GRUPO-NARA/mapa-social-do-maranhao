@@ -13,8 +13,8 @@ app = FastAPI()
 try:
 
     # Quando a API for inicializada, é realizado a coleta e tratamento dos dados
-    asyncio.run(ColetaESalvamento().realizar_coleta())
-    ArquivodeTratamento().executar_processo_de_tratamento()
+    #asyncio.run(ColetaESalvamento().realizar_coleta())
+    #ArquivodeTratamento().executar_processo_de_tratamento()
 
     diretorio_atual = Path(__file__).resolve().parent
         
@@ -160,7 +160,8 @@ def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
             
             fontes = [
                 'SAGICAD',
-                'SIDRA'    
+                'SIDRA',
+                'QEDU'
             ]
             
             texto_separado = arquivo.replace('_', ' ')
@@ -218,6 +219,6 @@ def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
             
     raise HTTPException(status_code=404, detail="Indicador não encontrado.")
     
-#if __name__ == '__main__':
-    #inicializar_API()
+if __name__ == '__main__':
+    inicializar_API()
     #buscar_por_indicador_e_referencia('quantidade_de_pessoas_do_sexo_masculino_inscritas_no_cadastro_unico', '2025-12')

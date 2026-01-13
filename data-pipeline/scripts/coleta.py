@@ -84,15 +84,15 @@ class ColetaESalvamento:
             if tarefas:
                 await asyncio.gather(*tarefas)
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # Cria o objeto de coleta
-    coleta = ColetaESalvamento()
+ #   coleta = ColetaESalvamento()
     
     # Marca o tempo de início
-    t1 = time.time()
+  #  t1 = time.time()
     
     # Roda o processo de coleta assíncrona
-    asyncio.run(coleta.realizar_coleta())
+   # asyncio.run(coleta.realizar_coleta())
     
     # Mostra quanto tempo demorou no total
-    print(f"Tempo total: {time.time() - t1:.2f} segundos")
+   # print(f"Tempo total: {time.time() - t1:.2f} segundos")

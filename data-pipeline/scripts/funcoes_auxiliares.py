@@ -1,8 +1,10 @@
 # Bibliotecas necessárias para o funcionamento correto das funções
+from pathlib import Path
 import unicodedata 
 from numpy import float64, int64
 from pandas import DataFrame
 import pandas as pd
+import os
 
 class AuxiliaresTratamento:
     """
@@ -171,3 +173,13 @@ class AuxiliaresTratamento:
             dataframe['valor'] = dataframe['valor'].astype(float64)
         
         return dataframe
+    
+    def agrupar_dataframes_QEDU(self, diretorio_dados_educacao: Path) -> DataFrame:
+        arquivos_no_diretorio = os.listdir(diretorio_dados_educacao)
+        dataframes = []
+        for arquivo in arquivos_no_diretorio:
+            if str(arquivo).endswith('QEDU.xlsx'):
+                caminho_do_arquivo = diretorio_dados_educacao / arquivo
+                df = pd.read_excel(caminho_do_arquivo, sheet_name='municipios')
+                dataframes.append(df)
+        return pd.concat(dataframes, ignore_index=True)
