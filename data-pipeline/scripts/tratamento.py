@@ -245,6 +245,7 @@ class ArquivodeTratamento:
             novo_dataframe = novo_dataframe[formato_final_do_dataframe]
             novo_dataframe = novo_dataframe.sort_values(by='referencia', ascending=True)
             novo_dataframe['referencia'] = novo_dataframe['referencia'].astype(str)
+            novo_dataframe['cod_municipio'] = novo_dataframe['cod_municipio'].astype(str)
             nome_do_arquivo_de_salvamento = f"{indicador}_AI_QEDU_municipal_ano_long.json"
             diretorio_salvamento = self.diretorio_dados_tratados / 'dados-educacao'
             diretorio_salvamento.mkdir(parents=True, exist_ok=True)
