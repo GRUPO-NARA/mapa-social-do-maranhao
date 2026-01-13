@@ -1,3 +1,4 @@
+from pandas.io import html
 from fastapi import FastAPI # type: ignore
 import uvicorn # type: ignore
 import os
@@ -13,8 +14,8 @@ app = FastAPI()
 try:
 
     # Quando a API for inicializada, é realizado a coleta e tratamento dos dados
-    #asyncio.run(ColetaESalvamento().realizar_coleta())
-    #ArquivodeTratamento().executar_processo_de_tratamento()
+    asyncio.run(ColetaESalvamento().realizar_coleta())
+    ArquivodeTratamento().executar_processo_de_tratamento()
 
     diretorio_atual = Path(__file__).resolve().parent
         
@@ -99,55 +100,88 @@ async def buscar_indicadores():
     return corpo_requisicao
 
 def definir_formato_da_referencia(referencia):
+
     formato_da_referencia = '' 
+
     if referencia.count('-') > 0:
+
         formato_da_referencia = 'ano-mes'
+
     else:
+
         formato_da_referencia = 'ano'
     
     return formato_da_referencia
 
 def verificar_referencia(arquivo: json, referencia: str):
+
+
     formato_da_referencia = definir_formato_da_referencia(referencia)
-    if formato_da_referencia == 'ano':
-        for dados in arquivo:
-            if dados['referencia'] != referencia:
-                raise HTTPException(status_code=404, detail="Não foram encontrados dados para a referência solicitada!")
+
+    encontrou_dados_do_ano_especifico = False
+
+    encontrou_referencia_especifica_por_ano_e_mes = False
+
+    ano_que_vai_filtrar = None
+
+    ano_e_mes_que_vai_filtrar = None
+
+    for dados in arquivo:
+
+        referencia_encontrada = str(dados['referencia'])
+
+        if formato_da_referencia == 'ano':
+
+            if referencia_encontrada == referencia:
+
+                encontrou_dados_do_ano_especifico = True
+                
+                break
+        
+        if formato_da_referencia == 'ano-mes':
+            
+            if referencia_encontrada == referencia:
+
+                encontrou_referencia_especifica_por_ano_e_mes = True
+
+                break
+
+    if referencia.count("-") > 0:
+       
+        if not encontrou_referencia_especifica_por_ano_e_mes:
+
+            raise HTTPException(status_code=404, detail=f"Não foram encontrados dados da referência: {referencia}")
+        
     else:
-        # Divide a referência (ex: "2023-05") em duas variáveis
-        ano_requisitado, mes_requisitado = referencia.split('-')
 
-        ano_encontrado = False
-        mes_encontrado = False
+        if not encontrou_dados_do_ano_especifico:
 
-        for dados in arquivo:
-            texto_ref = dados['referencia']
-            ano_ref, mes_ref = texto_ref.split('-')
+            raise HTTPException(status_code=404, detail=f"Não foram encontrados dados do ano de: {referencia}")
 
-            if ano_ref == ano_requisitado:
-                ano_encontrado = True
-                # Se achou o ano, verifica se o mês também bate
-                if mes_ref == mes_requisitado:
-                    mes_encontrado = True
-                    # Aqui você provavelmente quer salvar os 'dados' ou retornar algo
-                    break 
+    if encontrou_dados_do_ano_especifico:
 
-        # Verificações de erro fora do loop
-        if not ano_encontrado:
-            raise HTTPException(status_code=404, detail="Não foram encontrados dados para o ano solicitado!")
+        ano_que_vai_filtrar = referencia
 
-        if not mes_encontrado:
-            raise HTTPException(status_code=404, detail="Não foram encontrados dados para o mês solicitado!")
+        return ano_que_vai_filtrar
+    
+    if encontrou_referencia_especifica_por_ano_e_mes:
 
-        # Se chegou aqui, é porque encontrou ambos!
+        ano_e_mes_que_vai_filtrar = referencia
+
+        return ano_e_mes_que_vai_filtrar
+
 
 @app.get('/dados')
 def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
     
+    
     formato_da_referencia_de_entrada = definir_formato_da_referencia(referencia)
     
-    if referencia[-1] == '-':
-        raise HTTPException(status_code=404, detail=f'A referência precisa estar no formato (ano-mes). A referência fornecida foi: {referencia}')
+    print(formato_da_referencia_de_entrada)
+
+    if formato_da_referencia_de_entrada == 'ano-mes':
+        if referencia[-1] == '-':
+            raise HTTPException(status_code=404, detail=f'A referência precisa estar no formato (ano-mes). A referência fornecida foi: {referencia}')
     
         
     for pasta in pastas_nos_dados_tratados:
@@ -175,33 +209,36 @@ def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
                     break
             
             indicador_do_arquivo = arquivo[:localizacao_referencia - 1]
-            
+           
             quantidade_de_dados = 0
             if indicador_do_arquivo == indicador:
                 
                 caminho_arquivo = diretorio_pasta / arquivo
                 
-                with open(caminho_arquivo, 'r') as f:
-                    
+                with open(caminho_arquivo,'r',encoding='utf-8') as f:
                     leitura_do_arquivo = json.load(f)
                 
                 dados_iniciais = leitura_do_arquivo[0]
+                
                 formato_da_referencia_do_arquivo = definir_formato_da_referencia(dados_iniciais['referencia'])
                 
                 if formato_da_referencia_de_entrada != formato_da_referencia_do_arquivo:
-                    raise HTTPException(status_code=404, detail="Verifique o formato da referência")
+                    raise HTTPException(status_code=404, detail=f"O arquivo referente ao indicador: {indicador_do_arquivo} não aceita o formato da referência solicitada. Por favor, verifique o formato da referência!")
                 
                 fonte_dados = dados_iniciais['fonte']
+               
                 unidade = dados_iniciais['unidade']
-                referencia_dos_dados = referencia
+                
                 lista_de_dados = []
                 
-                verificar_referencia(leitura_do_arquivo, referencia)
-                    
+                referencia_dos_dados = verificar_referencia(leitura_do_arquivo, referencia)
+                
                 for dados in leitura_do_arquivo:
-                    dicionario_dos_dados = { 'cod_municipio' : dados['cod_municipio'], 'valor' : dados['valor']}
-                    lista_de_dados.append(dicionario_dos_dados)
-                    quantidade_de_dados += 1
+                    
+                    if dados['referencia'] == referencia_dos_dados:
+                        dicionario_dos_dados = { 'cod_municipio' : dados['cod_municipio'], 'valor' : dados['valor']}
+                        lista_de_dados.append(dicionario_dos_dados)
+                        quantidade_de_dados += 1
                 
                 corpo_da_requisicao = {
                     'filtros' : {
@@ -213,12 +250,11 @@ def buscar_por_indicador_e_referencia(indicador: str, referencia: str):
                     'quantidade_de_dados' : quantidade_de_dados,
                     'dados' : lista_de_dados
                 }
-                # Mudar o formato dos valores para int64 ou float64
-                # Adicionar quando nao for encontrado o indicador
+                
                 return corpo_da_requisicao  
             
     raise HTTPException(status_code=404, detail="Indicador não encontrado.")
     
 if __name__ == '__main__':
     inicializar_API()
-    #buscar_por_indicador_e_referencia('quantidade_de_pessoas_do_sexo_masculino_inscritas_no_cadastro_unico', '2025-12')
+    
