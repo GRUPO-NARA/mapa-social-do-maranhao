@@ -9,65 +9,112 @@
 </head>
 
 <body>
-    <div class="toda-tela">
-        <main class="painel-principal">
+    <div class="tela-dispositivo">
+        <div class="painel-principal">
             <header class="cabecalho">
                 <div class="cabecalho-esquerdo">
                     <img src="logo.png" alt="" id="logo">
                     <div class="titulo-subtitulo">
-                        <h3>
-                            Mapa Social do Maranhao
-                        </h3>
-                        <p>
-                            Indicadores Sociais do Maranhao
-                        </p>
+                        <h3>Mapa Social do Maranhão</h3>
+                        <p>Indicadores Sociais do Estado do Maranhão</p>
                     </div>
                 </div>
                 <div class="cabecalho-direito">
-                    <a href="">
-                        Sobre
-                    </a>
-                    <a href="">
-                        Contato
-                    </a>
+                    <a href="">Sobre</a>
+                    <a href="">Contato</a>
                 </div>
             </header>
-            <nav>
-                <ul class="navegador-indicadores">
-                    <li>
-                        <a href="">
-                            Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            Educacao
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            Saude
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            Assistencia Social
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="conteiner-superior">
-                <div class="filtros">
+            <main class="sessao-foco">
+                <nav>
+                    <ul class="navegador-indicadores">
+                        <li>
+                            <a href="">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                Educação
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                Saúde
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                Assistência Social
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="conteiner-superior">
+                    <div class="filtros">
+                        <h3>
+                            Filtrar Dados
+                        </h3>
+                        <div class="opcoes-filtros">
+                            <div>
+                                <label for="tema">Tema:<br></label>
+                                <select name="tema" id="">
+                                    <option value="">
+                                        Educação
+                                    </option>
+                                    <option value="">
+                                        Saúde
+                                    </option>
+                                    <option value="">
+                                        Assistência Social
+                                    </option>
+                                </select>
+                            </div>
 
-                </div>
-                <div class="mapa">
+                            <div>
+                                <label for="municipio">Município:<br></label>
+                                <select name="municipio" id="">
+                                    <option value="">Selecione o Município</option>
+                                </select>
+                            </div>
 
-                </div>
-                <div class="indicadores-especificos">
+                            <div>
+                                <label for="ano">Ano:<br></label>
+                                <select name="ano" id="">
+                                    <option value="">
+                                        2026
+                                    </option>
+                                </select>
+                            </div>
 
+                            <button type="button" id="botao-aplicar-filtros">
+                                Aplicar Filtros
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mapa">
+                    </div>
+                    <div class="indicadores">
+
+                    </div>
                 </div>
-            </div>
-        </main>
+                <div class="cards">
+                    <div class="indicador-1">
+
+                    </div>
+                    <div class="indicador-2">
+
+                    </div>
+                    <div class="indicador-3">
+
+                    </div>
+                </div>
+            </main>
+            <footer class="rodape">
+                <h3>
+                    Desenvolvido por ----
+                </h3>
+            </footer>
+        </div>
     </div>
 </body>
 
