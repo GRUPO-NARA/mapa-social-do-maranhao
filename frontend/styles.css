@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -19,28 +20,73 @@ body {
     background-color: rgb(255, 255, 255);
     border: 1px solid;
     border-radius: 20px;
-    box-shadow: 0px 20px 25px;
+    box-shadow: 0px 0px 25px;
     overflow: hidden;
 }
 
 .cabecalho {
-    background-color: red;
-    height: 12%;
+    display: flex;
+    background-color: rgb(255, 255, 255);
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid;
+    padding: 20px;
+}
+
+.cabecalho .lado-esquerdo {
+    display: flex;
+    align-items: center;
+}
+
+.cabecalho .lado-esquerdo #logo {
+    width: 10%;
+}
+
+.cabecalho .lado-direito {
+    display: flex;
+}
+
+.cabecalho .lado-direito a {
+    margin: 10px;
+    text-decoration: none;
+    color: black;
 }
 
 .menu-indicadores {
-    margin: 20px 40px;
-    background-color: brown;
-    width: 15%;
-    height: 50px;
+    margin: 20px 2%;
+    background-color: rgb(255, 255, 255);
+    width: fit-content;
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.menu-indicadores li {
+    list-style: none;
+    display: flex;
+}
+
+.menu-indicadores a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    padding: 10px;
+    border-right: 1px solid;
+}
+
+.menu-indicadores a:hover {
+    color: white;
+    background-color: rgb(111, 111, 231);
+}
+
+.menu-indicadores a:last-child {
+    border-right: none;
 }
 
 .foco-principal {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 400px 250px;
+    grid-template-rows: 400px 220px;
     grid-template-areas:
         "box-1 box-2 box-2 box-3"
         "box-4 box-5 box-6 box-3"
@@ -52,6 +98,7 @@ body {
     overflow-y: auto;
 }
 
+
 .foco-principal .filtros {
     grid-area: box-1;
     background-color: rgb(255, 255, 255);
@@ -59,11 +106,36 @@ body {
     border-radius: 20px;
 }
 
-.foco-principal .mapa {
+.foco-principal .filtros h3 {
+    margin: 10px 10px;
+}
+
+.foco-principal .filtros .filtros-indicadores {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.foco-principal .filtros .filtros-indicadores select {
+    border: 0px;
+}
+
+.foco-principal .filtros .botao {
+    width: fit-content;
+    display: flex;
+}
+
+
+.foco-principal #mapa {
     grid-area: box-2;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
     border-radius: 20px;
+    min-height: 400px;
+    width: 100%;
+
 }
 
 .foco-principal .indicadores {
@@ -96,9 +168,24 @@ body {
 
 @media (max-width: 430px) {
 
+    .cabecalho .lado-esquerdo .titulo-subtitulo p {
+        display: none;
+    }
+
+    .cabecalho .lado-esquerdo #logo {
+        width: 30%;
+    }
+
     nav {
         display: flex;
         justify-content: center;
+        align-items: center;
+    }
+
+    .menu-indicadores a {
+        font-size: 14px;
+        text-align: center;
+        display: flex;
         align-items: center;
     }
 
@@ -124,4 +211,8 @@ body {
     .foco-principal>div {
         min-height: 300px;
     }
+
+
+
+
 }
