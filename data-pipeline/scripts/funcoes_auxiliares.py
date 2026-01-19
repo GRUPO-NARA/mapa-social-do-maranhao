@@ -1,5 +1,6 @@
 # Bibliotecas necessárias para o funcionamento correto das funções
 from pathlib import Path
+from typing import Dict, List, Union
 import unicodedata 
 from numpy import float64, int64
 from pandas import DataFrame
@@ -15,7 +16,15 @@ class AuxiliaresTratamento:
         """
         Inicializador da classe AuxiliaresTratamento.
         """
-        pass
+        self.DIRETORIO_ARQUIVO = Path(__file__).resolve().parent
+        
+    def leitura_arquivo_informacoes_municipios(self) -> dict[str, List[str]]:
+        caminho_arquivo = self.DIRETORIO_ARQUIVO / '..' / 'dados' / 'informacoes_municipios.csv'
+        dataframe = pd.read_csv(caminho_arquivo, sep=',')
+        return {
+            'codigos_municipais' : dataframe['cod_municipio'].to_list(),
+            'nomes_municipios' : dataframe['nome_municipio'].to_list()
+        }
 
     def remover_acentos(self, texto: str) -> str:
         """
@@ -70,22 +79,6 @@ class AuxiliaresTratamento:
                 break
             
         return unidade
-    
-    def salvar_arquivo_tratado_SAGICAD(self, indicador: str, fonte: str, diretorio_salvamento: str, dataframe: DataFrame) -> None:
-        """
-        Gera um arquivo JSON a partir do DataFrame tratado, utilizando uma nomenclatura padronizada.
-        
-        :param indicador: Nome do indicador para compor o nome do arquivo.
-        :param fonte: Nome da fonte dos dados.
-        :param diretorio_salvamento: Caminho da pasta onde o arquivo será gravado.
-        :param dataframe: Objeto DataFrame contendo os dados a serem salvos.
-        :return: None
-        """
-        # Define o nome do arquivo seguindo o padrão: indicador_fonte_municipal_ano_long.json
-        nome_arquivo = f'{diretorio_salvamento}/{str(indicador)}_{str(fonte)}_municipal_ano_long.json'
-        
-        # Salva em JSON com suporte a caracteres especiais e indentação para leitura humana
-        dataframe.to_json(nome_arquivo, orient='records', force_ascii=False, indent=4, double_precision=3)
 
     def organizar_dataframe_SAGICAD(self, fonte: str, indicador: str, dataframe: DataFrame) -> DataFrame:
         """
