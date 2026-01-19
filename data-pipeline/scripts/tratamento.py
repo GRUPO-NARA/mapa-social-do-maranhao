@@ -2,10 +2,10 @@ import pandas as pd
 from pathlib import Path
 import os
 from funcoes_auxiliares import AuxiliaresTratamento
-
+from operacoes_db import ConexaoPostgres
 # Instância da classe auxiliar para usar funções de limpeza e organização
 classe_das_funcoes_auxiliares = AuxiliaresTratamento()
-
+database = ConexaoPostgres()
 class ArquivodeTratamento:
     """
     Classe responsável por processar arquivos de dados brutos das fontes SIDRA e SAGICAD,
@@ -38,8 +38,7 @@ class ArquivodeTratamento:
         Função principal que dispara o tratamento para cada tipo de fonte.
         """
         self.arquivos_SIDRA()
-        self.arquivos_SAGICAD()
-        self.arquivos_taxas_de_rendimento_AI_QEDU()
+    
 
     def arquivos_SIDRA(self) -> None: 
         """
@@ -108,13 +107,17 @@ class ArquivodeTratamento:
                             df_x['valor'] = df_x['valor'].astype(int)
                         else:
                             df_x['valor'] = df_x['valor'].astype(str).str.replace(',','.').astype(float).round(3)
-
-                        # Salva o resultado em JSON dentro da pasta da respectiva categoria
-                        nome_arquivo = f'{str(indicador)}_{str(fonte)}_{str(referencia)}_long.json'
-                        nova_pasta_dados_tratados = self.diretorio_dados_tratados / pasta
-                        nova_pasta_dados_tratados.mkdir(exist_ok=True)     
-                        df_x.to_json(nova_pasta_dados_tratados / nome_arquivo, orient='records', force_ascii=False, indent=4)
-                                                      
+                        
+                        
+                        # Corrigir amanhã 
+                        nome_topico = pasta
+                        
+                        database.inserir_dados(
+                            indicador,
+                            nome_topico,
+                            df_x
+                        )
+                       
                     except Exception:
                         pass
     
@@ -156,6 +159,7 @@ class ArquivodeTratamento:
                     nova_pasta_dados_tratados = self.diretorio_dados_tratados / pasta
                     nova_pasta_dados_tratados.mkdir(exist_ok=True)     
                     
+                    topico = pasta
                     # Se houver mais de um indicador no mesmo arquivo, separa em arquivos diferentes
                     if len(colunas_indicadores) > 1:
                         for coluna in colunas_indicadores:
@@ -163,21 +167,36 @@ class ArquivodeTratamento:
                             novo_df[coluna] = df[coluna]
                             
                             indicador = coluna
+                            
+                            print(indicador)
+                            
                             novo_df.rename(columns={indicador: 'valor', 'codigo': 'cod_municipio'}, inplace=True)
                             
                             # Usa funções auxiliares para organizar e salvar
                             novo_df = classe_das_funcoes_auxiliares.organizar_dataframe_SAGICAD(fonte, indicador, novo_df)
                             novo_df = classe_das_funcoes_auxiliares.tratamento_valores_nulos_SAGICAD(novo_df)
-                            classe_das_funcoes_auxiliares.salvar_arquivo_tratado_SAGICAD(indicador, fonte, nova_pasta_dados_tratados, novo_df)
+                            database.inserir_dados(
+                                indicador,
+                                topico,
+                                novo_df
+                            )   
 
                     else:
                         # Processo para arquivo com apenas um indicador
+                        print("unica")
                         indicador = colunas_indicadores[0]
+                        
                         df.rename(columns={'codigo': 'cod_municipio', indicador: 'valor'}, inplace=True)
                         
                         df = classe_das_funcoes_auxiliares.organizar_dataframe_SAGICAD(fonte, indicador, df)
                         df = classe_das_funcoes_auxiliares.tratamento_valores_nulos_SAGICAD(df)
-                        classe_das_funcoes_auxiliares.salvar_arquivo_tratado_SAGICAD(indicador, fonte, nova_pasta_dados_tratados, df)
+                        database.inserir_dados(
+                            indicador,
+                            topico,
+                            df
+                        )  
+                    
+                        
                         
     def arquivos_taxas_de_rendimento_AI_QEDU(self) -> None:
         diretorio_dados_educacao = self.diretorio_dados_brutos / "dados-educacao"
@@ -253,7 +272,9 @@ class ArquivodeTratamento:
             novo_dataframe.to_json(caminho_salvamento, orient='records',
                   force_ascii=False, indent=4, double_precision=3)
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     # Inicia o processo completo
     #ArquivodeTratamento().executar_processo_de_tratamento()
     #ArquivodeTratamento().arquivos_taxas_de_rendimento_AI_QEDU()
+    ArquivodeTratamento().arquivos_SIDRA()
+    ArquivodeTratamento().arquivos_SAGICAD()
