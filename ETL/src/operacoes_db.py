@@ -1,9 +1,8 @@
 import os
-from typing import List
 from dotenv import load_dotenv
 from pandas import DataFrame 
 from sqlalchemy import create_engine, URL, Engine 
-from funcoes_auxiliares import AuxiliaresTratamento
+from funcoes_de_apoio import AuxiliaresTratamento
 
 funcoes_auxiliares = AuxiliaresTratamento()
 
@@ -11,6 +10,7 @@ class ConexaoPostgres:
     def __init__(self):
         load_dotenv()
         self.CONEXAO_DB = self.estabelecer_conexao()
+        self.inserir_tabela_municipios()
 
     def estabelecer_conexao(self) -> Engine:
         try:
@@ -26,24 +26,24 @@ class ConexaoPostgres:
             print(e)
 
     def inserir_dados(self, indicador:str, topico:str, dataframe: DataFrame) -> None:
+        
+        indicador = funcoes_auxiliares.ajustar_tamanho_caracteres_indicador(indicador)
+
         try:
-
-            if indicador == 'responsaveis_familiares_do_sexo_feminino_beneficiarias_do_auxilio_gas':
-                indicador = 'responsaveis_familiares_feminino_beneficiarias_do_auxilio_gas'
-
             dataframe.to_sql(
                 name = indicador,
                 schema = topico,
                 if_exists = 'replace',
                 chunksize=10000,
                 con = self.CONEXAO_DB,
-                index=False
+                index=False,
+                method='multi'
             )
             self.anexar_chave_estrangeira(indicador, topico)
         except Exception as e:
             print(e)
 
-    def inserir_tabela_municipios(self, codigos_municipais:List[str] , nomes_municipios:List[str] ) -> None:
+    def inserir_tabela_municipios(self) -> None:
 
         try:
             dados_tabela = funcoes_auxiliares.leitura_arquivo_informacoes_municipios()
@@ -75,7 +75,6 @@ class ConexaoPostgres:
         except Exception as e:
             print(e)
         
-
     def anexar_chave_estrangeira(self, nome_tabela: str, topico: str):
     
         nome_constraint = f"fk_{nome_tabela}_municipio"
@@ -95,3 +94,17 @@ class ConexaoPostgres:
             """
                 cursor.execute(comando)
                 conexao_raw.commit()
+
+    def verificar_existencia_schema(self, topico:str):
+        print(topico)
+        try:
+            with self.CONEXAO_DB.connect() as conexao:
+                conexao_raw = conexao.connection
+                with conexao_raw.cursor() as cursor:
+                    comando = f"""
+                    CREATE SCHEMA IF NOT EXISTS {topico}
+                    """
+                    cursor.execute(comando)
+                    conexao_raw.commit()
+        except Exception as e:
+            print(e)

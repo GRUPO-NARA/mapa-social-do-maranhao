@@ -17,10 +17,10 @@ class AuxiliaresTratamento:
         Inicializador da classe AuxiliaresTratamento.
         """
         self.DIRETORIO_ARQUIVO = Path(__file__).resolve().parent
-        
+        self.arquivo_informacoes_municipios = self.DIRETORIO_ARQUIVO / '..' / 'dados_coletados' / 'informacoes_estaduais' / 'informacoes_municipios.csv'
+
     def leitura_arquivo_informacoes_municipios(self) -> dict[str, List[str]]:
-        caminho_arquivo = self.DIRETORIO_ARQUIVO / '..' / 'dados' / 'informacoes_municipios.csv'
-        dataframe = pd.read_csv(caminho_arquivo, sep=',')
+        dataframe = pd.read_csv(self.arquivo_informacoes_municipios, sep=',')
         return {
             'codigos_municipais' : dataframe['cod_municipio'].to_list(),
             'nomes_municipios' : dataframe['nome_municipio'].to_list()
@@ -176,3 +176,30 @@ class AuxiliaresTratamento:
                 df = pd.read_excel(caminho_do_arquivo, sheet_name='municipios')
                 dataframes.append(df)
         return pd.concat(dataframes, ignore_index=True)
+
+    def corrigir_codigo_ibge(self, dataframe_original: DataFrame) -> DataFrame:
+
+        referencia_codigos_municipais = pd.read_csv(self.arquivo_informacoes_municipios, sep=',')
+        referencia_codigos_municipais.drop(columns=['nome_municipio'], inplace=True)
+        referencia_codigos_municipais['cod_municipal_7_digitos'] = referencia_codigos_municipais['cod_municipio'].astype(str).str.zfill(7)
+        referencia_codigos_municipais['cod_municipal_6_digitos'] = referencia_codigos_municipais['cod_municipal_7_digitos'].str[:6]
+
+        df = dataframe_original          
+        df['Código'] = df['Código'].astype(str).str.zfill(6)
+        df = df.merge(referencia_codigos_municipais[['cod_municipal_6_digitos','cod_municipal_7_digitos']], left_on='Código', right_on='cod_municipal_6_digitos', how="left")
+        df['Código'] = df['cod_municipal_7_digitos']
+        df = df.drop(columns=['cod_municipal_6_digitos','cod_municipal_7_digitos'])
+        return df 
+    
+    def ajustar_tamanho_caracteres_indicador(self, indicador: str):
+        possiveis_indicadores_e_correcao = {
+            'responsaveis_familiares_do_sexo_feminino_beneficiarias_do_auxilio_gas' : 'responsaveis_familiares_feminino_beneficiarias_do_auxilio_gas',
+            'quantidade_de_pessoas_sem_informacao_sobre_raca_cor_inscritas_no_cadastro_unico' : 'pessoas_sem_informacao_sobre_raca_cor_cadastro_unico',
+            'quantidade_de_familias_do_cadastro_unico_em_situacao_de_trabalho_infantil' : 'familias_do_cadastro_unico_em_situacao_de_trabalho_infantil',
+            'quantidade_de_pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil' : 'pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil'
+        }
+
+        if indicador in possiveis_indicadores_e_correcao.keys():
+            indicador = possiveis_indicadores_e_correcao[indicador]
+
+        return indicador
