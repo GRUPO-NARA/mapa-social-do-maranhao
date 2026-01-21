@@ -46,7 +46,7 @@ class ColetaESalvamento:
                 else:
                     print(f"Status {resposta.status} para: {url}")
         except Exception as e:
-            print(f"Erro ao baixar {url}: {e}")
+            print(f"Erro ao baixar {nome_do_arquivo}: {e}")
 
     async def realizar_coleta(self):
         """
