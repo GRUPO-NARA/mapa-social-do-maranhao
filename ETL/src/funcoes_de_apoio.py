@@ -166,16 +166,6 @@ class AuxiliaresTratamento:
             dataframe['valor'] = dataframe['valor'].astype(float64)
         
         return dataframe
-    
-    def agrupar_dataframes_QEDU(self, diretorio_dados_educacao: Path) -> DataFrame:
-        arquivos_no_diretorio = os.listdir(diretorio_dados_educacao)
-        dataframes = []
-        for arquivo in arquivos_no_diretorio:
-            if str(arquivo).endswith('QEDU.xlsx'):
-                caminho_do_arquivo = diretorio_dados_educacao / arquivo
-                df = pd.read_excel(caminho_do_arquivo, sheet_name='municipios')
-                dataframes.append(df)
-        return pd.concat(dataframes, ignore_index=True)
 
     def corrigir_codigo_ibge(self, dataframe_original: DataFrame) -> DataFrame:
 
@@ -196,7 +186,10 @@ class AuxiliaresTratamento:
             'responsaveis_familiares_do_sexo_feminino_beneficiarias_do_auxilio_gas' : 'responsaveis_familiares_feminino_beneficiarias_do_auxilio_gas',
             'quantidade_de_pessoas_sem_informacao_sobre_raca_cor_inscritas_no_cadastro_unico' : 'pessoas_sem_informacao_sobre_raca_cor_cadastro_unico',
             'quantidade_de_familias_do_cadastro_unico_em_situacao_de_trabalho_infantil' : 'familias_do_cadastro_unico_em_situacao_de_trabalho_infantil',
-            'quantidade_de_pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil' : 'pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil'
+            'quantidade_de_pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil' : 'pessoas_do_cadastro_unico_em_situacao_de_trabalho_infantil',
+            'quantidade_de_pessoas_do_sexo_masculino_inscritas_no_cadastro_unico' : "pessoas_do_sexo_masculino_inscritas_no_cadastro_unico",
+            'quantidade_de_pessoas_do_sexo_feminino_inscritas_no_cadastro_unico' : "pessoas_do_sexo_feminino_inscritas_no_cadastro_unico",
+            'total_de_familias_em_situacao_de_rua_inscritas_no_cadastro_unico' : "familias_em_situacao_de_rua_cadastro_unico"
         }
 
         if indicador in possiveis_indicadores_e_correcao.keys():

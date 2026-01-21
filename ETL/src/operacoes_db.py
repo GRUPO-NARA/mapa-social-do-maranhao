@@ -10,7 +10,7 @@ class ConexaoPostgres:
     def __init__(self):
         load_dotenv()
         self.CONEXAO_DB = self.estabelecer_conexao()
-        self.inserir_tabela_municipios()
+        self.criar_schema_dados_gerais()
 
     def estabelecer_conexao(self) -> Engine:
         try:
@@ -22,8 +22,10 @@ class ConexaoPostgres:
                 "postgresql+psycopg2", username=USUARIO_DB, password=SENHA_DB, host=HOST_DB, database=NOME_DB
             )
             return create_engine(url)
+        # Implementar tratamento para caso o database não exista
         except Exception as e:
             print(e)
+       
 
     def inserir_dados(self, indicador:str, topico:str, dataframe: DataFrame) -> None:
         
@@ -42,8 +44,8 @@ class ConexaoPostgres:
             self.anexar_chave_estrangeira(indicador, topico)
         except Exception as e:
             print(e)
-
-    def inserir_tabela_municipios(self) -> None:
+    
+    def criar_schema_dados_gerais(self) -> None:
 
         try:
             dados_tabela = funcoes_auxiliares.leitura_arquivo_informacoes_municipios()
@@ -51,11 +53,11 @@ class ConexaoPostgres:
                 conexao_raw = conexao.connection
                 with conexao_raw.cursor() as cursor:
                     cursor.execute("""
-                        CREATE SCHEMA IF NOT EXISTS dados_municipios
+                        CREATE SCHEMA IF NOT EXISTS dados_gerais
                     """)
                     conexao_raw.commit()
                     cursor.execute("""
-                        CREATE TABLE IF NOT EXISTS dados_municipios.informacoes (
+                        CREATE TABLE IF NOT EXISTS dados_gerais.informacoes (
                                    codigo_ibge VARCHAR(7) PRIMARY KEY,
                                    nome_municipio VARCHAR(100) NOT NULL 
                                    )
@@ -63,7 +65,7 @@ class ConexaoPostgres:
                     conexao_raw.commit()
                     for item_atual in range(0, len(dados_tabela['codigos_municipais'])): 
                         cursor.execute("""
-                            INSERT INTO dados_municipios.informacoes (
+                            INSERT INTO dados_gerais.informacoes (
                             codigo_ibge, nome_municipio
                             ) VALUES (%s, %s) ON CONFLICT (codigo_ibge) DO NOTHING
                         """, (
@@ -74,7 +76,21 @@ class ConexaoPostgres:
 
         except Exception as e:
             print(e)
-        
+
+    def inserir_dados_schema_dados_gerais(self, indicador:str, dataframe: DataFrame) -> None:
+        try:
+            dataframe.to_sql(
+                name = indicador,
+                schema = 'dados_gerais',
+                if_exists = 'replace',
+                chunksize = 10000,
+                con = self.CONEXAO_DB,
+                index = False,
+                method = 'multi'
+            )
+        except Exception as e:
+            print(e)
+
     def anexar_chave_estrangeira(self, nome_tabela: str, topico: str):
     
         nome_constraint = f"fk_{nome_tabela}_municipio"
@@ -90,13 +106,13 @@ class ConexaoPostgres:
             ALTER TABLE {topico}.{nome_tabela}
             ADD CONSTRAINT {nome_constraint}
             FOREIGN KEY (cod_municipio)
-            REFERENCES dados_municipios.informacoes (codigo_ibge);
+            REFERENCES dados_gerais.informacoes (codigo_ibge);
             """
                 cursor.execute(comando)
                 conexao_raw.commit()
 
     def verificar_existencia_schema(self, topico:str):
-        print(topico)
+        
         try:
             with self.CONEXAO_DB.connect() as conexao:
                 conexao_raw = conexao.connection
