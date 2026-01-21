@@ -26,6 +26,7 @@ class ArquivodeTratamento:
         
         self.arquivos_SIDRA()
         self.arquivos_SAGICAD()
+        self.arquivos_ideb_dados_gerais_QEDU()
     
     def arquivos_SIDRA(self) -> None: 
         """
@@ -171,12 +172,57 @@ class ArquivodeTratamento:
                             dataframe
                         )  
                     
-                        
-                        
+    def arquivos_ideb_dados_gerais_QEDU(self) -> None: 
+        dataframe_completo = []
+        for pasta in self.topicos:
+            caminho_arquivos = self.pastas_informacoes_municipais / pasta
+            arquivos_na_pasta = os.listdir(caminho_arquivos)
+            
+            for arquivo in arquivos_na_pasta:   
+                if arquivo.startswith("IDEB") and arquivo.endswith('QEDU.xlsx'):
+                    caminho_arquivo = caminho_arquivos / arquivo
+                    leitura_dataframe_tabela_estado = pd.read_excel(caminho_arquivo, sheet_name='estado')
+                    leitura_dataframe_tabela_municipios = pd.read_excel(caminho_arquivo, sheet_name='municipios')
+                    dataframe_completo.append(leitura_dataframe_tabela_estado)
+                    dataframe_completo.append(leitura_dataframe_tabela_municipios)
+        
+        if dataframe_completo:
+            df = pd.concat(dataframe_completo, ignore_index=True)
+            df.drop(columns=['fluxo','aprendizado','nota_mt','nota_lp'], inplace = True)
+            map_dependencia = {
+                0 : 'total',
+                1 : 'federal',
+                2 : 'estadual',
+                3 : 'municipal',
+                4 : 'privada',
+                5 : 'publica'
+            }
+            map_ciclo = {
+                'AI' : 'anos_iniciais',
+                'AF' : 'anos_finais',
+                'EM' : 'ensino_medio'
+
+            }
+            df['ciclo'] = df['ciclo_id'].map(map_ciclo)
+            df['dependencia_adm'] = df['dependencia_id'].map(map_dependencia)
+            df.drop(columns=['dependencia_id','ciclo_id'], inplace = True)
+            df['unidade'] = 'decimal'
+            df.rename(columns={'ibge_id' : 'cod_municipio'}, inplace=True)
+            dataframe_dados_estadual = df[df['cod_municipio'] == 21]
+            indicador = 'ideb_geral'
+            database.inserir_dados_schema_dados_gerais(indicador, dataframe_dados_estadual)
+
+            dataframe_dados_municipais = df[df['cod_municipio'] != 21]
+            dataframe_dados_municipais.fillna(-1, inplace=True)
+            database.verificar_existencia_schema('dados_educacao')
+            database.inserir_dados('ideb_municipais','dados_educacao',dataframe_dados_municipais)
+        else:
+            print("Nenhum dado encontrado")
+
 
 if __name__ == '__main__':
     # Inicia o processo completo
     ArquivodeTratamento().executar_processo_de_tratamento()
-    #ArquivodeTratamento().arquivos_taxas_de_rendimento_AI_QEDU()
     #ArquivodeTratamento().arquivos_SIDRA()
     #ArquivodeTratamento().arquivos_SAGICAD()
+    #ArquivodeTratamento().arquivos_ideb_dados_gerais_QEDU()
