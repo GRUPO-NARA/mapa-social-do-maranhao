@@ -3,11 +3,12 @@ from pathlib import Path
 import os
 from funcoes_de_apoio import AuxiliaresTratamento
 from operacoes_db import ConexaoPostgres
+import time
 
 funcoes_auxiliares = AuxiliaresTratamento()
 database = ConexaoPostgres()
 
-class ArquivodeTratamento:
+class TratamentoDadosMunicipais:
     
     def __init__(self):
         
@@ -222,7 +223,10 @@ class ArquivodeTratamento:
 
 if __name__ == '__main__':
     # Inicia o processo completo
-    ArquivodeTratamento().executar_processo_de_tratamento()
-    #ArquivodeTratamento().arquivos_SIDRA()
-    #ArquivodeTratamento().arquivos_SAGICAD()
-    #ArquivodeTratamento().arquivos_ideb_dados_gerais_QEDU()
+    
+    t1 = time.time()
+    TratamentoDadosMunicipais().executar_processo_de_tratamento()
+    print(f"Tempo total: {time.time() - t1:.2f} segundos")
+    #TratamentoDadosMunicipais().arquivos_SIDRA()
+    #TratamentoDadosMunicipais().arquivos_SAGICAD()
+    #TratamentoDadosMunicipais().arquivos_ideb_dados_gerais_QEDU()
