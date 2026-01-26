@@ -1,6 +1,4 @@
 .venv
 .env
-.dockerignore
-Dockerfile
-data-pipeline/scripts/__pycache__
-data-pipeline/.env
+.gitignore
+ 
