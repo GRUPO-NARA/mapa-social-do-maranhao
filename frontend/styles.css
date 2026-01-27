@@ -15,11 +15,11 @@ body {
 }
 
 .painel-principal {
-    width: 95%;
+    width: 90%;
     height: 95%;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
     box-shadow: 0px 0px 25px;
     overflow: hidden;
 }
@@ -57,7 +57,7 @@ body {
     background-color: rgb(255, 255, 255);
     width: fit-content;
     border: 1px solid;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
 }
 
@@ -101,7 +101,7 @@ body {
     grid-area: box-1;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
 }
 
 .foco-principal .filtros h3 {
@@ -120,16 +120,32 @@ body {
     border: 0px;
 }
 
-.foco-principal .filtros .botao {
-    width: fit-content;
+.botao-filtro {
+    grid-area: box-4;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
     display: flex;
+    justify-content: center;
+    align-items: center;
+   
+
+}
+
+#botao {
+  background-color: #5399e9;
+  color: #f2f2f2;  
+  border-radius: 2px;
+  border: none;
+  font-size: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .foco-principal #mapa {
     grid-area: box-2;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
     min-height: 400px;
     width: 100%;
 }
@@ -143,37 +159,42 @@ body {
     height: 100%;
 }
 
-.filtrar-municipios input[type="text"] {
-    width: 100%;
-    max-width: 100%;
+.filtrar-municipios .selecao1{
+    width: 200px;
+    padding: 5px 8px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+
 }
 
 .foco-principal .indicadores {
     grid-area: box-3;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
 }
 
 .foco-principal .card-1 {
     grid-area: box-4;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
 }
 
 .foco-principal .card-2 {
     grid-area: box-5;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
 }
 
 .foco-principal .card-3 {
     grid-area: box-6;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
-    border-radius: 20px;
+    border-radius: 6px;
 }
 
 
