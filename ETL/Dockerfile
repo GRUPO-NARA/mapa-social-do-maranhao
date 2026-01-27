@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "tests/teste_docker.py"]
+CMD ["python", "src/processo_ETL.py"]

@@ -1,0 +1,22 @@
+services:
+  database:
+    image: postgres:15
+    ports:
+      - "5430:${DB_PORT}"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_PORT: ${DB_PORT}
+    volumes:
+      -  pgdata:/var/lib/postgresql/data
+  datapipeline:
+    build: ETL
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}   
+    depends_on:
+      - database
+
+volumes:
+  pgdata:

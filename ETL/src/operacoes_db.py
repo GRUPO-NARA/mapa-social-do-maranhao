@@ -14,14 +14,15 @@ class ConexaoPostgres:
 
     def estabelecer_conexao(self) -> Engine:
         try:
-            USUARIO_DB = os.getenv('DB_USER') 
-            HOST_DB = os.getenv('DB_HOST')
-            SENHA_DB = os.getenv('DB_PASS')
-            NOME_DB = os.getenv('DB_NAME')
-            url = URL.create(
-                "postgresql+psycopg2", username=USUARIO_DB, password=SENHA_DB, host=HOST_DB, database=NOME_DB
-            )
-            return create_engine(url)
+            URL = os.getenv('DATABASE_URL')
+            #USUARIO_DB = os.getenv('DB_USER') 
+            #HOST_DB = os.getenv('DB_HOST')
+            #SENHA_DB = os.getenv('DB_PASSWORD')
+            #NOME_DB = os.getenv('DB_NAME')
+            #url = URL.create(
+            #    "postgresql+psycopg2", username=USUARIO_DB, password=SENHA_DB, host=HOST_DB, database=NOME_DB
+            #)
+            return create_engine(URL)
         # Implementar tratamento para caso o database não exista
         except Exception as e:
             print(e)

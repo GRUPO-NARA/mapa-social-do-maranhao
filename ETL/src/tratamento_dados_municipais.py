@@ -221,12 +221,3 @@ class TratamentoDadosMunicipais:
             print("Nenhum dado encontrado")
 
 
-if __name__ == '__main__':
-    # Inicia o processo completo
-    
-    t1 = time.time()
-    TratamentoDadosMunicipais().executar_processo_de_tratamento()
-    print(f"Tempo total: {time.time() - t1:.2f} segundos")
-    #TratamentoDadosMunicipais().arquivos_SIDRA()
-    #TratamentoDadosMunicipais().arquivos_SAGICAD()
-    #TratamentoDadosMunicipais().arquivos_ideb_dados_gerais_QEDU()

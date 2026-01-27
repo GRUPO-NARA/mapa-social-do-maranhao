@@ -88,9 +88,3 @@ class ColetaESalvamento:
                 await asyncio.gather(*tarefas)
                 print("Coleta concluída!")
 
-if __name__ == '__main__':
-    coleta = ColetaESalvamento()
-    
-    t1 = time.time()
-    asyncio.run(coleta.realizar_coleta())
-    print(f"Tempo total: {time.time() - t1:.2f} segundos")
