@@ -1,12 +1,34 @@
 let marcacao_atual = null;
 let territorio_atual = null;
 let dadosGeo = null;
+let mapa = null; 
 
 window.onload = async function () {
-  const inputMunicipio = document.getElementById('f-municipios');
-  const datalistMunicipios = document.getElementById('lista-municipios');
+  const seletorMunicipios = document.getElementById('f-municipios');
+  
+  const anos = [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+  const selectAnos = new TomSelect('#f-ano', {
+    options: anos.map(a => ({ value: String(a), text: String(a) })),
+    items: ['2026'],
+    create: false,
+    allowEmptyOption: true,
+    placeholder: "Selecione o ano"
+  });
 
-  const mapa = L.map('mapa').setView([-4.96, -45.27], 6);
+  const temas = [
+    { value: 'educacao', text: 'Educação'},
+    { value: 'saude', text: 'Saúde'},
+    { value: 'assistencia', text: 'Assistência Social'}
+  ];
+
+  const selectTemas = new TomSelect('#f-tema', {
+    options: temas,
+    create: false,
+    allowEmptyOption: true,
+    placeholder: "Selecione o tema"
+  });
+
+  mapa = L.map('mapa').setView([-4.96, -45.27], 6); 
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap'
@@ -17,36 +39,16 @@ window.onload = async function () {
   dadosGeo = await carregarGeoJSON('coordenadas_municipios.json');
 
   const municipios = extrair_municipios(dadosGeo);
-  popular_datalist_municipios(datalistMunicipios, municipios);
-
-  inputMunicipio.addEventListener('change', async function () {
-    const municipio = inputMunicipio.value.trim();
-    if (!municipio) return;
-
-    const coordsRaw = demarcacao_municipio_no_cache(municipio, dadosGeo);
-    if (!coordsRaw) {
-      console.error("Município não encontrado no JSON local:", municipio);
-      return;
-    }
-
-    if (marcacao_atual) mapa.removeLayer(marcacao_atual);
-    if (territorio_atual) mapa.removeLayer(territorio_atual);
-
-    const coordsCorrigidas = coordsRaw.map(p => [p[1], p[0]]); 
-    territorio_atual = L.polygon(coordsCorrigidas, {
-      color: 'red',
-      weight: 2,
-      fillColor: 'rgb(80, 31, 41)',
-      fillOpacity: 0.5
-    }).addTo(mapa);
-
-    mapa.fitBounds(territorio_atual.getBounds());
-
-    const coordenadas_municipio = await lat_e_lon_municipio(municipio);
-    if (coordenadas_municipio) {
-      marcacao_atual = L.marker(coordenadas_municipio).addTo(mapa);
-    }
+  const tomSelectMunicipios = new TomSelect(seletorMunicipios, {
+    options: municipios.map(m => ({ value: m, text: m })),
+    searchField: ['text'],
+    placeholder: "Digite ou selecione o município",
+    allowEmptyOption: true,
+    create: false,
   });
+
+  document.getElementById('botao').addEventListener('click', aplicarFiltros);
+
 };
 
 async function carregarGeoJSON(caminho) {
@@ -62,18 +64,9 @@ function extrair_municipios(geo) {
   return [...new Set(nomes)].sort((a, b) => a.localeCompare(b, 'pt-BR'));
 }
 
-function popular_datalist_municipios(datalistEl, municipios) {
-  datalistEl.innerHTML = "";
-  for (const nome of municipios) {
-    const opt = document.createElement("option");
-    opt.value = nome;
-    datalistEl.appendChild(opt);
-  }
-}
-
 function demarcacao_municipio_no_cache(municipio, geo) {
   const feature = geo.features.find(f => f?.properties?.name === municipio);
-  return feature ? feature.geometry.coordinates[0] : null; 
+  return feature ? feature.geometry.coordinates[0] : null;
 }
 
 async function lat_e_lon_municipio(municipio) {
@@ -94,4 +87,44 @@ async function lat_e_lon_municipio(municipio) {
     console.log(erro);
     return null;
   }
+}
+
+async function aplicarFiltros() {
+  const municipio = document.getElementById('f-municipios').value.trim();
+  const tema = document.getElementById('f-tema').value;
+  const ano = document.getElementById('f-ano').value;
+
+  if (!municipio) {
+    alert("Selecione um município.");
+    return;
+  }
+
+  const coordsRaw = demarcacao_municipio_no_cache(municipio, dadosGeo);
+  if (!coordsRaw) {
+    console.error("Município não encontrado no JSON local:", municipio);
+    return;
+  }
+
+  if (marcacao_atual) mapa.removeLayer(marcacao_atual);
+  if (territorio_atual) mapa.removeLayer(territorio_atual);
+
+  const coordsCorrigidas = coordsRaw.map(p => [p[1], p[0]]);
+  territorio_atual = L.polygon(coordsCorrigidas, {
+    color: 'red',
+    weight: 2,
+    fillColor: 'rgb(80, 31, 41)',
+    fillOpacity: 0.5
+  }).addTo(mapa);
+
+  mapa.fitBounds(territorio_atual.getBounds());
+
+  const coordenadas_municipio = await lat_e_lon_municipio(municipio);
+  if (coordenadas_municipio) {
+    marcacao_atual = L.marker(coordenadas_municipio).addTo(mapa);
+  }
+
+  console.log("Filtros aplicados:");
+  console.log("Município:", municipio);
+  console.log("Tema:", tema);
+  console.log("Ano:", ano);
 }
