@@ -112,6 +112,12 @@ class ConexaoPostgres:
             dataframe (DataFrame): Dados a serem salvos.
         """
         try:
+            with self.CONEXAO_DB.connect() as conexao:
+                conexao_raw = conexao.connection
+                with conexao_raw.cursor() as cursor:
+                    cursor.execute("CREATE SCHEMA IF NOT EXISTS dados_gerais")
+                    conexao_raw.commit()
+                    
             dataframe.to_sql(
                 name = indicador,
                 schema = 'dados_gerais',
