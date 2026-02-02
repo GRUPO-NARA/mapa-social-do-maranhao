@@ -5,7 +5,6 @@ import unicodedata
 from numpy import float64, int64
 from pandas import DataFrame
 import pandas as pd
-import os
 
 class AuxiliaresTratamento:
     """
@@ -15,11 +14,18 @@ class AuxiliaresTratamento:
     def __init__(self):
         """
         Inicializador da classe AuxiliaresTratamento.
+        Define os caminhos base para os arquivos de referência de municípios.
         """
         self.DIRETORIO_ARQUIVO = Path(__file__).resolve().parent
         self.arquivo_informacoes_municipios = self.DIRETORIO_ARQUIVO / '..' / 'dados_coletados' / 'informacoes_estaduais' / 'informacoes_municipios.csv'
 
     def leitura_arquivo_informacoes_municipios(self) -> dict[str, List[str]]:
+        """
+        Lê o arquivo CSV de informações municipais e extrai listas de códigos e nomes.
+
+        :return: Dicionário contendo as chaves 'cod_municipais' e 'nomes_municipios'.
+        :rtype: dict
+        """
         dataframe = pd.read_csv(self.arquivo_informacoes_municipios, sep=',')
         return {
             'codigos_municipais' : dataframe['cod_municipio'].to_list(),
@@ -168,20 +174,36 @@ class AuxiliaresTratamento:
         return dataframe
 
     def corrigir_codigo_ibge(self, dataframe_original: DataFrame) -> DataFrame:
+        """
+        Ajusta códigos de município de 6 dígitos para o padrão de 7 dígitos usando uma base de referência.
 
+        :param dataframe_original: DataFrame contendo a coluna 'Código'.
+        :return: DataFrame com os códigos de município corrigidos e atualizados.
+        :rtype: DataFrame
+        """
         referencia_codigos_municipais = pd.read_csv(self.arquivo_informacoes_municipios, sep=',')
         referencia_codigos_municipais.drop(columns=['nome_municipio'], inplace=True)
+        
+        # Cria colunas auxiliares de 6 e 7 dígitos para realizar o cruzamento (merge)
         referencia_codigos_municipais['cod_municipal_7_digitos'] = referencia_codigos_municipais['cod_municipio'].astype(str).str.zfill(7)
         referencia_codigos_municipais['cod_municipal_6_digitos'] = referencia_codigos_municipais['cod_municipal_7_digitos'].str[:6]
 
         df = dataframe_original          
         df['Código'] = df['Código'].astype(str).str.zfill(6)
+        
+        # Mescla os dados para recuperar o dígito verificador ausente
         df = df.merge(referencia_codigos_municipais[['cod_municipal_6_digitos','cod_municipal_7_digitos']], left_on='Código', right_on='cod_municipal_6_digitos', how="left")
         df['Código'] = df['cod_municipal_7_digitos']
         df = df.drop(columns=['cod_municipal_6_digitos','cod_municipal_7_digitos'])
         return df 
     
     def ajustar_tamanho_caracteres_indicador(self, indicador: str):
+        """
+        Mapeia e corrige nomes de indicadores muito longos para versões mais enxutas e padronizadas.
+
+        :param indicador: Nome original do indicador.
+        :return: Nome do indicador corrigido ou o original caso não esteja no mapeamento.
+        """
         possiveis_indicadores_e_correcao = {
             'responsaveis_familiares_do_sexo_feminino_beneficiarias_do_auxilio_gas' : 'responsaveis_familiares_feminino_beneficiarias_do_auxilio_gas',
             'quantidade_de_pessoas_sem_informacao_sobre_raca_cor_inscritas_no_cadastro_unico' : 'pessoas_sem_informacao_sobre_raca_cor_cadastro_unico',
