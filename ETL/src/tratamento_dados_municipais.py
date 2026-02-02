@@ -3,7 +3,6 @@ from pathlib import Path
 import os
 from funcoes_de_apoio import AuxiliaresTratamento
 from operacoes_db import ConexaoPostgres
-import time
 
 # Instanciação das dependências para uso na classe principal
 funcoes_auxiliares = AuxiliaresTratamento()
@@ -40,6 +39,7 @@ class TratamentoDadosMunicipais:
         self.arquivos_SIDRA()
         self.arquivos_SAGICAD()
         self.arquivos_ideb_dados_gerais_QEDU()
+        self.arquivos_aprendizado_QEDU()
     
     def arquivos_SIDRA(self) -> None: 
         """
@@ -218,5 +218,64 @@ class TratamentoDadosMunicipais:
             dataframe_dados_municipais.fillna(-1, inplace=True)
             database.verificar_existencia_schema('dados_educacao')
             database.inserir_dados('ideb_municipais','dados_educacao',dataframe_dados_municipais)
+        else:
+            print("Nenhum dado encontrado")
+    
+    def arquivos_aprendizado_QEDU(self) -> None:
+        """
+        Processa arquivos de proficiência escolar (aprendizado) da plataforma QEDU (.xlsx).
+        
+        A função consolida dados de desempenho em Matemática e Português, traduz siglas 
+        técnicas para nomes amigáveis, padroniza as colunas de ciclo e dependência 
+        administrativa e separa os registros entre o nível estadual (MA) e municipal.
+        """
+        dados_separados = []
+        
+        # Varredura de diretórios para localização dos arquivos específicos de aprendizado
+        for pasta in self.topicos:
+            caminho_arquivos = self.pastas_informacoes_municipais / pasta
+            arquivos_na_pasta = os.listdir(caminho_arquivos)
+            
+            for arquivo in arquivos_na_pasta:   
+                if arquivo.startswith("aprendizado") and arquivo.endswith('QEDU.xlsx'):
+                    caminho_arquivo = caminho_arquivos / arquivo
+                    # Coleta dados das abas de municípios e do estado
+                    dados_separados.append(pd.read_excel(caminho_arquivo, sheet_name='municipios'))
+                    dados_separados.append(pd.read_excel(caminho_arquivo, sheet_name='estado'))
+                    
+        if dados_separados:
+            # Consolida todos os arquivos encontrados em um único DataFrame
+            df = pd.concat(dados_separados)
+            
+            # Dicionários de mapeamento para tradução de IDs e siglas
+            map_dependencia = {0: 'total', 1: 'federal', 2: 'estadual', 3: 'municipal', 4: 'privada', 5: 'publica'}
+            map_ciclo = {'AI': 'anos_iniciais', 'AF': 'anos_finais', 'EM': 'ensino_medio'}
+                        
+            # Aplicação do mapeamento e limpeza de colunas de ID
+            df['ciclo'] = df['ciclo_id'].map(map_ciclo)
+            df['dependencia_adm'] = df['dependencia_id'].map(map_dependencia)
+            df.drop(columns=['dependencia_id','ciclo_id'], inplace = True)
+            df.rename(columns={'ibge_id' : 'cod_municipio'}, inplace=True)
+            df['unidade'] = 'percentual'
+            
+            # Tradução dinâmica dos nomes das colunas de proficiência
+            # Converte prefixos técnicos (mt_ -> matematica_ | lp_ -> portugues_)
+            for coluna in df.columns:
+                if str(coluna).startswith('mt'):
+                    df.rename(columns={coluna:str(coluna).replace('mt','matematica')}, inplace=True)
+                elif str(coluna).startswith('lp'):
+                    df.rename(columns={coluna:str(coluna).replace('lp','portugues')}, inplace=True) 
+            
+            # Segmentação e Inserção 1: Dados de nível Estadual (Código IBGE 21 para o Maranhão)
+            df_agrupamento_estadual = df[df['cod_municipio'] == 21]
+            database.inserir_dados_schema_dados_gerais('aprendizado_geral', df_agrupamento_estadual)
+            
+            # Segmentação e Inserção 2: Dados de nível Municipal
+            df_agrupamento_municipal = df[df['cod_municipio'] != 21]
+            # Trata valores ausentes com valor sentinela -1
+            df_agrupamento_municipal.fillna(-1, inplace=True)
+            database.verificar_existencia_schema('dados_educacao')
+            database.inserir_dados('aprendizado_municipais','dados_educacao',df_agrupamento_municipal)
+            
         else:
             print("Nenhum dado encontrado")
