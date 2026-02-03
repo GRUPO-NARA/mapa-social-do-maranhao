@@ -3,6 +3,9 @@ from pathlib import Path
 import os
 from funcoes_de_apoio import AuxiliaresTratamento
 from operacoes_db import ConexaoPostgres
+import time
+from pysus.ftp.databases import SIM
+
 
 # Instanciação das dependências para uso na classe principal
 funcoes_auxiliares = AuxiliaresTratamento()
@@ -31,7 +34,10 @@ class TratamentoDadosMunicipais:
         self.pastas_informacoes_municipais = self.diretorio_dados_coletados / 'informacoes_municipais'
         # Lista as subpastas que representam os temas/tópicos dos dados
         self.topicos = os.listdir(self.pastas_informacoes_municipais)
+
+        self.COLUNAS_SIM_MAPA = ["CODMUNRES", "DTOBITO", "DTNASC", "CAUSABAS", "SEXO", "RACACOR", "ESC2010"]
         
+
     def executar_processo_de_tratamento(self):
         """
         Executa sequencialmente o tratamento para todos os tipos de arquivos suportados.
@@ -40,6 +46,7 @@ class TratamentoDadosMunicipais:
         self.arquivos_SAGICAD()
         self.arquivos_ideb_dados_gerais_QEDU()
         self.arquivos_aprendizado_QEDU()
+        self.arquivos_SIM(colunas=self.COLUNAS_SIM_MAPA) 
     
     def arquivos_SIDRA(self) -> None: 
         """
@@ -279,3 +286,101 @@ class TratamentoDadosMunicipais:
             
         else:
             print("Nenhum dado encontrado")
+
+    def arquivos_SIM(
+        self,
+        grupo="CID10",
+        uf="MA",
+        ano_inicio=2015,
+        ano_fim=2024,
+        schema_destino="dados_saude",
+        indicador_destino="sim_obitos",
+        colunas=None,
+        chunksize=None,  # se seu inserir_dados suportar, senão ignore
+    ):
+        print("Iniciando tratamento dos arquivos SIM...")
+    
+        ref_csv_path= self.diretorio_dados_coletados / 'informacoes_estaduais' / 'informacoes_municipios.csv'
+
+        # 1) lê referência dentro do método (tudo dentro)
+        ref = pd.read_csv(ref_csv_path)
+        ref2 = ref.copy()
+        ref2["CODMUN7"] = ref2["cod_municipio"].astype(str).str.zfill(7)
+        ref2["CODMUN6"] = ref2["CODMUN7"].str[:6]
+        ref2 = ref2.drop_duplicates("CODMUN6")[["CODMUN6", "CODMUN7"]]
+
+        sim = SIM().load()
+
+        # 2) garante schema
+        database.verificar_existencia_schema(schema_destino)
+
+        # 3) loop por ano (melhor pra banco)
+        for ano in range(ano_inicio, ano_fim + 1):
+            try:
+                print(f"Baixando SIM {grupo} | {uf} | {ano}")
+
+                arquivos = sim.get_files(grupo, uf=uf, year=ano)
+                parquet = sim.download(arquivos)
+                df = parquet.to_dataframe()
+
+                # seleciona colunas
+                if colunas is not None:
+                    cols_ok = [c for c in colunas if c in df.columns]
+                    df = df[cols_ok].copy()
+
+                # CODMUNRES: 6 -> 7 dígitos
+                if "CODMUNRES" in df.columns:
+                    df["CODMUNRES"] = df["CODMUNRES"].astype(str).str.strip().str.zfill(6)
+                    df = df.merge(ref2, left_on="CODMUNRES", right_on="CODMUN6", how="left")
+                    df["CODMUNRES"] = df["CODMUN7"].astype("string").str.zfill(7)
+                    df.drop(columns=["CODMUN6", "CODMUN7"], inplace=True, errors="ignore")
+                    
+                # datas
+                if "DTOBITO" in df.columns:
+                    df["DTOBITO"] = pd.to_datetime(df["DTOBITO"].astype(str), format="%d%m%Y", errors="coerce")
+                if "DTNASC" in df.columns:
+                    df["DTNASC"] = pd.to_datetime(df["DTNASC"].astype(str), format="%d%m%Y", errors="coerce")
+
+                # idade
+                if {"DTOBITO", "DTNASC"}.issubset(df.columns):
+                    anos_calc = df["DTOBITO"].dt.year - df["DTNASC"].dt.year
+                    fez_aniversario = (
+                        (df["DTOBITO"].dt.month > df["DTNASC"].dt.month)
+                        | (
+                            (df["DTOBITO"].dt.month == df["DTNASC"].dt.month)
+                            & (df["DTOBITO"].dt.day >= df["DTNASC"].dt.day)
+                        )
+                    )
+                    df["IDADE"] = anos_calc - (~fez_aniversario).astype(int)
+                    df.loc[df["IDADE"] < 0, "IDADE"] = pd.NA
+                    df.loc[df["IDADE"] > 130, "IDADE"] = pd.NA
+                    df["IDADE"] = df["IDADE"].astype("Int64")
+
+                # ESC2010
+                if "ESC2010" in df.columns:
+                    df["ESC2010"] = pd.to_numeric(df["ESC2010"], errors="coerce")
+                    df.loc[~df["ESC2010"].isin([1, 2, 3, 4, 5]), "ESC2010"] = 9
+                    df["ESC2010"] = df["ESC2010"].astype("Int64")
+
+                # RACACOR
+                if "RACACOR" in df.columns:
+                    s = df["RACACOR"].astype(str).str.strip().replace("", pd.NA)
+                    df["RACACOR"] = pd.to_numeric(s, errors="coerce")
+                    df.loc[~df["RACACOR"].isin([1, 2, 3, 4, 5]), "RACACOR"] = 9
+                    df["RACACOR"] = df["RACACOR"].fillna(9).astype("Int64")
+
+                # ano
+                df["ANO"] = ano
+                df.rename(columns={"CODMUNRES":"cod_municipio"})
+                # 4) grava no banco (ano a ano)
+                database.inserir_dados(indicador_destino, schema_destino, df)
+
+                print(f"✅ SIM {ano} inserido ({len(df):,} linhas)")
+
+            except Exception as e:
+                print(f"❌ Erro no SIM {ano}: {e}")
+
+ 
+                
+
+
