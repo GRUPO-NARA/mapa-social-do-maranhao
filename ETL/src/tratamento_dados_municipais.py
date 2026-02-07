@@ -37,11 +37,13 @@ class TratamentoDadosMunicipais:
         self.topicos = os.listdir(self.pastas_informacoes_municipais)
 
         self.COLUNAS_SIM_MAPA = ["CODMUNRES", "DTOBITO", "DTNASC", "CAUSABAS", "SEXO", "RACACOR", "ESC2010"]
-        self.COLUNAS_CNES = [
-            "CNES", "SERV_ESP", "CLASS_SR", "TP_UNID", "AMB_SUS", "HOSP_SUS",
-            "TP_LEITO", "QT_SUS", "QT_EXIST", "QT_USO", "TIPEQUIP", "CODEQUIP",
-            "IND_SUS", "IND_NSUS", "COMPETEN", "CBO", "PROF_SUS", "HORA_AMB", "HORAHOSP"
-        ]   
+        self.COLUNAS_CNES = {
+            "ST": ["CNES", "CODUFMUN", "TP_UNID", "HOSP_SUS", "AMB_SUS", "ATIVIDAD"],
+            "SR": ["CNES", "CODUFMUN", "SERV_ESP", "CLASS_SR", "TP_UNID", "AMB_SUS", "HOSP_SUS"],
+            "LT": ["CNES", "CODUFMUN","TP_LEITO", "QT_EXIST", "QT_SUS"],
+            "EQ": ["CNES", "CODUFMUN", "TIPEQUIP", "CODEQUIP", "QT_EXIST", "QT_USO", "IND_SUS", "IND_NSUS", "COMPETEN"],
+            "PF": ["CNES", "CODUFMUN", "CBO", "PROF_SUS", "HORA_AMB", "HORAHOSP", "COMPETEN"]
+        }
 
         
     def executar_processo_de_tratamento(self):
@@ -54,7 +56,7 @@ class TratamentoDadosMunicipais:
 
         self.arquivos_aprendizado_QEDU()
         self.arquivos_SIM(colunas=self.COLUNAS_SIM_MAPA)
-        #self.arquivos_CNES(colunas=self.COLUNAS_CNES)
+        self.arquivos_CNES(colunas_por_grupo=self.COLUNAS_CNES)
 
     
     def arquivos_SIDRA(self) -> None: 
@@ -414,29 +416,33 @@ class TratamentoDadosMunicipais:
                 print(f"Erro ao tratar/inserir SIM {ano}: {e}")
  
     def arquivos_CNES(
-    self,
-    grupos=("ST", "SR", "PF", "LT", "EQ"),
-    uf="MA",
-    ano_inicio=2015,
-    ano_fim=2024,
-    schema_destino="dados_saude",
-    indicador_destino="cnes_dados",
-    colunas=None,
+        self,
+        grupos=("ST", "SR", "PF", "LT", "EQ"),
+        uf="MA",
+        ano_inicio=2015,
+        ano_fim=2024,
+        schema_destino="dados_saude",
+        colunas_por_grupo=None
     ):
         print("Iniciando tratamento dos arquivos do CNES...")
 
         cnes_db = CNES().load(list(grupos))
 
-        database.verificar_existencia_schema(schema_destino)
-
-        inseriu_algum = False
-
-        ref_csv_path = self.diretorio_dados_coletados / "informacoes_estaduais" / "informacoes_municipios.csv"
+        # referência 6 -> 7 (para bater com FK da tabela informacoes)
+        ref_csv_path = (
+            self.diretorio_dados_coletados
+            / "informacoes_estaduais"
+            / "informacoes_municipios.csv"
+        )
         ref = pd.read_csv(ref_csv_path)
-
         ref["CODMUN7"] = ref["cod_municipio"].astype(str).str.zfill(7)
         ref["CODMUN6"] = ref["CODMUN7"].str[:6]
         ref = ref.drop_duplicates("CODMUN6")[["CODMUN6", "CODMUN7"]]
+
+        # garante schema uma vez
+        database.verificar_existencia_schema(schema_destino)
+
+        inseriu_algum = False
 
         for ano in range(ano_inicio, ano_fim + 1):
             for g in grupos:
@@ -450,12 +456,20 @@ class TratamentoDadosMunicipais:
 
                     parquets = cnes_db.download(arquivos)
 
+                    #colunas específicas por grupo (se existir no seu dicionário)
+                    colunas_grupo = None
+                    if hasattr(self, "COLUNAS_CNES") and isinstance(self.COLUNAS_CNES, dict):
+                        colunas_grupo = self.COLUNAS_CNES.get(g)
+
+                    tabela_destino = f"cnes_{g.lower()}"
+
                     for pq in parquets:
                         df = pq.to_dataframe()
 
                         df["ANO"] = ano
                         df["GRUPO"] = g
-                        #Tratando a coluna de residência
+
+                        # CODUFMUN 6 -> 7
                         if "CODUFMUN" in df.columns:
                             cod6 = (
                                 df["CODUFMUN"]
@@ -471,21 +485,19 @@ class TratamentoDadosMunicipais:
                             )
 
                             df["cod_municipio"] = df["CODMUN7"]
+                            df.drop(columns=["CODUFMUN", "CODMUN6", "CODMUN7"], inplace=True, errors="ignore")
 
-                            df.drop(
-                                columns=["CODUFMUN", "CODMUN6", "CODMUN7"],
-                                inplace=True,
-                                errors="ignore"
-                            )
-                        if colunas is not None:
+                        # filtra colunas do grupo + mantém chaves
+                        if colunas_grupo is not None:
                             base = ["ANO", "GRUPO", "cod_municipio"]
-                            cols_ok = [c for c in colunas if c in df.columns]
+                            cols_ok = [c for c in colunas_grupo if c in df.columns]
                             df = df[list(dict.fromkeys(cols_ok + base))].copy()
-                        
-                        database.inserir_dados(indicador_destino, schema_destino, df)
+
+                        # insere na tabela do grupo
+                        database.inserir_dados(tabela_destino, schema_destino, df)
                         inseriu_algum = True
 
-                    print(f"Inserido: ano={ano} grupo={g}")
+                    print(f"Inserido: ano={ano} grupo={g} -> tabela {tabela_destino}")
 
                 except Exception as e:
                     print(f"Erro CNES: ano={ano} grupo={g} -> {e}")
@@ -493,9 +505,4 @@ class TratamentoDadosMunicipais:
         if not inseriu_algum:
             raise ValueError("Nenhum dado CNES foi inserido (todos os filtros retornaram 0 arquivos).")
 
-        print("Finalizado: CNES inserido no banco.")
-            
-
-
-
-
+        print("Finalizado: CNES inserido no banco em tabelas separadas por grupo.")
