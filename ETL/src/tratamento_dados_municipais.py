@@ -4,7 +4,7 @@ import os
 from funcoes_de_apoio import AuxiliaresTratamento
 from operacoes_db import ConexaoPostgres
 import time
-from pysus.ftp.databases import SIM, CNES
+from pysus.ftp.databases import SIM, CNES, SINAN
 
 
 
@@ -44,6 +44,14 @@ class TratamentoDadosMunicipais:
             "EQ": ["CNES", "CODUFMUN", "TIPEQUIP", "CODEQUIP", "QT_EXIST", "QT_USO", "IND_SUS", "IND_NSUS", "COMPETEN"],
             "PF": ["CNES", "CODUFMUN", "CBO", "PROF_SUS", "HORA_AMB", "HORAHOSP", "COMPETEN"]
         }
+        self.COLUNAS_SINAN = {
+            "ACGR": ["DT_ACGRAV", "ID_MN_RESI", "ID_MUNICIP", "NU_IDADE_N", "CS_SEXO", "CS_RACA", "CS_ESCOL_N",
+                "EVOLUCAO", "CLASSI_FIN", "ACIDTRAB", "OCUPACAO", "ATIVIDADE"],
+            "VIOL": ["ID_MN_RESI", "ID_MUNICIP", "NU_IDADE_N", "CS_SEXO", "CS_RACA", "CS_ESCOL_N",
+                "TP_VIOL", "MEIO_AGRAV", "AUTOR_VIOL", "LOCAL_OCOR", "EVOLUCAO", "CLASSI_FIN"],
+            "DENG": ["DT_SIN_PRI", "ID_MN_RESI", "ID_MUNICIP", "NU_IDADE_N", "CS_SEXO", "CS_RACA", "CS_ESCOL_N",
+                "CLASSI_FIN", "EVOLUCAO", "HOSPITAL"]
+        }
 
         
     def executar_processo_de_tratamento(self):
@@ -53,10 +61,10 @@ class TratamentoDadosMunicipais:
         self.arquivos_SIDRA()
         self.arquivos_SAGICAD()
         self.arquivos_ideb_dados_gerais_QEDU()
-
         self.arquivos_aprendizado_QEDU()
         self.arquivos_SIM(colunas=self.COLUNAS_SIM_MAPA)
         self.arquivos_CNES(colunas_por_grupo=self.COLUNAS_CNES)
+        self.arquivos_SINAN(grupos=("ACGR","VIOL","DENG"), ano_inicio=2024, ano_fim=2024)
 
     
     def arquivos_SIDRA(self) -> None: 
@@ -317,7 +325,6 @@ class TratamentoDadosMunicipais:
             / "informacoes_municipios.csv"
         )
 
-        #Corrije coluna dos dígitos dos munícipios de 6 dígitos para 7
         ref = pd.read_csv(ref_csv_path)
         ref2 = ref.copy()
         ref2["CODMUN7"] = ref2["cod_municipio"].astype(str).str.zfill(7)
@@ -336,12 +343,10 @@ class TratamentoDadosMunicipais:
                 parquet = sim.download(arquivos)
                 df = parquet.to_dataframe()
 
-                # seleciona colunas (se pediu)
                 if colunas is not None:
                     cols_ok = [c for c in colunas if c in df.columns]
                     df = df[cols_ok].copy()
 
-                #Tratando coluna de residência
                 if "CODMUNRES" in df.columns:
                     cod6 = (
                         df["CODMUNRES"]
@@ -374,7 +379,6 @@ class TratamentoDadosMunicipais:
                             errors="coerce"
                         )
 
-                #Tratando coluna de idade
                 if {"DTOBITO", "DTNASC"}.issubset(df.columns):
                     anos_calc = df["DTOBITO"].dt.year - df["DTNASC"].dt.year
                     fez_aniversario = (
@@ -389,20 +393,17 @@ class TratamentoDadosMunicipais:
                     df.loc[df["IDADE"] > 130, "IDADE"] = pd.NA
                     df["IDADE"] = df["IDADE"].astype("Int64")
 
-                #Tratando coluna de escolaridade
                 if "ESC2010" in df.columns:
                     df["ESC2010"] = pd.to_numeric(df["ESC2010"], errors="coerce")
                     df.loc[~df["ESC2010"].isin([1, 2, 3, 4, 5]), "ESC2010"] = 9
                     df["ESC2010"] = df["ESC2010"].astype("Int64")
 
-                #Tratando coluna de raças
                 if "RACACOR" in df.columns:
                     s = df["RACACOR"].astype(str).str.strip().replace("", pd.NA)
                     df["RACACOR"] = pd.to_numeric(s, errors="coerce")
                     df.loc[~df["RACACOR"].isin([1, 2, 3, 4, 5]), "RACACOR"] = 9
                     df["RACACOR"] = df["RACACOR"].fillna(9).astype("Int64")
 
-                #Tratando coluna de ano
                 df["ANO"] = ano
 
                 if "CODMUNRES" in df.columns:
@@ -427,8 +428,7 @@ class TratamentoDadosMunicipais:
         print("Iniciando tratamento dos arquivos do CNES...")
 
         cnes_db = CNES().load(list(grupos))
-
-        # referência 6 -> 7 (para bater com FK da tabela informacoes)
+        
         ref_csv_path = (
             self.diretorio_dados_coletados
             / "informacoes_estaduais"
@@ -438,8 +438,7 @@ class TratamentoDadosMunicipais:
         ref["CODMUN7"] = ref["cod_municipio"].astype(str).str.zfill(7)
         ref["CODMUN6"] = ref["CODMUN7"].str[:6]
         ref = ref.drop_duplicates("CODMUN6")[["CODMUN6", "CODMUN7"]]
-
-        # garante schema uma vez
+        
         database.verificar_existencia_schema(schema_destino)
 
         inseriu_algum = False
@@ -456,7 +455,6 @@ class TratamentoDadosMunicipais:
 
                     parquets = cnes_db.download(arquivos)
 
-                    #colunas específicas por grupo (se existir no seu dicionário)
                     colunas_grupo = None
                     if hasattr(self, "COLUNAS_CNES") and isinstance(self.COLUNAS_CNES, dict):
                         colunas_grupo = self.COLUNAS_CNES.get(g)
@@ -469,7 +467,6 @@ class TratamentoDadosMunicipais:
                         df["ANO"] = ano
                         df["GRUPO"] = g
 
-                        # CODUFMUN 6 -> 7
                         if "CODUFMUN" in df.columns:
                             cod6 = (
                                 df["CODUFMUN"]
@@ -487,13 +484,11 @@ class TratamentoDadosMunicipais:
                             df["cod_municipio"] = df["CODMUN7"]
                             df.drop(columns=["CODUFMUN", "CODMUN6", "CODMUN7"], inplace=True, errors="ignore")
 
-                        # filtra colunas do grupo + mantém chaves
                         if colunas_grupo is not None:
                             base = ["ANO", "GRUPO", "cod_municipio"]
                             cols_ok = [c for c in colunas_grupo if c in df.columns]
                             df = df[list(dict.fromkeys(cols_ok + base))].copy()
 
-                        # insere na tabela do grupo
                         database.inserir_dados(tabela_destino, schema_destino, df)
                         inseriu_algum = True
 
@@ -506,3 +501,110 @@ class TratamentoDadosMunicipais:
             raise ValueError("Nenhum dado CNES foi inserido (todos os filtros retornaram 0 arquivos).")
 
         print("Finalizado: CNES inserido no banco em tabelas separadas por grupo.")
+
+    def arquivos_SINAN(
+        self,
+        grupos=("ACGR", "VIOL", "DENG"),
+        ano_inicio=2015,
+        ano_fim=2024,
+        schema_destino="dados_saude",
+        uf_ibge_prefixo="21",
+        usar_municipio_residencia=True,
+    ):
+        print("Iniciando tratamento dos arquivos SINAN...")
+
+        ref_csv_path = (
+            self.diretorio_dados_coletados
+            / "informacoes_estaduais"
+            / "informacoes_municipios.csv"
+        )
+        ref = pd.read_csv(ref_csv_path)
+        ref["CODMUN7"] = ref["cod_municipio"].astype(str).str.zfill(7)
+        ref["CODMUN6"] = ref["CODMUN7"].str[:6]
+        ref = ref.drop_duplicates("CODMUN6")[["CODMUN6", "CODMUN7"]]
+
+        col_mun = "ID_MN_RESI" if usar_municipio_residencia else "ID_MUNICIP"
+
+        sinan = SINAN().load()
+        database.verificar_existencia_schema(schema_destino)
+
+        inseriu_algum = False
+
+        for ano in range(ano_inicio, ano_fim + 1):
+            for g in grupos:
+                try:
+                    print(f"Baixando arquivos do SINAN | grupo={g} | ano={ano}")
+
+                    arquivos = sinan.get_files(g, year=ano)  # sem uf
+                    if not arquivos:
+                        print(f"Não foi achado arquivos: grupo={g} ano={ano}")
+                        continue
+
+                    parquets = sinan.download(arquivos)
+
+                    if hasattr(parquets, "__iter__") and not isinstance(parquets, (str, bytes)):
+                        lista_pq = list(parquets)
+                    else:
+                        lista_pq = [parquets]
+
+                    colunas_g = self.COLUNAS_SINAN.get(g)
+                    if not colunas_g:
+                        raise ValueError(f"Não há colunas definidas em self.COLUNAS_SINAN para o grupo '{g}'.")
+
+                    tabela_destino = f"sinan_{g.lower()}"
+
+                    for pq in lista_pq:
+                        df = pq.to_dataframe()
+
+                        cols_ok = [c for c in colunas_g if c in df.columns]
+                        manter = list(dict.fromkeys(cols_ok + [col_mun]))
+                        manter = [c for c in manter if c in df.columns]
+                        df = df[manter].copy()
+
+                        if col_mun not in df.columns:
+                            print(f"  Aviso: {col_mun} não existe em grupo={g} ano={ano}; pulando arquivo.")
+                            continue
+
+                        mun6 = (
+                            df[col_mun]
+                            .astype(str)
+                            .str.strip()
+                            .str.replace(r"\.0$", "", regex=True)
+                            .str.zfill(6)
+                        )
+                        df = df[mun6.str.startswith(uf_ibge_prefixo, na=False)].copy()
+                        mun6 = mun6.loc[df.index]
+
+                        if df.empty:
+                            continue
+
+                        df = df.assign(CODMUN6=mun6).merge(ref, on="CODMUN6", how="left")
+                        df["cod_municipio"] = df["CODMUN7"].astype("string")
+
+                        df = df[df["cod_municipio"].notna()].copy()
+                        if df.empty:
+                            continue
+
+                        df.drop(columns=["CODMUN6", "CODMUN7"], inplace=True, errors="ignore")
+
+                        for c in ("DT_NOTIFIC", "DT_ACGRAV", "DT_SIN_PRI"):
+                            if c in df.columns:
+                                df[c] = pd.to_datetime(df[c].astype(str), format="%d%m%Y", errors="coerce")
+
+                        df["ANO"] = ano
+                        df["GRUPO"] = g
+
+                        df.drop(columns=["ID_MN_RESI", "ID_MUNICIP"], inplace=True, errors="ignore")
+
+                        database.inserir_dados(tabela_destino, schema_destino, df)
+                        inseriu_algum = True
+
+                    print(f"Inserido: grupo={g} ano={ano} -> tabela {tabela_destino}")
+
+                except Exception as e:
+                    print(f"Erro SINAN: grupo={g} ano={ano} -> {e}")
+
+        if not inseriu_algum:
+            raise ValueError("Nenhum dado SINAN foi inserido (sem arquivos ou filtro UF removeu tudo).")
+
+        print("Finalizado: SINAN inserido no banco (tabelas separadas por grupo).")
