@@ -62,9 +62,9 @@ class TratamentoDadosMunicipais:
         self.arquivos_SAGICAD()
         self.arquivos_ideb_dados_gerais_QEDU()
         self.arquivos_aprendizado_QEDU()
-        self.arquivos_SIM(colunas=self.COLUNAS_SIM_MAPA)
-        self.arquivos_CNES(colunas_por_grupo=self.COLUNAS_CNES)
-        self.arquivos_SINAN(grupos=("ACGR","VIOL","DENG"), ano_inicio=2024, ano_fim=2024)
+        #self.arquivos_SIM(colunas=self.COLUNAS_SIM_MAPA)
+        #self.arquivos_CNES(colunas_por_grupo=self.COLUNAS_CNES)
+        #self.arquivos_SINAN(grupos=("ACGR","VIOL","DENG"), ano_inicio=2024, ano_fim=2024)
 
     
     def arquivos_SIDRA(self) -> None: 
