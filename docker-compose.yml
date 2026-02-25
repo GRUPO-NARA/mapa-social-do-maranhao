@@ -1,6 +1,7 @@
 services:
   database:
     image: postgres:15
+    restart: always
     ports:
       - "5430:${DB_PORT}"
     environment:
