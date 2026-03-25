@@ -20,7 +20,7 @@ class ConexaoPostgres:
         """
         load_dotenv() 
         self.CONEXAO_DB = self.estabelecer_conexao() 
-        self.criar_schema_dados_gerais() 
+       
 
     def estabelecer_conexao(self) -> Engine:
         """
