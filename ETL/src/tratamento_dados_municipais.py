@@ -58,6 +58,7 @@ class TratamentoDadosMunicipais:
         """
         Executa sequencialmente o tratamento para todos os tipos de arquivos suportados.
         """
+        database.criar_schema_dados_gerais()
         self.arquivos_SIDRA()
         self.arquivos_SAGICAD()
         self.arquivos_ideb_dados_gerais_QEDU()
