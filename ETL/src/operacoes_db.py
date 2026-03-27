@@ -60,6 +60,7 @@ class ConexaoPostgres:
                 method = 'multi'       # Melhora performance de inserção múltipla
             )
             # Estabelece o relacionamento de integridade referencial com a tabela de municípios
+            self.anexar_chave_primaria(indicador, topico)
             self.anexar_chave_estrangeira(indicador, topico) 
         except Exception as e:
             print(f"Erro ao inserir dados: {e}")
@@ -153,6 +154,28 @@ class ConexaoPostgres:
                     ADD CONSTRAINT {nome_constraint}
                     FOREIGN KEY (cod_municipio)
                     REFERENCES dados_gerais.informacoes (codigo_ibge);
+                """
+                cursor.execute(comando)
+                conexao_raw.commit()
+
+    def anexar_chave_primaria(self, nome_tabela: str, topico: str):
+        """
+        Altera a estrutura de uma tabela para adicionar uma CONSTRAINT de chave primária (PK) 
+        na coluna 'id'.
+
+        Args:
+            nome_tabela (str): Tabela que receberá a chave primária.
+            topico (str): Schema onde a tabela se encontra.
+        """
+        nome_constraint = f"pk_{nome_tabela}_id"
+
+        with self.CONEXAO_DB.connect() as conexao:
+            conexao_raw = conexao.connection
+            with conexao_raw.cursor() as cursor:
+                comando = f"""
+                    ALTER TABLE {topico}.{nome_tabela}
+                    ADD CONSTRAINT {nome_constraint}
+                    PRIMARY KEY (id);
                 """
                 cursor.execute(comando)
                 conexao_raw.commit()
