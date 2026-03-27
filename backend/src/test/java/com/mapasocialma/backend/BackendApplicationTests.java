@@ -1,10 +1,10 @@
-package com.example.elisabackend;
+package com.mapasocialma.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ElisaBackendApplicationTests {
+class BackendApplicationTests {
 
     @Test
     void contextLoads() {

@@ -32,6 +32,16 @@ export default function Indicadores() {
                         </div>
                         <img className="bg-white h-12 rounded-2xl p-2 shadow-sm" src="igualdade.png" alt="" />
                     </div>
+                    <div className="flex gap-10">
+                        <div>
+                            <h1 className="text-2xl">Homens</h1>
+                            <p>Valor</p>
+                        </div>
+                        <div>
+                            <h1 className="text-2xl">Mulheres</h1>
+                            <p>valor</p>
+                        </div>
+                    </div>
                 </div>
                 <div className="flex flex-col p-6 gap-7 bg-white rounded-2xl shadow-sm">
                     <div className="flex justify-between items-center">
