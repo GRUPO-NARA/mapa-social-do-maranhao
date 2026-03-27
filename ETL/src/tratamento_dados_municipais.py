@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 from funcoes_de_apoio import AuxiliaresTratamento
 from operacoes_db import ConexaoPostgres
-import time
+
 from pysus.ftp.databases import SIM, CNES, SINAN
 
 
@@ -132,6 +132,9 @@ class TratamentoDadosMunicipais:
                         formato_dataframe = ['cod_municipio', 'referencia', 'fonte', 'indicador', 'valor', 'unidade']
                         dataframe = dataframe[formato_dataframe]
 
+                        # Adiciona coluna de chave primária incremental
+                        dataframe.insert(0, 'id', range(1, len(dataframe) + 1))
+
                         if unidade.lower() in unidades_inteiras:
                             dataframe['valor'] = dataframe['valor'].astype(int)
                         else:
@@ -139,8 +142,10 @@ class TratamentoDadosMunicipais:
                         
                         # Persistência no banco
                         nome_topico = pasta
+                        
                         database.verificar_existencia_schema(nome_topico)
                         database.inserir_dados(indicador, nome_topico, dataframe)
+                        
                        
                     except Exception:
                         pass
@@ -182,12 +187,17 @@ class TratamentoDadosMunicipais:
                             
                             indicador = coluna
                             dataframe_atualizado.rename(columns={indicador: 'valor', 'codigo': 'cod_municipio'}, inplace=True)
+
                             
+
                             # Tratamento e salvamento via auxiliares
                             dataframe_atualizado = funcoes_auxiliares.organizar_dataframe_SAGICAD(fonte, indicador, dataframe_atualizado)
                             dataframe_atualizado = funcoes_auxiliares.tratamento_valores_nulos_SAGICAD(dataframe_atualizado)
+                            dataframe_atualizado.insert(0, 'id', range(1, len(dataframe_atualizado) + 1))
                             database.verificar_existencia_schema(topico)
-                            database.inserir_dados(indicador, topico, dataframe_atualizado)   
+                            
+                            database.inserir_dados(indicador, topico, dataframe_atualizado) 
+                            
 
                     else:
                         # Lógica para arquivos de indicador único
@@ -196,8 +206,11 @@ class TratamentoDadosMunicipais:
                         
                         dataframe = funcoes_auxiliares.organizar_dataframe_SAGICAD(fonte, indicador, dataframe)
                         dataframe = funcoes_auxiliares.tratamento_valores_nulos_SAGICAD(dataframe)
+                        dataframe.insert(0, 'id', range(1, len(dataframe) + 1))
                         database.verificar_existencia_schema(topico)
-                        database.inserir_dados(indicador, topico, dataframe)   
+                        
+                        database.inserir_dados(indicador, topico, dataframe) 
+                        
                     
     def arquivos_ideb_dados_gerais_QEDU(self) -> None: 
         """
@@ -238,13 +251,17 @@ class TratamentoDadosMunicipais:
             # Separação e inserção: Dados Estaduais (Maranhão)
             dataframe_dados_estadual = df[df['cod_municipio'] == 21]
             indicador = 'ideb_geral'
+            dataframe_dados_estadual.insert(0, 'id', range(1, len(dataframe_dados_estadual) + 1))
             database.inserir_dados_schema_dados_gerais(indicador, dataframe_dados_estadual)
+            
 
             # Separação e inserção: Dados Municipais
             dataframe_dados_municipais = df[df['cod_municipio'] != 21]
             dataframe_dados_municipais.fillna(-1, inplace=True)
+            dataframe_dados_municipais.insert(0, 'id', range(1, len(dataframe_dados_municipais) + 1))
             database.verificar_existencia_schema('dados_educacao')
             database.inserir_dados('ideb_municipais','dados_educacao',dataframe_dados_municipais)
+            
         else:
             print("Nenhum dado encontrado")
     
@@ -295,14 +312,18 @@ class TratamentoDadosMunicipais:
             
             # Segmentação e Inserção 1: Dados de nível Estadual (Código IBGE 21 para o Maranhão)
             df_agrupamento_estadual = df[df['cod_municipio'] == 21]
+            df_agrupamento_estadual.insert(0, 'id', range(1, len(df_agrupamento_estadual) + 1))
             database.inserir_dados_schema_dados_gerais('aprendizado_geral', df_agrupamento_estadual)
+            
             
             # Segmentação e Inserção 2: Dados de nível Municipal
             df_agrupamento_municipal = df[df['cod_municipio'] != 21]
+            df_agrupamento_municipal.insert(0, 'id', range(1, len(df_agrupamento_municipal) + 1))
             # Trata valores ausentes com valor sentinela -1
             df_agrupamento_municipal.fillna(-1, inplace=True)
             database.verificar_existencia_schema('dados_educacao')
             database.inserir_dados('aprendizado_municipais','dados_educacao',df_agrupamento_municipal)
+           
             
         else:
             print("Nenhum dado encontrado")

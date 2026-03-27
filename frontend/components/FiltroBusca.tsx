@@ -2,8 +2,13 @@
 import { useEffect, useState } from "react";
 
 
-export default function FiltroBusca() {
-    const [listaMunicipios, setListaMunicipios] = useState([])
+interface FiltroBuscaProps {
+    nomeSelecionado: string;
+    aoMudarMunicipio: (municipio: string) => void;
+}
+
+export default function FiltroBusca({ nomeSelecionado, aoMudarMunicipio }: FiltroBuscaProps) {
+    const [listaMunicipios, setListaMunicipios] = useState<string[]>([])
 
     useEffect(() => {
         getlistaMunicipios()
@@ -23,10 +28,16 @@ export default function FiltroBusca() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     <div className="flex flex-col gap-1">
                         <label className="text-[14px]" htmlFor="seletor-municipio">Municipio</label>
-                        <select className="rounded-lg shadow-sm p-2" name="seletor-municipio" id="">
+                        <select
+                            className="rounded-lg shadow-sm p-2"
+                            name="seletor-municipio"
+                            value={nomeSelecionado}
+                            onChange={(e) => aoMudarMunicipio(e.target.value)}
+                        >
+                            <option value="">Selecione um município</option>
                             {
-                                listaMunicipios.map((nomeMunicipio) => (
-                                    <option key={nomeMunicipio} value={nomeMunicipio}>{nomeMunicipio}</option>
+                                listaMunicipios.map((municipio) => (
+                                    <option key={municipio} value={municipio}>{municipio}</option>
                                 ))
                             }
                         </select>
