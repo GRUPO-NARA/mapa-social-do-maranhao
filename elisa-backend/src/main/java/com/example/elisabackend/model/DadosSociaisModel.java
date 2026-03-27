@@ -1,27 +1,31 @@
-package com.example.elisabackend.model
-// Resolvi usar essa biblioteca para fazer a ponte Java-banco
-import jakarta.persistence.*;
+packge com.example.elisabackend.model;
 
-// Essa escolhi para não precisar escrever Getters e Setters
-import lombok.Data;
+import jakarta.persistence.*; // Importação da anotação @Entity
+import lombok.Data; // Importação da anotação @Data do Lombok
+import java.math.BigDecimal; // Importação da classe BigDecimal para valores monetários
 
-@Entity // "Esta classe é uma tabela do banco de dados"
-@Table(name = "dados_sociais") // Nome EXATO da tabela que está no Docker
-@Data // Gerando os Getters e Setters
-public class DadosSociaisModel {
-    @Id // "Este campo é a chave primária da tabela"
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // "O valor deste campo é gerado automaticamente pelo banco de dados"
-    private Long id; // "Campo do tipo Long para armazenar o ID"
+@Entity
+@Table(name="informacoes", schema = "dados_demograficos")//Mapeando o nome exato da tabela
+@Data // Utilizando o @Data para a criação de Getters e Setters e Tostring
 
-    @Column(name = "nome") // "Este campo é uma coluna da tabela com o nome 'nome'"
-    private String nome; // "Campo do tipo String para armazenar o nome"
+public class DadosDemograficosModel {
+    @Id // definindo campo de chave primária
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //auto incremento do Postgree
+    private Long id ;
 
-    @Column(name = "sobrenome") // "Este campo é uma coluna da tabela com o nome 'sobrenome'"
-    private String sobrenome; // "Campo do tipo String para armazenar o sobrenome"
+    @Column(nullable = false) // Campo de município não pode ser nulo
+    private String municipio ;
 
-    @Column(name = "email") // "Este campo é uma coluna da tabela com o nome 'email'"
-    private String email; // "Campo do tipo String para armazenar o email"
+    @Column(nullable = false)
+    private Integer ano ;
 
-    @Column(name = "telefone") // "Este campo é uma coluna da tabela com o nome 'telefone'"
-    private String telefone; // "Campo do tipo String para armazenar o telefone"
+    @Column(name = "populacao_total") //mapeando o nome da coluna
+    private Long populacaoTotal ;
+
+    @Column(name = "taxa_natalidade")
+    private Double taxaNatalidade;
+
+    @Column(name="densidade_demografica")
+    private Double densidadeDemografica;
+
 }
