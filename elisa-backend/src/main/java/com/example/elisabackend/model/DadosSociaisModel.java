@@ -1,4 +1,4 @@
-packge com.example.elisabackend.model;
+package com.example.elisabackend.model;
 
 import jakarta.persistence.*; // Importação da anotação @Entity
 import lombok.Data; // Importação da anotação @Data do Lombok
