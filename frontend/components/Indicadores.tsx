@@ -23,9 +23,9 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
     }
 
     return (
-        <div className=" h-50 flex justify-center items-center">
+        <div className="flex justify-center items-center">
 
-            <div className="bg-white h-0 w-300 grid grid-cols-1 md:grid-cols-3 gap-10 p-3 shadow-2xl">
+            <div className="bg-white  w-300 grid grid-cols-1 md:grid-cols-3 gap-10 p-3 shadow-2xl">
                 <div className="flex flex-col p-6 gap-7 bg-white rounded-2xl shadow-sm">
                     <div className="flex justify-between items-center">
                         <div>

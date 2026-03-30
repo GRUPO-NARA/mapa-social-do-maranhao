@@ -4,7 +4,7 @@ import Carregamento from "@/components/Carregamento";
 import FiltroBusca from "@/components/FiltroBusca";
 import Indicadores from "@/components/Indicadores";
 import MapaEstado from "@/components/MapaEstado";
-import SeletorIndicador from "@/components/SeletorIndicadores";
+import SeletorIndicador from "@/components/Navegacao";
 import { useState } from "react";
 
 

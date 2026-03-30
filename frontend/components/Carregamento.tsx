@@ -6,7 +6,7 @@ export default function Carregamento() {
     const [visivel, setVisivel] = useState(true);
 
     useEffect(() => {
-        const timer = setTimeout(() => setVisivel(false), 2000); // 2 segundos
+        const timer = setTimeout(() => setVisivel(false), 2000); 
         return () => clearTimeout(timer);
     }, []);
 

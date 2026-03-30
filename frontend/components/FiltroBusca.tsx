@@ -23,13 +23,17 @@ export default function FiltroBusca({ nomeSelecionado, aoMudarMunicipio }: Filtr
 
     return (
         <div className="justify-center flex p-6 ">
-            <div className="w-300 h-fit flex flex-col rounded-2xl shadow-sm bg-white p-6">
-                <h1 className="pb-4"><b>Filtros de Busca</b></h1>
+            <div className="w-300 h-fit flex flex-col gap-4 rounded-2xl shadow-xl/30 shadow-sky-600 p-6 border-1 border-sky-600">
+                <div className="flex items-center gap-2 ">
+                    <p className="w-1 h-6 rounded bg-sky-600"></p>
+                    <h1 className="text-xl font-bold">Filtros de Busca</h1>
+                </div>
+        
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     <div className="flex flex-col gap-1">
-                        <label className="text-[14px]" htmlFor="seletor-municipio">Municipio</label>
+                        <label className="text-sm" htmlFor="seletor-municipio">Municipio</label>
                         <select
-                            className="rounded-lg shadow-sm p-2"
+                            className="rounded-lg shadow-sm p-2 bg-sky-600 text-white"
                             name="seletor-municipio"
                             value={nomeSelecionado}
                             onChange={(e) => aoMudarMunicipio(e.target.value)}
@@ -43,8 +47,8 @@ export default function FiltroBusca({ nomeSelecionado, aoMudarMunicipio }: Filtr
                         </select>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <label className="text-[14px]" htmlFor="seletor-ano">Ano</label>
-                        <select className="rounded-lg shadow-sm p-2" name="seletor-ano" id="">
+                        <label className="text-sm" htmlFor="seletor-ano">Ano</label>
+                        <select className="rounded-lg shadow-sm p-2 bg-sky-600 text-white" name="seletor-ano" id="">
                             <option value="">2024</option>
                         </select>
                     </div>

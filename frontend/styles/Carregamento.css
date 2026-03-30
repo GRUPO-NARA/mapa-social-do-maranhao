@@ -1,5 +1,5 @@
 .tela-carregamento {
-    background-color: rgb(14, 99, 102);
+    background: #3182ce;
     width: 100vw;
     height: 100vh;
     z-index: 9999;
