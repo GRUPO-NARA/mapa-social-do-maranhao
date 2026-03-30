@@ -5,6 +5,7 @@ import FiltroBusca from "@/components/FiltroBusca";
 import Indicadores from "@/components/Indicadores";
 import MapaEstado from "@/components/MapaEstado";
 import SeletorIndicador from "@/components/Navegacao";
+import PanoramaGeral from "@/components/PanoramaGeral";
 import ResumoGeral from "@/components/ResumoGeral";
 import { useState } from "react";
 
@@ -15,7 +16,7 @@ export default function Main() {
 
   return (
     
-    /*
+    
     <div className="flex flex-col gap-10">
       <Carregamento />
       <Cabecalho />
@@ -25,15 +26,13 @@ export default function Main() {
         aoMudarMunicipio={setNomeMunicipio}
       />
       <MapaEstado />
-      
-        <Indicadores nomeSelecionado={nomeMunicipio} />
-            
+      <Indicadores nomeSelecionado={nomeMunicipio} />
+      <ResumoGeral />
+      <PanoramaGeral />      
     </div>
-    */
+    
 
-    <div className="flex flex-col gap-10">
-      <ResumoGeral/>
-    </div>
+    
 
   )
 }
