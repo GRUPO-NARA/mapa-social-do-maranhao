@@ -4,27 +4,27 @@ export default function Navegacao() {
         <div className="flex justify-center items-center">
             <div className="flex justify-center w-fit shadow-xl/20 rounded-2xl bg-sky-600 overflow-hidden ">
                 <ul>
-                    <li className="flex rounded-[10px] divide-x divide-white text-sm ">
+                    <li className="flex divide-x divide-white text-sm">
                         <Link
-                            className="hover:bg-red-600 text-white font-bold px-4 py-2 rounded transition-colors duration-200"
+                            className="hover:bg-red-600 text-white font-bold px-4 py-2"
                             href="/"
                         >
                             Home
                         </Link>
                         <a
-                            className="hover:bg-red-600 text-white font-bold px-4 py-2 rounded transition-colors duration-200"
+                            className="hover:bg-red-600 text-white font-bold px-4 py-2 "
                             href=""
                         >
                             Saúde
                         </a>
                         <Link
-                            className="hover:bg-red-600 text-white font-bold px-4 py-2 rounded transition-colors duration-200"
+                            className="hover:bg-red-600 text-white font-bold px-4 py-2 "
                             href="/educacao"
                         >
                             Educação
                         </Link>
                         <a
-                            className="hover:bg-red-600 text-white font-bold px-4 py-2 rounded transition-colors duration-200"
+                            className="hover:bg-red-600 text-white font-bold px-4 py-2 "
                             href=""
                         >
                             Assistência Social
