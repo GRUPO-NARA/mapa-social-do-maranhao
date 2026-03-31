@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import IndicadoresPrincipais from "./IndicadoresPrincipais";
 
 interface IndicadoresProps {
     nomeSelecionado: string;
@@ -7,7 +8,8 @@ interface IndicadoresProps {
 export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
 
     const [densidadeDemografica, setDensidadeDemografica] = useState([])
-    const [botaoClicado, setBotaoClicado] = useState(false)
+    
+    
     useEffect(() => {
         getDensidadeDemografica()
     }, [nomeSelecionado])
@@ -29,8 +31,7 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
                     <ul className="">
                         <li className=" bg-sky-600 grid grid-cols-2 divide-x divide-white">
                             <div className="flex justify-center hover:bg-red-600 p-6">
-                               <button className="font-bold text-white" onClick={(e) => setBotaoClicado(true)}>Indicadores</button>
-                            
+                                <button className="font-bold text-white">Indicadores</button>
                             </div>
                             <div className="flex justify-center hover:bg-red-600 p-6">
                                 <a className="font-bold text-white" href="">Gráficos</a>   
@@ -38,6 +39,7 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
                         </li>
                     </ul>
                 </nav>
+                <IndicadoresPrincipais nomeSelecionado={nomeSelecionado}/>
             </div>
         </div>
     )
