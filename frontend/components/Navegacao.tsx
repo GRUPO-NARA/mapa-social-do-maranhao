@@ -4,7 +4,7 @@ export default function Navegacao() {
         <div className="flex justify-center items-center">
             <div className="flex justify-center w-fit shadow-xl/20 rounded-2xl bg-sky-600 overflow-hidden">
                 <ul>
-                    <li className="flex divide-x divide-white text-[20px]">
+                    <li className="flex divide-x divide-white">
                         <Link
                             className="hover:bg-red-600 text-white font-bold px-4 py-2"
                             href="/"

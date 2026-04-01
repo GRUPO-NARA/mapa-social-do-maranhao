@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import IndicadoresPrincipais from "./IndicadoresPrincipais";
+import IndicadoresSociais from "./IndicadoresSociais";
+import InfraestruturaERenda from "./InfraestruturaERenda";
 
 interface IndicadoresProps {
     nomeSelecionado: string;
@@ -25,7 +27,7 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
     }
 
     return (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center ">
             <div className="w-300 h-200 rounded-2xl shadow-xl/30 shadow-sky-600 overflow-auto border border-sky-600">
                 <nav className="">
                     <ul className="">
@@ -40,6 +42,8 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
                     </ul>
                 </nav>
                 <IndicadoresPrincipais nomeSelecionado={nomeSelecionado}/>
+                <IndicadoresSociais />
+                <InfraestruturaERenda />
             </div>
         </div>
     )

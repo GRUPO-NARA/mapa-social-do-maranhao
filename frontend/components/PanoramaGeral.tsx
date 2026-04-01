@@ -6,7 +6,7 @@ export default function PanoramaGeral() {
                             <p className="w-1 h-6 rounded bg-sky-600"></p>
                             <h1 className="text-xl font-bold">Panorama Geral do Estado</h1>
                 </div>
-                <div className="grid grid-cols-4 gap-10">
+                <div className="grid sm:grid-cols-1 md:grid-cols-4 xl:grid-cols-4 gap-10 ">
                     <div className="flex flex-col shadow-2xl p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1">
                         <img className="w-9 h-9" src="" alt="" />
                         <h1>Total de Municípios</h1>

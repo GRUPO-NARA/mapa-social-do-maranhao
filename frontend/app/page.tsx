@@ -18,7 +18,7 @@ export default function Main() {
   return (
     
     
-    <div className="flex flex-col gap-10">
+    <main className="grid grid-cols-1 gap-10">
       <Carregamento />
       <Cabecalho />
       <SeletorIndicador />
@@ -30,8 +30,10 @@ export default function Main() {
       <Indicadores nomeSelecionado={nomeMunicipio} />
       <ResumoGeral nomeSelecionado={nomeMunicipio}/>
       <PanoramaGeral />      
+    </main>
       
-    </div>
+      
+   
     
 
     
