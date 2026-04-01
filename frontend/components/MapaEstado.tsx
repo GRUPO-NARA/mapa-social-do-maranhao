@@ -1,3 +1,11 @@
+import {
+    Map,
+    MapMarker,
+    MapPopup,
+    MapTileLayer,
+    MapZoomControl,
+} from "@/components/ui/map"
+
 export default function MapaEstado() {
     return (
         <div className="flex justify-center items-center">
@@ -7,8 +15,14 @@ export default function MapaEstado() {
                             <p className="w-1 h-6 rounded bg-sky-600"></p>
                             <h1 className="text-xl font-bold">Mapa do Maranhão</h1>
                         </div>
-                        <div className="h-170 border border-sky-600 rounded-2xl ">
-
+                        <div className="h-170 border border-sky-600 rounded-2xl overflow-hidden">
+                            <Map center={[-2.53073, -44.3068]}>
+                                <MapTileLayer />
+                                <MapZoomControl />
+                                <MapMarker position={[-2.53073, -44.3068]}>
+                                    <MapPopup></MapPopup>
+                                </MapMarker>
+                            </Map>
                         </div>
                     </div>
                 

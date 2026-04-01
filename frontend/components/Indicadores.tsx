@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import IndicadoresPrincipais from "./IndicadoresPrincipais";
+import IndicadoresSociais from "./IndicadoresSociais";
+import InfraestruturaERenda from "./InfraestruturaERenda";
 
 interface IndicadoresProps {
     nomeSelecionado: string;
@@ -7,7 +10,8 @@ interface IndicadoresProps {
 export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
 
     const [densidadeDemografica, setDensidadeDemografica] = useState([])
-    const [botaoClicado, setBotaoClicado] = useState(false)
+    
+    
     useEffect(() => {
         getDensidadeDemografica()
     }, [nomeSelecionado])
@@ -23,14 +27,13 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
     }
 
     return (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center ">
             <div className="w-300 h-200 rounded-2xl shadow-xl/30 shadow-sky-600 overflow-auto border border-sky-600">
                 <nav className="">
                     <ul className="">
                         <li className=" bg-sky-600 grid grid-cols-2 divide-x divide-white">
                             <div className="flex justify-center hover:bg-red-600 p-6">
-                               <button className="font-bold text-white" onClick={(e) => setBotaoClicado(true)}>Indicadores</button>
-                            
+                                <button className="font-bold text-white">Indicadores</button>
                             </div>
                             <div className="flex justify-center hover:bg-red-600 p-6">
                                 <a className="font-bold text-white" href="">Gráficos</a>   
@@ -38,6 +41,9 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
                         </li>
                     </ul>
                 </nav>
+                <IndicadoresPrincipais nomeSelecionado={nomeSelecionado}/>
+                <IndicadoresSociais />
+                <InfraestruturaERenda />
             </div>
         </div>
     )

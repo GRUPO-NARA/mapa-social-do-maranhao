@@ -3,6 +3,7 @@ import Cabecalho from "@/components/Cabecalho";
 import Carregamento from "@/components/Carregamento";
 import FiltroBusca from "@/components/FiltroBusca";
 import Indicadores from "@/components/Indicadores";
+import IndicadoresPrincipais from "@/components/IndicadoresPrincipais";
 import MapaEstado from "@/components/MapaEstado";
 import SeletorIndicador from "@/components/Navegacao";
 import PanoramaGeral from "@/components/PanoramaGeral";
@@ -17,7 +18,7 @@ export default function Main() {
   return (
     
     
-    <div className="flex flex-col gap-10">
+    <main className="grid grid-cols-1 gap-10">
       <Carregamento />
       <Cabecalho />
       <SeletorIndicador />
@@ -27,9 +28,12 @@ export default function Main() {
       />
       <MapaEstado />
       <Indicadores nomeSelecionado={nomeMunicipio} />
-      <ResumoGeral />
+      <ResumoGeral nomeSelecionado={nomeMunicipio}/>
       <PanoramaGeral />      
-    </div>
+    </main>
+      
+      
+   
     
 
     
