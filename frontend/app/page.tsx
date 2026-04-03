@@ -1,42 +1,35 @@
-"use client"
-import Cabecalho from "@/components/Cabecalho";
-import Carregamento from "@/components/Carregamento";
-import FiltroBusca from "@/components/FiltroBusca";
-import Indicadores from "@/components/Indicadores";
-import IndicadoresPrincipais from "@/components/IndicadoresPrincipais";
-import MapaEstado from "@/components/MapaEstado";
-import SeletorIndicador from "@/components/Navegacao";
-import PanoramaGeral from "@/components/PanoramaGeral";
-import ResumoGeral from "@/components/ResumoGeral";
-import { useState } from "react";
+import Cabecalho from "@/components/Cabecalho"
+import Carregamento from "@/components/Carregamento"
+import SeletorIndicador from "@/components/Navegacao"
+import PanoramaGeral from "@/components/PanoramaGeral"
+import Painel from "@/components/Painel"
+import { GeoJSONData } from "@/types/geojson"
+import FiltroBusca  from "@/components/FiltroBusca"
 
+async function getDados(): Promise<GeoJSONData> {
+  const res = await fetch(
+    "https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-21-mun.json"
+  )
 
-export default function Main() {
+  if (!res.ok) {
+    throw new Error("Dados não encontrados.")
+  }
 
-  const [nomeMunicipio, setNomeMunicipio] = useState("");
+  return res.json()
+}
+
+export default async function Main() {
+  const dados = await getDados()
 
   return (
-    
-    
     <main className="grid grid-cols-1 gap-10">
       <Carregamento />
       <Cabecalho />
       <SeletorIndicador />
-      <FiltroBusca
-        nomeSelecionado={nomeMunicipio}
-        aoMudarMunicipio={setNomeMunicipio}
-      />
-      <MapaEstado />
-      <Indicadores nomeSelecionado={nomeMunicipio} />
-      <ResumoGeral nomeSelecionado={nomeMunicipio}/>
-      <PanoramaGeral />      
+
+      <Painel dados={dados} />
+
+      <PanoramaGeral />
     </main>
-      
-      
-   
-    
-
-    
-
   )
 }
