@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from "react";
 import IndicadoresPrincipais from "./IndicadoresPrincipais";
 import IndicadoresSociais from "./IndicadoresSociais";
