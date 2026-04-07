@@ -3,48 +3,31 @@
 import { useEffect, useState } from "react"
 
 interface FiltroBuscaProps {
-  nomeSelecionado: string
   aoMudarMunicipio: (municipio: string) => void
 }
 
-type GeoJSONData = {
-    features: {
-    properties: {
-    name: string
-    }
-  }[]
-}
-
-export default function FiltroBusca({ nomeSelecionado, aoMudarMunicipio,}: FiltroBuscaProps) {
+export default function FiltroBusca({ aoMudarMunicipio,}: FiltroBuscaProps) {
   const [listaMunicipios, setListaMunicipios] = useState<string[]>([])
 
   useEffect(() => { getListaMunicipios() }, [])
 
   async function getListaMunicipios() {
-    const response = await fetch(
-      "https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-21-mun.json"
+    const resposta = await fetch(
+      "http://localhost:8080/api/nomesMunicipios"
     )
-
-    const dados: GeoJSONData = await response.json()
-
-    const nomesMunicipios = dados.features.map(
-      (feature) => feature.properties.name
-    ) 
-
-    nomesMunicipios.sort((a, b) => a.localeCompare(b, "pt-BR"))
-
+    const nomesMunicipios = await resposta.json()
     setListaMunicipios(nomesMunicipios)
   }
 
   return (
     <div className="justify-center flex p-6">
-      <div className="w-full max-w-[1200px] h-fit flex flex-col gap-4 rounded-2xl shadow-xl/30 shadow-sky-600 p-6 border border-sky-600">
+      <div className="group w-full max-w-[1200px] h-fit flex flex-col gap-4 rounded-2xl shadow-xl/30 p-6 border shadow-sky-900 border border-gray-300 hover:border-sky-600 transition-colors duration-300">
         <div className="flex items-center gap-2">
           <p className="w-1 h-6 rounded bg-sky-600"></p>
-          <h1 className="text-xl font-bold">Filtros de Busca</h1>
+          <h1 className="text-xl font-bold group-hover:text-sky-800 transition-colors duration-300">Filtros de Busca</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm" htmlFor="seletor-municipio">
               Município
@@ -52,8 +35,7 @@ export default function FiltroBusca({ nomeSelecionado, aoMudarMunicipio,}: Filtr
 
             <select
               id="seletor-municipio"
-              className="rounded-lg shadow-sm p-2 bg-sky-600 text-white"
-              value={nomeSelecionado}
+              className="rounded-lg shadow-sm p-2 bg-sky-700 text-white"
               onChange={(e) => aoMudarMunicipio(e.target.value)}
             >
               <option value="">Selecione um município</option>
@@ -63,18 +45,6 @@ export default function FiltroBusca({ nomeSelecionado, aoMudarMunicipio,}: Filtr
                   {municipio}
                 </option>
               ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-sm" htmlFor="seletor-ano">
-              Ano
-            </label>
-            <select
-              id="seletor-ano"
-              className="rounded-lg shadow-sm p-2 bg-sky-600 text-white"
-            >
-              <option value="">2024</option>
             </select>
           </div>
         </div>

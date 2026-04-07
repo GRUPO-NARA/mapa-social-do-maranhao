@@ -5,35 +5,17 @@ import IndicadoresSociais from "./IndicadoresSociais";
 import InfraestruturaERenda from "./InfraestruturaERenda";
 
 interface IndicadoresProps {
-    nomeSelecionado: string;
+    municipioSelecionado: string;
 }
 
-export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
-
-    const [densidadeDemografica, setDensidadeDemografica] = useState([])
-    
-    
-    useEffect(() => {
-        getDensidadeDemografica()
-    }, [nomeSelecionado])
-
-    async function getDensidadeDemografica() {
-        if (!nomeSelecionado) {
-            nomeSelecionado = "-"
-        } else {
-            const resposta = await fetch(`http://localhost:8080/dados_geograficos/densidade_demografica?nomeMunicipio=${nomeSelecionado}`);
-            const dados = await resposta.json();
-            setDensidadeDemografica(dados);
-        }
-    }
-
+export default function Indicadores({ municipioSelecionado }: IndicadoresProps) {
     return (
         <div className="flex justify-center items-center ">
-            <div className="w-300 h-200 rounded-2xl shadow-xl/30 shadow-sky-600 overflow-auto border border-sky-600">
+            <div className="w-300 rounded-2xl shadow-xl/30  shadow-sky-900 border border-gray-300 hover:border-sky-600 transition-colors duration-300 overflow-hidden">
                 <nav className="">
                     <ul className="">
-                        <li className=" bg-sky-600 grid grid-cols-2 divide-x divide-white">
-                            <div className="flex justify-center hover:bg-red-600 p-6">
+                        <li className=" bg-sky-800 grid grid-cols-2 divide-x divide-white">
+                            <div className="flex justify-center hover:bg-red-600">
                                 <button className="font-bold text-white">Indicadores</button>
                             </div>
                             <div className="flex justify-center hover:bg-red-600 p-6">
@@ -42,7 +24,7 @@ export default function Indicadores({ nomeSelecionado }: IndicadoresProps) {
                         </li>
                     </ul>
                 </nav>
-                <IndicadoresPrincipais nomeSelecionado={nomeSelecionado}/>
+                <IndicadoresPrincipais municipioSelecionado={municipioSelecionado}/>
                 <IndicadoresSociais />
                 <InfraestruturaERenda />
             </div>

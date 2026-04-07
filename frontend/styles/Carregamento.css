@@ -23,6 +23,7 @@
 .tela-carregamento #titulo-carregamento {
     color: #fff;
     font-size: 2rem;
+    font-bold: 600;
     font-weight: 600;
     letter-spacing: 1px;
     text-align: center;
