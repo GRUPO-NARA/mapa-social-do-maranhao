@@ -1,7 +1,7 @@
 
 export default function Cabecalho() {
     return (
-        <header className="flex justify-between items-center p-5 bg-gradient-to-r from-sky-600 to-red-600 text-white shadow-xl/20  ">     
+        <header className="flex justify-between items-center p-5 bg-sky-800 text-white shadow-xl/20  ">     
             <div className="flex items-center">
                 <img className="h-20 w-30" src="logo.png" alt="" />
                 <div>
