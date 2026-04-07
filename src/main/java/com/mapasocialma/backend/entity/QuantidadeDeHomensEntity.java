@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "quantidade_de_homens", schema = "dados_demograficos")
 @Data // Substitui Getters, Setters, Equals e HashCode
 @NoArgsConstructor // Construtor padrão exigido pelo Hibernate
-@AllArgsConstructor // Construtor para facilitar testes
+@AllArgsConstructor // Construtor para facilitar testes e escrever menos código
 public class QuantidadeDeHomensEntity {
 
     @EmbeddedId
