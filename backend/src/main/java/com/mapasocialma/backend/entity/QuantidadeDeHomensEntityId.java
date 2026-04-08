@@ -1,3 +1,4 @@
+/*
 package com.mapasocialma.backend.entity;
 
 import jakarta.persistence.Column;
@@ -37,3 +38,4 @@ public class QuantidadeDeHomensEntityId implements Serializable {
 
 }
 
+*/
