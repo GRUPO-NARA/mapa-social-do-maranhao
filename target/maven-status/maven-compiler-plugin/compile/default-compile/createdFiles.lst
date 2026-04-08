@@ -1,9 +1,0 @@
-com\mapasocialma\backend\BackendApplication.class
-com\mapasocialma\backend\controller\informacoesBaseController.class
-com\mapasocialma\backend\repository\informacoesMunicipaisRepository.class
-com\mapasocialma\backend\entity\QuantidadeDeHomensEntityId.class
-com\mapasocialma\backend\entity\DensidadeDemograficaEntity.class
-com\mapasocialma\backend\repository\DensidadeDemograficaRepository.class
-com\mapasocialma\backend\entity\informacoesMunicipais.class
-com\mapasocialma\backend\entity\QuantidadeDeHomensEntity.class
-com\mapasocialma\backend\controller\dadosGeograficosController.class

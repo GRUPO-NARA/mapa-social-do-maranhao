@@ -44,15 +44,21 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                 <div className="grid sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-4 ">
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
                         <div className="flex flex-col gap-2 p-6">
-                            <h1 className="text-gray-600">População Total</h1>
+                            <div>
+                                <h1 className="text-gray-600 font-bold">População Total</h1>
+                                <p className="text-gray-400 text-sm">habitantes no município</p>
+                            </div>
                             <h1 className="text-sky-600 font-bold text-2xl">
-                                {populacaoTotal.length > 0 ? populacaoTotal[0] : '--'}
+                                {populacaoTotal.length > 0 ? populacaoTotal[0].toLocaleString('pt-BR') : '--'}
                             </h1>
                         </div>
                     </div>
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
                         <div className="flex flex-col gap-2 p-6">
-                            <h1 className="text-gray-600">Densidade Demográfica</h1>
+                            <div>
+                                <h1 className="text-gray-600 font-bold">Densidade Demográfica</h1>
+                                <p className="text-gray-400 text-sm">habitantes por km²</p>
+                            </div>
                             <h1 className="text-sky-600 font-bold text-2xl">
                                 {densidadeDemografica.length > 0 ? densidadeDemografica[0] : '--'}
                             </h1>

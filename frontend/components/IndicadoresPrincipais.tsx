@@ -41,7 +41,7 @@ export default function IndicadoresPrincipais({ municipioSelecionado }: Indicado
                             </div>
                             <h1 className="font-bold text-2xl text-sky-600">
                                 {pibMunicipal !== null
-                                    ? pibMunicipal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + ' bi'
+                                    ? pibMunicipal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                                     : '--'}
                             </h1>
                             <div className="flex items-center gap-2">
