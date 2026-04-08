@@ -1,3 +1,4 @@
+/*
 package com.mapasocialma.backend.controller;
 
 import com.mapasocialma.backend.entity.QuantidadeDeHomensEntity;
@@ -17,6 +18,7 @@ public class QuantidadeDeHomensController {
     End point para buscar dados da quantidade de homens por município, o frontend vai chamar esse end point passando o código do município
 
      */
+    /*
     @GetMapping("/municipio/{codMunicipio}")
     public List<QuantidadeDeHomensEntity>getPorMunicipio(@PathVariable String codMunicipio) {
         // Aqui peguei o valor da url com PathVariable e jogo para a variável 'codMunicipio'
@@ -24,3 +26,5 @@ public class QuantidadeDeHomensController {
     }
 
 }
+
+*/

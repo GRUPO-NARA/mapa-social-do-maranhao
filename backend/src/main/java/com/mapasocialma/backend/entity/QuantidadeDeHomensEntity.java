@@ -1,3 +1,5 @@
+
+/*
 package com.mapasocialma.backend.entity;
 
 import jakarta.persistence.EmbeddedId;
@@ -19,3 +21,5 @@ public class QuantidadeDeHomensEntity {
 
 
 }
+
+ */

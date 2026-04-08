@@ -46,7 +46,7 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                         <div className="flex flex-col gap-2 p-6">
                             <div>
                                 <h1 className="text-gray-600 font-bold">População Total</h1>
-                                <p className="text-gray-400 text-sm">habitantes no município</p>
+                                <p className="text-gray-400 text-sm">habitantes no município - 2022</p>
                             </div>
                             <h1 className="text-sky-600 font-bold text-2xl">
                                 {populacaoTotal.length > 0 ? populacaoTotal[0].toLocaleString('pt-BR') : '--'}
@@ -55,9 +55,21 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                     </div>
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
                         <div className="flex flex-col gap-2 p-6">
+                            <h1 className="text-gray-600 font-bold">Quantidade de Homens</h1>
+                            <h1 className="text-sky-600 font-bold text-2xl">--</h1>
+                        </div>
+                    </div>
+                    <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
+                        <div className="flex flex-col gap-2 p-6">
+                            <h1 className="text-gray-600 font-bold">Quantidade de Mulheres</h1>
+                            <h1 className="text-sky-600 font-bold text-2xl">--</h1>
+                        </div>
+                    </div>
+                    <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
+                        <div className="flex flex-col gap-2 p-6">
                             <div>
                                 <h1 className="text-gray-600 font-bold">Densidade Demográfica</h1>
-                                <p className="text-gray-400 text-sm">habitantes por km²</p>
+                                <p className="text-gray-400 text-sm">habitantes por km² - 2022</p>
                             </div>
                             <h1 className="text-sky-600 font-bold text-2xl">
                                 {densidadeDemografica.length > 0 ? densidadeDemografica[0] : '--'}
@@ -72,7 +84,7 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                     </div>
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
                         <div className="flex flex-col gap-2 p-6">
-                            <h1 className="text-gray-600">Razão de Sexo</h1>
+                            <h1 className="text-gray-600 font-bold">Área Territorial</h1>
                             <h1 className="text-sky-600 font-bold text-2xl">--</h1>
                         </div>
                     </div>

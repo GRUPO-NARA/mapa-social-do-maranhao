@@ -1,3 +1,4 @@
+/*
 package com.mapasocialma.backend.service;
 
 import com.mapasocialma.backend.entity.QuantidadeDeHomensEntity;
@@ -17,3 +18,4 @@ public class QuantidadeDeHomensService {
         return repository.findByIdCodMunicipio(codMunicipio);
     }
 }
+ */

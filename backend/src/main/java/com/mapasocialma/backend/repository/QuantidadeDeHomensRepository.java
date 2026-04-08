@@ -1,3 +1,4 @@
+/*
 package com.mapasocialma.backend.repository;
 
 import com.mapasocialma.backend.entity.QuantidadeDeHomensEntity;
@@ -17,7 +18,8 @@ public interface QuantidadeDeHomensRepository extends JpaRepository<QuantidadeDe
     método de busca seguindo a convenção de nomenclatura.
 
     */
-
+    /*
     List<QuantidadeDeHomensEntity>findByIdCodMunicipio(String codMunicipio);
 
 }
+*/
