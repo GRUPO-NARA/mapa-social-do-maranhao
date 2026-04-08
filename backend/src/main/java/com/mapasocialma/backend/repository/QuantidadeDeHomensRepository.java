@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface QuantidadeDeHomensRepository {
+public interface QuantidadeDeHomensRepository extends JpaRepository<QuantidadeDeHomensEntity, QuantidadeDeHomensEntityId> {
      /* Aqui vamos buscar os dados da Quantidade de homens de acordo com o código do
     município.
 

@@ -4,10 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor
+import lombok.NoArgsConstructor;
 import lombok.Data;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Embeddable
 @Data
