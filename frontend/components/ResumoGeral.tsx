@@ -9,11 +9,13 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
     const [populacaoTotal, setPopulacaoTotal] = useState([]);
     const [densidadeDemografica, setDensidadeDemografica] = useState([])
     const [areaTerritorial, setAreaTerritorial] = useState([])
+    const [quantidadeMulheres, setQuantidadeMulheres] = useState([])
 
     useEffect(() => {
         getPopulacaoTotal(),
         getDensidadeDemografica(),
-        getAreaTerritorial()
+        getAreaTerritorial(),
+        getQuantidadeMulheres()
     }, [municipioSelecionado])
 
     async function getPopulacaoTotal(){
@@ -29,7 +31,7 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
 
     async function getAreaTerritorial() {
         if (!municipioSelecionado) {
-            municipioSelecionado = "-"
+            setAreaTerritorial([])
         } else {
             const resposta = await fetch(`http://localhost:8080/dados_geograficos/area_territorial?nomeMunicipio=${municipioSelecionado}`);
             const dados = await resposta.json();
@@ -39,11 +41,21 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
 
     async function getDensidadeDemografica() {
         if (!municipioSelecionado) {
-            municipioSelecionado = "-"
+            setDensidadeDemografica([])
         } else {
             const resposta = await fetch(`http://localhost:8080/dados_geograficos/densidade_demografica?nomeMunicipio=${municipioSelecionado}`);
             const dados = await resposta.json();
             setDensidadeDemografica(dados);
+        }
+    }
+
+    async function getQuantidadeMulheres(){
+        if(!municipioSelecionado){
+            setQuantidadeMulheres([])
+        }else{
+            const resposta = await fetch(`http://localhost:8080/dados_demograficos/quantidade_mulheres?nomeMunicipio=${municipioSelecionado}`);
+            const dados = await resposta.json();
+            setQuantidadeMulheres(dados);
         }
     }
 
@@ -75,7 +87,9 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
                         <div className="flex flex-col gap-2 p-6">
                             <h1 className="text-gray-600 font-bold">Quantidade de Mulheres</h1>
-                            <h1 className="text-sky-600 font-bold text-2xl">--</h1>
+                            <h1 className="text-sky-600 font-bold text-2xl">
+                                {quantidadeMulheres.length > 0 ? quantidadeMulheres[0].toLocaleString('pt-BR') : '--'}
+                            </h1>
                         </div>
                     </div>
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
@@ -102,7 +116,7 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                                 <p className="text-gray-400 text-sm">km² - 2022</p>
                             </div>
                             <h1 className="text-sky-600 font-bold text-2xl">
-                                {areaTerritorial.length > 0 ? areaTerritorial[0].toLocaleString('pt-BR') : '-'}
+                                {areaTerritorial.length > 0 ? areaTerritorial[0].toLocaleString('pt-BR') : '--'}
                             </h1>
                         </div>
                     </div>
