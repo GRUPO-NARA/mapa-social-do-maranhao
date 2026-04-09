@@ -8,10 +8,12 @@ interface ResumoGeralProps {
 export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) {
     const [populacaoTotal, setPopulacaoTotal] = useState([]);
     const [densidadeDemografica, setDensidadeDemografica] = useState([])
+    const [areaTerritorial, setAreaTerritorial] = useState([])
 
     useEffect(() => {
         getPopulacaoTotal(),
-        getDensidadeDemografica()
+        getDensidadeDemografica(),
+        getAreaTerritorial()
     }, [municipioSelecionado])
 
     async function getPopulacaoTotal(){
@@ -24,6 +26,17 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
         }
         
     }
+
+    async function getAreaTerritorial() {
+        if (!municipioSelecionado) {
+            municipioSelecionado = "-"
+        } else {
+            const resposta = await fetch(`http://localhost:8080/dados_geograficos/area_territorial?nomeMunicipio=${municipioSelecionado}`);
+            const dados = await resposta.json();
+            setAreaTerritorial(dados);
+        }
+    }
+
     async function getDensidadeDemografica() {
         if (!municipioSelecionado) {
             municipioSelecionado = "-"
@@ -84,8 +97,13 @@ export default function ResumoGeral({ municipioSelecionado }: ResumoGeralProps) 
                     </div>
                     <div className="bg-white rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300">
                         <div className="flex flex-col gap-2 p-6">
-                            <h1 className="text-gray-600 font-bold">Área Territorial</h1>
-                            <h1 className="text-sky-600 font-bold text-2xl">--</h1>
+                            <div>
+                                <h1 className="text-gray-600 font-bold">Área Territorial</h1>
+                                <p className="text-gray-400 text-sm">km² - 2022</p>
+                            </div>
+                            <h1 className="text-sky-600 font-bold text-2xl">
+                                {areaTerritorial.length > 0 ? areaTerritorial[0].toLocaleString('pt-BR') : '-'}
+                            </h1>
                         </div>
                     </div>
                 </div>
