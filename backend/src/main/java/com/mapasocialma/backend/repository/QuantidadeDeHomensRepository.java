@@ -20,6 +20,6 @@ public interface QuantidadeDeHomensRepository extends JpaRepository<QuantidadeDe
     */
     /*
     List<QuantidadeDeHomensEntity>findByIdCodMunicipio(String codMunicipio);
-
+.
 }
 */
