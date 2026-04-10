@@ -1,25 +1,26 @@
-/*
 package com.mapasocialma.backend.repository;
 
 import com.mapasocialma.backend.entity.QuantidadeDeHomensEntity;
-import com.mapasocialma.backend.entity.QuantidadeDeHomensEntityId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Repository
-public interface QuantidadeDeHomensRepository extends JpaRepository<QuantidadeDeHomensEntity, QuantidadeDeHomensEntityId> {
-     /* Aqui vamos buscar os dados da Quantidade de homens de acordo com o código do
-    município.
+public interface QuantidadeDeHomensRepository extends JpaRepository<QuantidadeDeHomensEntity, String> {
+    @Query(value = """
+        SELECT 
+            dd.valor
+        FROM 
+            dados_demograficos.quantidade_de_homens as dd
+        INNER JOIN 
+            dados_gerais.informacoes dg ON TRIM(dd.cod_municipio) = TRIM(dg.codigo_ibge)
+        WHERE  
+            dg.nome_municipio ILIKE concat('%', :nomeMunicipio, '%');
+    """, nativeQuery = true)
+    List<BigInteger> findQuantidadeDeHomensByMunicipio(@Param("nomeMunicipio") String nomeMunicipio);
 
-    Não vai ser preciso definir a forma que vai pegar esses dados com "SELECT * FROM"
-    e blá blá blá, com o Spring Data JPA, basta definir o
-    método de busca seguindo a convenção de nomenclatura.
-
-    */
-    /*
-    List<QuantidadeDeHomensEntity>findByIdCodMunicipio(String codMunicipio);
-.
 }
-*/
