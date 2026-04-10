@@ -2,6 +2,7 @@ package com.mapasocialma.backend.controller;
 
 import com.mapasocialma.backend.entity.QuantidadeDeMulheresEntity;
 import com.mapasocialma.backend.repository.PopulacaoResidenteRepository;
+import com.mapasocialma.backend.repository.QuantidadeDeHomensRepository;
 import com.mapasocialma.backend.repository.QuantidadeDeMulheresRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class dadosDemograficosController {
     @Autowired
     private QuantidadeDeMulheresRepository quantidadeDeMulheresRepository;
 
+    @Autowired
+    private QuantidadeDeHomensRepository quantidadeDeHomensRepository;
+
     @GetMapping("/populacao_residente")
     public ResponseEntity<List<BigInteger>> getPopulacaoResidente(@RequestParam String nomeMunicipio){
         List<BigInteger> populacao_residente = populacaoResidenteRepository.findPopulacaoResidenteByMunicipio(nomeMunicipio);
@@ -31,5 +35,11 @@ public class dadosDemograficosController {
     public ResponseEntity<List<BigInteger>> getQuantidadeDeMulheres(@RequestParam String nomeMunicipio) {
         List<BigInteger> quantidade_de_mulheres = quantidadeDeMulheresRepository.findQuantidadeDeMulheresByMunicipio(nomeMunicipio);
         return ResponseEntity.ok(quantidade_de_mulheres);
+    }
+
+    @GetMapping("/quantidade_homens")
+    public ResponseEntity<List<BigInteger>> getQuantidadeDeHomens(@RequestParam String nomeMunicipio) {
+        List<BigInteger> quantidade_de_homens = quantidadeDeHomensRepository.findQuantidadeDeHomensByMunicipio((nomeMunicipio));
+        return ResponseEntity.ok(quantidade_de_homens);
     }
 }
