@@ -20,4 +20,9 @@ public interface ProdutoInternoBrutoRepository extends JpaRepository<ProdutoInte
         
         """, nativeQuery = true)
     List<Double> findAllProdutoInternoBrutoByMunicipio(@Param("nomeMunicipio") String nomeMunicipio);
+
+    @Query(value = "SELECT SUM(de.valor)FROM dados_economicos.produto_interno_bruto de ", nativeQuery = true )
+    Double findTotalPibEstado();
+
 }
+
