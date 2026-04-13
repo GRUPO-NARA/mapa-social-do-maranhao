@@ -23,4 +23,6 @@ public interface PopulacaoResidenteRepository extends JpaRepository<PopulacaoRes
                 i.nome_municipio ILIKE concat('%', :nomeMunicipio ,'%');
             """, nativeQuery = true)
     List<BigInteger> findPopulacaoResidenteByMunicipio(@Param("nomeMunicipio") String nomeMunicipio);
+    @Query( value = "SELECT SUM(dd.valor)FROM dados_demograficos.população_residente dd ", nativeQuery = true )
+    Long findPopulacaoResidenteTotal();
 }

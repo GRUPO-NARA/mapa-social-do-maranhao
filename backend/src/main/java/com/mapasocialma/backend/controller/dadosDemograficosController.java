@@ -42,4 +42,9 @@ public class dadosDemograficosController {
         List<BigInteger> quantidade_de_homens = quantidadeDeHomensRepository.findQuantidadeDeHomensByMunicipio((nomeMunicipio));
         return ResponseEntity.ok(quantidade_de_homens);
     }
+
+    @GetMapping ("/total_populacao_estado")
+    public ResponseEntity<Long> getTotalPopulacaoEstado() {
+        return ResponseEntity.ok(populacaoResidenteRepository.findPopulacaoResidenteTotal());
+    }
 }
