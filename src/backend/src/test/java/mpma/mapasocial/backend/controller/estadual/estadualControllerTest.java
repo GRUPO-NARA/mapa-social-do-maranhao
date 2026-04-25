@@ -264,4 +264,14 @@ public class estadualControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName(value = "GET /estadual/listarMunicipios - Deve retornar erro 204 quando a lista dos municípios do Maranhão estiver vazia")
+    @WithMockUser
+    void deveRetornarErro204QuandoListaDosMunicipiosDoMaranhaoEstiverVazia() throws Exception{
+        when(estadualService.listaDosMunicipiosDoEstado()).thenReturn(Arrays.asList());
+        mockMvc.perform(get("/estadual/listarMunicipios"))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
 }

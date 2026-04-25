@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/estadual")
 @Tag(name="Estadual", description = "Endpoints para dados estaduais")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class estadualController {
 
     @Autowired
@@ -38,6 +38,11 @@ public class estadualController {
     @GetMapping("/listarMunicipios")
     private ResponseEntity<List<String>> listarMunicipios(){
         List<String> listaDeMunicipios = estadualService.listaDosMunicipiosDoEstado();
+
+        if (listaDeMunicipios.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok(listaDeMunicipios);
     }
 }

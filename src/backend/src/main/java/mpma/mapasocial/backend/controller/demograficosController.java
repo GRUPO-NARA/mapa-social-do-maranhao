@@ -36,6 +36,7 @@ public class demograficosController {
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
+                                    name = "Exemplo de requisição bem sucedida para a população total do município de São Luís",
                                     value = "{\n" +
                                             "  \"indicador\": \"População Total do Município de São Luís\",\n" +
                                             "  \"resposta\": {\n" +
@@ -79,7 +80,21 @@ public class demograficosController {
     @Operation(summary = "Busca a quantidade de homens total por município",
     description = "Retorna a quantidade de homens total por município informado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Quantidade de homens encontrada com sucesso!"),
+            @ApiResponse(responseCode = "200",
+                    description = "Quantidade de homens encontrada com sucesso!",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Exemplo de requisição bem sucedida para a quantidade de homens do município de São Luís",
+                                    value = "{\n" +
+                                            "  \"indicador\": \"Quantidade de Homens do Município de Açailândia\",\n" +
+                                            "  \"resposta\": {\n" +
+                                            "    \"valor\": 52604\n" +
+                                            "  },\n" +
+                                            "  \"status\": \"200\"\n" +
+                                            "}"
+                            )
+                    )),
             @ApiResponse(responseCode = "204", description = "Não foi encontrado a quantidade de homens para o município informado!"),
             @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados!")
     })
@@ -108,4 +123,49 @@ public class demograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    @Operation(summary = "Busca a quantidade de mulheres total por município",
+    description = "Retorna a quantidade de mulheres total por município informado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Quantidade de mulheres encontrada com sucesso!",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Exemplo de requisição bem sucedida para a quantidade de mulheres do município de São Luís",
+                                    value = "{\n" +
+                                            "  \"indicador\": \"Quantidade de Mulheres do Município de São Luís\",\n" +
+                                            "  \"resposta\": {\n" +
+                                            "    \"valor\": 554274\n" +
+                                            "  },\n" +
+                                            "  \"status\": \"200\"\n" +
+                                            "}"
+                            )
+                    )),
+            @ApiResponse(responseCode = "204", description = "Não foi encontrado a quantidade de mulheres para o município informado!"),
+            @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados!")
+    })
+    @GetMapping("/buscaQuantidadeDeMulheres")
+    public ResponseEntity<?> buscarQuantidadeDeMulheres(
+            @Parameter(
+                    name = "municipio",
+                    description = "nome do município (ex: São Luís)",
+                    example = "São Luís",
+                    required = true
+            )
+            @RequestParam("municipio") String municipio
+    ){
+        Long quantidadeDeMulheresDoMunicipio = demograficosService.quantidadeDeMulheresDoMunicipio(municipio);
+
+        if (quantidadeDeMulheresDoMunicipio == null){
+            return ResponseEntity.noContent().build();
+        }
+
+        var resposta = service.criarCorpo(
+                "200",
+                "Quantidade de Mulheres do Município de " + municipio,
+                new gerarRespostaRequisicaoService.RespostaLong(quantidadeDeMulheresDoMunicipio)
+        );
+
+        return ResponseEntity.ok().body(resposta);
+    }
 }

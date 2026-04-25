@@ -1,1 +1,5 @@
 .env
+src/ETL/__pycache__/
+src/ETL/.ambiente-virtual-desenvolvimento/
+src/ETL/.pytest_cache/
+src/ETL/funcoes_de_apoio/__pycache__/
