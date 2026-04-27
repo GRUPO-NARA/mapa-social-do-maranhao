@@ -50,7 +50,14 @@ public class demograficosController {
             @ApiResponse(responseCode = "204",
                     description = "População não encontrada",
                     content = @Content()
-            )
+            ),
+            @ApiResponse(responseCode = "400",
+                    description = "Parâmetro município não informado ou inválido",
+                    content = @Content
+            ),
+            @ApiResponse(responseCode = "500",
+            description = "Erro na requisição dos dados",
+            content = @Content)
     })
     @GetMapping("/buscarPopulacaoTotal")
     public ResponseEntity<?> buscarPopulacaoTotal(
