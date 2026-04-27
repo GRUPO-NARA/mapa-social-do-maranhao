@@ -274,4 +274,12 @@ public class estadualControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName(value = "GET /estadual/listaMunicipios - Deve retornar erro 404 quando o endpoint for acessado com método HTTP diferente de GET")
+    @WithMockUser
+    void deveRetornarErro404QuandoEndpointForAcessadoComMetodoHTTPDiferenteDeGET() throws Exception {
+        mockMvc.perform(get("/estadual/listarMunic"))
+                .andExpect(status().isNotFound());
+    }
+
 }
