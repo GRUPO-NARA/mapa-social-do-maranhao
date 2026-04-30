@@ -5,7 +5,7 @@ import mpma.mapasocial.backend.entity.estadual.referenciasCodigosMunicipaisEntit
 
 @Entity
 @Table(name = "indice_de_desenvolvimento_humano", schema = "assistencia_social")
-public class IndiceDeDesenvolvimentoHumanoEntity {
+public class indiceDeDesenvolvimentoHumanoEntity {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
