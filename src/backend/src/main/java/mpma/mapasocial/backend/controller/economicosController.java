@@ -44,22 +44,28 @@ public class economicosController {
                                                     "  },\n" +
                                                     "  \"status\": \"200\"\n" +
                                                     "}"
-                                    ),
-                                    @ExampleObject(
-                                            name = "Exemplo de requisição bem sucedida para o PIB do município de Açailândia",
-                                            value = "{\n" +
-                                                    "  \"indicador\": \"Produto Interno Bruto do Município de Açailândia\",\n" +
-                                                    "  \"resposta\": {\n" +
-                                                    "    \"valor\": 4274161.961\n" +
-                                                    "  },\n" +
-                                                    "  \"status\": \"200\"\n" +
-                                                    "}"
                                     )
                             }
                     )
             ),
             @ApiResponse(
+                    responseCode = "204",
                     description = "Não foram encontrados dados do município informado",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Parâmetro município não informado ou inválido",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Endpoint não encontrado",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erro na requisição dos dados",
                     content = @Content
             )
     })
