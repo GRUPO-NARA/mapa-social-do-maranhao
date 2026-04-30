@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import mpma.mapasocial.backend.repository.demograficos.PopulacaoResidenteRepository;
-import mpma.mapasocial.backend.repository.demograficos.QuantidadeDeHomensRepository;
 import  mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
 import mpma.mapasocial.backend.service.demograficos.demograficosService;
 @RestController
@@ -47,17 +45,10 @@ public class demograficosController {
                             )
                     )
             ),
-            @ApiResponse(responseCode = "204",
-                    description = "População não encontrada",
-                    content = @Content()
-            ),
-            @ApiResponse(responseCode = "400",
-                    description = "Parâmetro município não informado ou inválido",
-                    content = @Content
-            ),
-            @ApiResponse(responseCode = "500",
-            description = "Erro na requisição dos dados",
-            content = @Content)
+            @ApiResponse(responseCode = "204", description = "População não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Parâmetro município não informado ou inválido!"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado!"),
+            @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados")
     })
     @GetMapping("/buscarPopulacaoTotal")
     public ResponseEntity<?> buscarPopulacaoTotal(
@@ -103,6 +94,8 @@ public class demograficosController {
                             )
                     )),
             @ApiResponse(responseCode = "204", description = "Não foi encontrado a quantidade de homens para o município informado!"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado!"),
+            @ApiResponse(responseCode = "400", description = "Parâmetro município não informado ou inválido!"),
             @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados!")
     })
     @GetMapping("/buscarQuantidadeDeHomens")
@@ -149,9 +142,11 @@ public class demograficosController {
                             )
                     )),
             @ApiResponse(responseCode = "204", description = "Não foi encontrado a quantidade de mulheres para o município informado!"),
+            @ApiResponse(responseCode = "400", description = "Parâmetro município não informado ou inválido!"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado!"),
             @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados!")
     })
-    @GetMapping("/buscaQuantidadeDeMulheres")
+    @GetMapping("/buscarQuantidadeDeMulheres")
     public ResponseEntity<?> buscarQuantidadeDeMulheres(
             @Parameter(
                     name = "municipio",
@@ -171,6 +166,118 @@ public class demograficosController {
                 "200",
                 "Quantidade de Mulheres do Município de " + municipio,
                 new gerarRespostaRequisicaoService.RespostaLong(quantidadeDeMulheresDoMunicipio)
+        );
+
+        return ResponseEntity.ok().body(resposta);
+    }
+
+    @Operation(summary = "Busca a quantidade de residentes rurais total por município",
+    description = "Retorna a quantidade de residentes rurais total por município informado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+            description = "Quantidade de residentes rurais encontrada com sucesso!",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(
+                            name = "Exemplo de requisição bem sucedida para a quantidade de residentes rurais do município de São Luís",
+                            value = "{\n" +
+                                    "  \"indicador\": \"Quantidade de Residentes Rurais do Município de São Luís\",\n" +
+                                    "  \"resposta\": {\n" +
+                                    "    \"valor\": 7836\n" +
+                                    "  },\n" +
+                                    "  \"status\": \"200\"\n" +
+                                    "}"
+                    )
+            )),
+            @ApiResponse(responseCode = "204",
+            description = "Não foi encontrado a quantidade de residentes rurais para o município informado!"),
+            @ApiResponse(responseCode = "400",
+            description = "Parâmetro município não informado ou inválido!"),
+            @ApiResponse(responseCode = "404",
+            description = "Endpoint não encontrado!"),
+            @ApiResponse(responseCode = "500",
+            description = "Erro na requisição dos dados!")
+    })
+    @GetMapping("/buscarQuantidadeDeResidentesRurais")
+    public ResponseEntity<?> buscarQuantidadeDeResidentesRurais(
+            @Parameter(
+                    name = "municipio",
+                    description = "nome do município (ex: São Luís)",
+                    example = "São Luís",
+                    required = true
+            )
+            @RequestParam("municipio") String municipio
+    ){
+        Long quantidadeDeResidentesRuraisDoMunicipio = demograficosService.quantidadeDeResidentesRuraisDoMunicipio(municipio);
+
+        if (quantidadeDeResidentesRuraisDoMunicipio == null){
+            return ResponseEntity.noContent().build();
+        }
+
+        var resposta = service.criarCorpo(
+                "200",
+                "Quantidade de Residentes Rurais do Município de " + municipio,
+                new gerarRespostaRequisicaoService.RespostaLong(quantidadeDeResidentesRuraisDoMunicipio)
+        );
+
+        return ResponseEntity.ok().body(resposta);
+    }
+
+    @Operation(summary = "Busca o índice de desenvolvimento humano por município",
+    description = "Retorna o valor do índice de desenvolvimento humano do município com base no ano da coleta dos dados e do município informado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+            description = "Índice de desenvolvimento humano encontrado com sucesso!",
+            content = @Content(
+                    examples = {
+                            @ExampleObject(
+                                    name = "Exemplo de requisição bem sucedida para o índice de desenvolvimento humano do município de São Luís no ano de 2010",
+                                    value = "{\n" +
+                                            "  \"indicador\": \"Índice de Desenvolvimento Humano do Município de São Luís\",\n" +
+                                            "  \"resposta\": {\n" +
+                                            "    \"valor\": 0.768\n" +
+                                            "  },\n" +
+                                            "  \"status\": \"200\"\n" +
+                                            "}"
+                            )
+                    }
+            )),
+            @ApiResponse(responseCode = "204",
+            description = "Não foi encontrado dados do índice de desenvolvimento humano para o município e ano informado!"),
+            @ApiResponse(responseCode = "400",
+            description = "Parâmetro município ou ano não informado ou inválido!"),
+            @ApiResponse(responseCode = "404",
+            description = "Endpoint não encontrado!"),
+            @ApiResponse(responseCode = "500",
+            description = "Erro na requisição dos dados!")
+    })
+    @GetMapping("/buscarIndiceDeDesenvolvimentoHumano")
+    private ResponseEntity<?> buscarIndiceDeDesenvolvimentoHumano(
+            @Parameter(
+                    name = "ano",
+                    description = "ano de referência da coleta dos dados (ex: 2010)",
+                    example = "2010",
+                    required = true
+            )
+            @RequestParam("ano") Integer ano,
+            @Parameter(
+                    name = "municipio",
+                    description = "nome do município (ex: São Luís)",
+                    example = "São Luís",
+                    required = true
+            )
+            @RequestParam("municipio") String municipio
+    ){
+        Double indiceDeDesenvolvimentoHumanoDoMunicipio = demograficosService.indiceDeDesenvolvimentoHumanoDoMunicipio(ano, municipio);
+
+        if (indiceDeDesenvolvimentoHumanoDoMunicipio == null){
+            return ResponseEntity.noContent().build();
+        }
+
+        var resposta = service.criarCorpo(
+                "200",
+                "Índice de Desenvolvimento Humano do Município de " + municipio,
+                new gerarRespostaRequisicaoService.RespostaDouble(indiceDeDesenvolvimentoHumanoDoMunicipio)
         );
 
         return ResponseEntity.ok().body(resposta);
