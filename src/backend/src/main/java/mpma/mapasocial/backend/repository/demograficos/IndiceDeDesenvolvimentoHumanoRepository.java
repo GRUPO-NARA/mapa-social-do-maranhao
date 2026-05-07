@@ -8,7 +8,7 @@ import mpma.mapasocial.backend.entity.demograficos.indiceDeDesenvolvimentoHumano
 
 @Repository
 public interface IndiceDeDesenvolvimentoHumanoRepository extends JpaRepository<indiceDeDesenvolvimentoHumanoEntity, Long> {
-    @Query(value = "SELECT idh.valor FROM demograficos.indice_de_desenvolvimento_humano idh\n" +
+    @Query(value = "SELECT idh.valor FROM demograficos.indice_de_desenvolvimento_humano idh " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON idh.cod_municipio = i.codigo_ibge\n" +
             "WHERE idh.referencia = :ano AND i.municipio ILIKE :municipio;", nativeQuery = true)
     Double buscarIndiceDeDesenvolvimentoHumanoPorMunicipio(@Param("ano") Integer ano, @Param("municipio") String municipio);
