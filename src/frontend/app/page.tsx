@@ -10,20 +10,19 @@ import { useState } from "react"
 
 export default function Home(){
   const [municipio, setMunicipio] = useState<String>("");
-  const [ano, setAno] = useState<String>("");
   const [isFiltrando, setIsFiltrando] = useState(false);
 
   return (
     <div className="flex justify-center items-center bg-[#F0F0F0]">
         <main className="h-full w-[85%]">
             <HeaderComponent />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 ">
-              <div className="flex flex-col gap-2">
-                <FiltroComponent aoMudarMunicipio={setMunicipio} aoMudarAno={setAno} isFiltrando={setIsFiltrando}/>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
+              <div className="flex flex-col gap-8">
+                <FiltroComponent aoMudarMunicipio={setMunicipio} isFiltrando={setIsFiltrando}/>
                 <PanoramaGeralComponent />
               </div>
-              <MapaComponent municipio={municipio} ano={ano} isFiltrando={isFiltrando}/>
-              <AgrupamentoIndicadoresMunicipaisComponent municipio={municipio} ano={ano} />
+              <MapaComponent municipio={municipio} isFiltrando={isFiltrando}/>
+              <AgrupamentoIndicadoresMunicipaisComponent municipio={municipio} />
             </div>
             <FooterComponent />
         </main>

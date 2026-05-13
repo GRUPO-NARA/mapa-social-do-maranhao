@@ -2,20 +2,17 @@ import { useState, useEffect } from "react";
 
 interface FiltroProps{
     aoMudarMunicipio: (municipio:string) => void
-    aoMudarAno: (ano:string) => void
     isFiltrando: (filtrando: boolean) => void
 }
 
-export default function FiltroComponent({aoMudarMunicipio, aoMudarAno, isFiltrando} : FiltroProps){
+export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : FiltroProps){
 
     const[municipios, setMunicipios] = useState([]);
-    const anos = [2000, 2010, 2022];
 
     const[isMunicipioSelecionado, setIsMunicipioSelecionado] = useState(false);
-    const[isAnoSelecionado, setIsAnoSelecionado] = useState(false);
 
     const[municipioSelecionado, setMunicipioSelecionado] = useState("");
-    const[anoSelecionado, setAnoSelecionado] = useState("");
+
 
     async function getMunicipios(){
         try{
@@ -66,40 +63,11 @@ export default function FiltroComponent({aoMudarMunicipio, aoMudarAno, isFiltran
                 ))}
                 </select>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[15px]" htmlFor="seletor-ano">
-                  Ano
-                </label>
-
-                <select
-                  id="seletor-ano"
-                  className="rounded-lg shadow-sm p-2 bg-sky-700 text-white"
-                  value={anoSelecionado}
-                  onChange={(e) => {
-                    if(e.target.value != ""){
-                      setIsAnoSelecionado(true);
-                      setAnoSelecionado(e.target.value);
-                      aoMudarAno(e.target.value);
-                    }else{
-                      setIsAnoSelecionado(false);
-                      setAnoSelecionado("");
-                      aoMudarAno("");
-                    }
-                  }}
-                >
-                <option value="">Selecione o ano</option>
-                {anos.map((ano) => (
-                  <option key={ano} value={ano}>
-                    {ano}
-                  </option>
-                ))}
-                </select>
-              </div>
               
               <div className="grid grid-cols-2 gap-4">
                   <button id="botao-aplicar-filtros" onClick={() =>
                 {
-                  if(isMunicipioSelecionado && isAnoSelecionado){
+                  if(isMunicipioSelecionado){
                     aoMudarMunicipio(municipioSelecionado);
                     isFiltrando(true);
                   }else{
@@ -111,11 +79,9 @@ export default function FiltroComponent({aoMudarMunicipio, aoMudarAno, isFiltran
                 <button id="botao-limpar-filtros" onClick={() =>
                 {
                   setIsMunicipioSelecionado(false);
-                  setIsAnoSelecionado(false);
                   setMunicipioSelecionado("");
-                  setAnoSelecionado("");
                   aoMudarMunicipio("");
-                  aoMudarAno("");
+
                   isFiltrando(false);
                 }} className="bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 active:bg-gray-500 ml-2">
                 Limpar Filtros

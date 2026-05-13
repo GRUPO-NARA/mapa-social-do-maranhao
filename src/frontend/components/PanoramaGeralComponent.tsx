@@ -5,7 +5,7 @@ export default function PanoramaGeralComponent() {
             <div className="group gap-5 flex flex-col rounded-2xl">
                 <div className="flex items-center gap-2">
                             <p className="w-1 h-6 rounded bg-sky-600 "></p>
-                            <h1 className="text-lg font-bold group-hover:text-sky-800 transition-colors duration-300">Panorama Geral</h1>
+                            <h1 className="text-lg font-bold group-hover:text-sky-800 transition-colors duration-300">Panorama Geral do Estado</h1>
                 </div>
                 <div className="grid grid-cols-2 gap-3 ">
                     <div className="group/div flex flex-col gap-1 p-3 rounded-2xl border-gray-300 border hover:shadow-xl/30 hover:shadow-sky-800 hover:-translate-y-1 hover:border-sky-600 transition-all duration-300 text-center items-center">

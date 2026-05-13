@@ -20,6 +20,7 @@ public class saudeController {
     @Autowired
     private saudeService saudeService;
 
+    /*
     @GetMapping("/buscarIdadeMediana")
     public ResponseEntity <?> buscarIdadeMediana(String ano, String municipio) {
         try {
@@ -29,6 +30,7 @@ public class saudeController {
             return service.gerarRespostaErro(e.getMessage());
         }
     }
+    */
 
 
 

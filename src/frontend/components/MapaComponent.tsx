@@ -11,11 +11,10 @@ interface GeoJsonData {
 
 interface MapaProps{
     municipio: String,
-    ano: String,
     isFiltrando?: boolean
 }
 
-export default function MapaComponent({municipio, ano, isFiltrando} : MapaProps){
+export default function MapaComponent({municipio, isFiltrando} : MapaProps){
     const [coordenadasMunicipais, setCoordenadasMunicipais] = useState<GeoJsonData | null>(null);
     const [coordenadasMunicipio, setCoordenadasMunicipio] = useState<[number, number]>([-5.0892, -45.3806]);
     const [zoom, setZoom] = useState(7);
@@ -148,7 +147,7 @@ export default function MapaComponent({municipio, ano, isFiltrando} : MapaProps)
             <div className="relative h-full w-full">
               <div className="absolute m-2 z-10 md:left-4 md:top-4 md:z-10">
                 <div className={`w-fit-content rounded-xl border border-indigo-600 bg-white/95 p-4 
-                  ${isFiltrando && municipio !== "" && ano !== "" ? "visible" : "invisible"}`}>
+                  ${isFiltrando && municipio !== "" ? "visible" : "invisible"}`}>
                   <div className="flex gap-2">
                     <p className="font-bold text-gray-700">População:</p>
                     <p className="text-black">{populacao?.resposta?.valor ? populacao.resposta.valor.toLocaleString("pt-BR") + " habitantes" : "--" }</p>
