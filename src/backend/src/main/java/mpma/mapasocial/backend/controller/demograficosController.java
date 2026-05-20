@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import mpma.mapasocial.backend.service.demograficos.demograficosService;
+import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
+import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService.RespostaLong;
+import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService.RespostaDouble;
+
 @RestController
 @RequestMapping("/demograficos")
 @Tag(name = "Demográficos", description = "Endpoints para dados demográficos")
