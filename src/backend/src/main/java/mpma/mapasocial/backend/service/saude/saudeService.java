@@ -9,4 +9,8 @@ import org.springframework.data.repository.query.Param;
 public class saudeService {
     @Autowired
     private IdadeMedianaRepository idadeMedianaRepository;
+
+    public Double buscarIdadeMedianaPorMunicipio(String ano, String municipio) {
+        return null;
+    }
 }
