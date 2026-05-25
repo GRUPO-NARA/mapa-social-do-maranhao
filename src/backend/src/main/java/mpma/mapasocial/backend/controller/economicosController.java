@@ -9,22 +9,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import mpma.mapasocial.backend.repository.economicos.ProdutoInternoBrutoMunicipalRepository;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
+import org.springframework.web.bind.annotation.*;
+import mpma.mapasocial.backend.service.RespostaRequisicao;
 import mpma.mapasocial.backend.service.economicos.economicosService;
+
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/economicos")
+@CrossOrigin("http://localhost:3000")
 @Tag(name = "Econômicos", description = "Endpoints para dados econômicos")
 public class economicosController {
     @Autowired
     private economicosService economicosService;
 
     @Autowired
-    private gerarRespostaRequisicaoService gerarRespostaRequisicaoService;
+    private RespostaRequisicao RespostaRequisicao;
 
     @Operation(summary = "Busca o Produto Interno Bruto municipal",
     description = "Retorna o PIB do municípip informado")
@@ -78,17 +78,33 @@ public class economicosController {
                     required = true
             )
             @RequestParam("municipio") String municipio){
-        Double pibMunicipal = economicosService.produtoInternoBrutoMunicipal(municipio);
+       HashMap<String, Object> pibMunicipal = economicosService.produtoInternoBruto(municipio);
 
         if (pibMunicipal == null){
             return ResponseEntity.noContent().build();
         }
 
-        var resposta = gerarRespostaRequisicaoService.criarCorpo(
+        var resposta = RespostaRequisicao.criarCorpo(
                 "200",
                 "Produto Interno Bruto do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaDouble(pibMunicipal)
+                new RespostaRequisicao.ObjetoDeResposta(pibMunicipal)
         );
+        return ResponseEntity.ok().body(resposta);
+    }
+    @GetMapping("/buscarProdutoInternoBrutoAgregado")
+    public ResponseEntity<?> buscarProdutoInternoBrutoAgregado(){
+        HashMap<String, Object> pibAgregadoEstadual = economicosService.produtoInternoBrutoAgregadoRecente();
+
+        if (pibAgregadoEstadual == null){
+            return ResponseEntity.noContent().build();
+        }
+
+        var resposta = RespostaRequisicao.criarCorpo(
+                "200",
+                "Produto Interno Bruto Agregado do Estado do Maranhão",
+                new RespostaRequisicao.ObjetoDeResposta(pibAgregadoEstadual)
+        );
+
         return ResponseEntity.ok().body(resposta);
     }
 }

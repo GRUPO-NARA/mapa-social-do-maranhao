@@ -10,7 +10,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import mpma.mapasocial.backend.service.demograficos.demograficosService;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
+import mpma.mapasocial.backend.service.RespostaRequisicao;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.mockito.Mockito.when;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(demograficosController.class)
-@Import(gerarRespostaRequisicaoService.class)
+@Import(RespostaRequisicao.class)
 public class buscarPopulacaoTotalEndpointTest {
 
     @Autowired
