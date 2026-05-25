@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         "destination" : `${process.env.URL_BASE}${process.env.URL_POPULACAO_TOTAL_MUNICIPIOS}`
       },
       {
+        "source" : "/api/v1/estado/populacao",
+        "destination" : `${process.env.URL_BASE}${process.env.URL_POPULACAO_TOTAL_ESTADO}`
+      },
+      {
         "source" : "/api/v1/municipios/quantidadeHomens",
         "destination" : `${process.env.URL_BASE}${process.env.URL_QUANTIDADE_HOMENS_MUNICIPIOS}`
       },
@@ -35,6 +39,14 @@ const nextConfig: NextConfig = {
       {
         "source" : "/api/v1/municipios/idh",
         "destination" : `${process.env.URL_BASE}${process.env.URL_IDH_MUNICIPIOS}`
+      },
+      {
+        "source" : "/api/v1/municipios/evolucaoIdh",
+        "destination" : `${process.env.URL_BASE}${process.env.URL_EVOLUCAO_IDH_MUNICIPIOS}`
+      },
+      {
+        "source" : "/api/v1/estado/pibAgregado",
+        "destination" : `${process.env.URL_BASE}${process.env.URL_PIB_AGREGADO_ESTADO}`
       }
     ]
   }

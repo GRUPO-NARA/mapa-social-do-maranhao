@@ -15,9 +15,9 @@ export default function IndicadoresSociaisComponent(){
                                     <h1 className="font-bold text-sm">Taxa de Natalidade</h1>
                                     <p className="text-gray-600 text-sm">por mil habitantes</p>
                                 </div>
-                                <p className="w-10 h-10 bg-sky-950 rounded-2xl"></p>
+
                             </div>
-                            <h1 className="font-bold text-2xl text-sky-600">
+                            <h1 className="font-bold text-2xl">
                                 --
                             </h1>
                         </div>
@@ -29,7 +29,7 @@ export default function IndicadoresSociaisComponent(){
                                     <h1 className="font-bold text-sm">Mortalidade Infantil</h1>
                                     <p className="text-gray-600 text-sm">por mil habitantes nascidos vivos</p>
                                 </div>
-                                <p className="w-10 h-10 bg-red-600 rounded-2xl"></p>
+
                             </div>
                             <h1 className="font-bold text-2xl">--</h1>
                         </div>
@@ -41,7 +41,7 @@ export default function IndicadoresSociaisComponent(){
                                     <h1 className="font-bold text-sm">Taxa de Escolaridade</h1>
                                     <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
                                 </div>
-                                <p className="w-10 h-10 bg-sky-600 rounded-2xl"></p>
+      
                             </div>
                             <h1 className="font-bold text-2xl">--</h1>
                         </div>

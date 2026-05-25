@@ -22,7 +22,7 @@ export default function Home(){
                 <PanoramaGeralComponent />
               </div>
               <MapaComponent municipio={municipio} isFiltrando={isFiltrando}/>
-              <AgrupamentoIndicadoresMunicipaisComponent municipio={municipio} />
+              <AgrupamentoIndicadoresMunicipaisComponent municipio={municipio} isFiltrando={isFiltrando} />
             </div>
             <FooterComponent />
         </main>

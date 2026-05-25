@@ -1,6 +1,9 @@
+"use client"
 
 import { Map, GeoJsonLoader } from "pigeon-maps"
 import { use, useEffect, useState } from "react"
+import Papa from "papaparse"
+import { json } from "stream/consumers"
 
 interface GeoJsonData {
     features: Array<{
@@ -28,6 +31,7 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
           getQuantidadeMulheres();
           getAreaTotal();
           getDensidadeDemografica();
+          getDadosPrincipaisSIDRA();
         }
       }, [municipio]);
 
@@ -43,75 +47,98 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
       }, [coordenadasMunicipais, municipio])
 
 
-    const [populacao, setPopulacao] = useState<any>({});
+    const [populacao, setPopulacao] = useState<any>();
     async function getPopulacao(){
       try{
         if(municipio != ""){
-          const resposta = await fetch(`/api/v1/municipios/populacao?municipio=${municipio}`);
-          const dados = await resposta.json();
-          setPopulacao(dados);
+          const requisicao = await fetch(`/api/v1/municipios/populacao?municipio=${municipio}`);
+          const resposta = await requisicao.json();
+          var populacaoMunicipal = resposta.resposta.dados ? resposta.resposta.dados.toLocaleString("pt-BR") + " habitantes" : "--"
+          setPopulacao(populacaoMunicipal);
         }
       }catch(error){
         console.error("Ocorreu um erro ao buscar dados referentes à população total do município!");
       }
     }
 
-    const [quantidadeHomens, setQuantidadeHomens] = useState<any>({})
+    const [quantidadeHomens, setQuantidadeHomens] = useState<any>()
     async function getQuantidadeHomens(){
       try{
         if(municipio != ""){
-          const resposta = await fetch(`/api/v1/municipios/quantidadeHomens?municipio=${municipio}`);
-          const dados = await resposta.json();
-          setQuantidadeHomens(dados);
+          const requisicao = await fetch(`/api/v1/municipios/quantidadeHomens?municipio=${municipio}`);
+          const resposta = await requisicao.json();
+          var quantidadeHomensMunicipal = resposta?.resposta?.dados ? resposta.resposta.dados.toLocaleString("pt-BR") + " homens" : "--"
+          setQuantidadeHomens(quantidadeHomensMunicipal);
         }
       }catch(error){
         console.error("Ocorreu um erro ao buscar dados referentes à quantidade de homens do município!")     
       }
     }
 
-    const [quantidadeMulheres, setQuantidadeMulheres] = useState<any>({})
+    const [quantidadeMulheres, setQuantidadeMulheres] = useState<any>()
     async function getQuantidadeMulheres(){
       try{
         if(municipio != ""){
-          const resposta = await fetch(`/api/v1/municipios/quantidadeMulheres?municipio=${municipio}`);
-          const dados = await resposta.json();
-          setQuantidadeMulheres(dados);
+          const requisicao = await fetch(`/api/v1/municipios/quantidadeMulheres?municipio=${municipio}`);
+          const resposta = await requisicao.json();
+          var quantidadeMulheresMunicipal = resposta?.resposta?.dados ? resposta.resposta.dados.toLocaleString("pt-BR") + " mulheres" : "--"
+          setQuantidadeMulheres(quantidadeMulheresMunicipal);
         }
       }catch(error){
         console.error("Ocorreu um erro ao buscar dados referentes à quantidade de mulheres do município!")
       }
     }
 
-    const [areaTotal, setAreaTotal] = useState<any>({})
+    const [areaTotal, setAreaTotal] = useState<any>()
     async function getAreaTotal(){
       try{
         if(municipio != ""){
-          const resposta = await fetch(`/api/v1/municipios/areaTotal?municipio=${municipio}`);
-          const dados = await resposta.json();
-          setAreaTotal(dados);
+          const requisicao = await fetch(`/api/v1/municipios/areaTotal?municipio=${municipio}`);
+          const resposta = await requisicao.json();
+          var areaTotalMunicipal = resposta?.resposta?.dados ? resposta.resposta.dados.toLocaleString("pt-BR") + " km²" : "--"
+          setAreaTotal(areaTotalMunicipal);
         }
       }catch(error){
         console.error("Ocorreu um erro ao buscar dados referentes à área total do município!")
       }
     }
     
-    const[densidadeDemografica, setDensidadeDemografica] = useState<any>({})
+    const[densidadeDemografica, setDensidadeDemografica] = useState<any>()
     async function getDensidadeDemografica(){
       try{
         if(municipio != ""){
-          const resposta = await fetch(`/api/v1/municipios/densidadeDemografica?municipio=${municipio}`);
-          const dados = await resposta.json();
-          setDensidadeDemografica(dados);
+          const requisicao = await fetch(`/api/v1/municipios/densidadeDemografica?municipio=${municipio}`);
+          const resposta = await requisicao.json();
+          var densidadeDemograficaMunicipal = resposta?.resposta?.dados ? resposta.resposta.dados.toLocaleString("pt-BR") + " hab/km²" : "--"
+          setDensidadeDemografica(densidadeDemograficaMunicipal);
         }
       }catch(error){
         console.error("Ocorreu um erro ao buscar dados referentes à densidade demográfica do município!")
       }
     }
 
+    const [dadosPrincipaisSIDRA, setDadosPrincipaisSIDRA] = useState<any>({})
+    async function getDadosPrincipaisSIDRA(){
+      const requisicao = await fetch(`http://localhost:8080/informacoes/dadosPrincipaisSIDRA?municipio=${municipio}`);
+      const resposta = await requisicao.json();
+
+      const dadosFormatados = resposta.resposta.dados.map((item: any) => ({             
+        "Indicador": item.indicador,           
+        "Valor": item.valor,                   
+        "Ano de Referência": item.data_coleta   
+      }));
+
+      const csv = Papa.unparse(dadosFormatados);
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      setDadosPrincipaisSIDRA(url);
+    }
+
     async function getCoordenadasMunicipais(){
         try {
-            const resposta = await fetch("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-21-mun.json")
-            const dados = await resposta.json()
+            const requisicao = await fetch("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-21-mun.json")
+            const dados = await requisicao.json()
             setCoordenadasMunicipais(dados)
         } catch (error) {
             console.error("Erro ao buscar coordenadas municipais:", error)
@@ -122,7 +149,7 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
     
         if (municipio == "") {
             console.warn("Nenhum município selecionado.")
-            setZoom(7)
+            setZoom(6)
             return
         }
 
@@ -135,7 +162,7 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
                 const [lon, lat] = feature.geometry.coordinates[0][0]
                 novasCoordenadas = [lat, lon]
                 setCoordenadasMunicipio(novasCoordenadas)
-                setZoom(9) 
+                setZoom(7.5) 
             }
           })
         }
@@ -146,28 +173,37 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
           <div className="h-screen md:h-full rounded-2xl overflow-hidden ">
             <div className="relative h-full w-full">
               <div className="absolute m-2 z-10 md:left-4 md:top-4 md:z-10">
-                <div className={`w-fit-content rounded-xl border border-indigo-600 bg-white/95 p-4 
+                <div className={`flex flex-col gap-1 w-fit-content rounded-xl border border-indigo-400 bg-white/95 p-4 shadow-lg
                   ${isFiltrando && municipio !== "" ? "visible" : "invisible"}`}>
                   <div className="flex gap-2">
-                    <p className="font-bold text-gray-700">População:</p>
-                    <p className="text-black">{populacao?.resposta?.valor ? populacao.resposta.valor.toLocaleString("pt-BR") + " habitantes" : "--" }</p>
+                    <p className="text-sm md:text-base font-bold text-gray-700">População:</p>
+                    <p className="text-sm md:text-base text-black">{populacao}</p>
                   </div>
                   <div className="flex gap-2">
-                    <p className="font-bold text-gray-700">Quantidade de Homens:</p>
-                    <p className="text-black">{quantidadeHomens?.resposta?.valor ? quantidadeHomens.resposta.valor.toLocaleString("pt-BR") + " homens" : "--" }</p>
+                    <p className="text-sm md:text-base font-bold text-gray-700">Quantidade de Homens:</p>
+                    <p className="text-sm md:text-base text-black">{quantidadeHomens}</p>
                   </div>
                   <div className="flex gap-2">
-                    <p className="font-bold text-gray-700">Quantidade de Mulheres:</p>
-                    <p className="text-black">{quantidadeMulheres?.resposta?.valor ? quantidadeMulheres.resposta.valor.toLocaleString("pt-BR") + " mulheres" : "--" }</p>
+                    <p className="text-sm md:text-base font-bold text-gray-700">Quantidade de Mulheres:</p>
+                    <p className="text-sm md:text-base text-black">{quantidadeMulheres}</p>
                   </div>
                   <div className="flex gap-2">
-                    <p className="font-bold text-gray-700">Densidade Demográfica:</p>
-                    <p className="text-black">{densidadeDemografica?.resposta?.valor ? densidadeDemografica.resposta.valor.toLocaleString("pt-BR") + " hab/km²": "--" }</p>
+                    <p className="text-sm md:text-base font-bold text-gray-700">Densidade Demográfica:</p>
+                    <p className="text-sm md:text-base text-black">{densidadeDemografica}</p>
                   </div>
                   <div className="flex gap-2">
-                    <p className="font-bold text-gray-700">Área Territorial:</p>
-                    <p className="text-black">{areaTotal?.resposta?.valor ? areaTotal.resposta.valor.toLocaleString("pt-BR") + " km²": "--" }</p>
+                    <p className="text-sm md:text-base font-bold text-gray-700">Área Territorial:</p>
+                    <p className="text-sm md:text-base text-black">{areaTotal}</p>
                   </div>
+                  <div className="flex flex-col bg-gray-300 rounded p-2 mt-2">
+                    <a href="https://sidra.ibge.gov.br/" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-800 hover:text-blue-500">
+                      Fonte: Sistema IBGE de Recuperação Automática (SIDRA)
+                    </a>
+                    <a href={dadosPrincipaisSIDRA} download="Dados_Mapa_SIDRA.csv" className="text-sm text-gray-800 hover:text-blue-500 font-semibold">
+                      Baixar dados
+                    </a>
+                  </div>
+                  
                 </div>
               </div>
               <Map center={coordenadasMunicipio} zoom={zoom}>

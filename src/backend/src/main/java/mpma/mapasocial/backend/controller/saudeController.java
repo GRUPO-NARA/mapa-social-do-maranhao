@@ -8,13 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import mpma.mapasocial.backend.service.saude.saudeService;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
+import mpma.mapasocial.backend.service.RespostaRequisicao;
 
 @RestController
 @RequestMapping("/saude")
@@ -22,7 +20,7 @@ import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
 public class saudeController {
 
     @Autowired
-    private gerarRespostaRequisicaoService service;
+    private RespostaRequisicao service;
 
     @Autowired
     private saudeService saudeService;
@@ -63,7 +61,7 @@ public class saudeController {
             var resposta = service.criarCorpo(
                     "200",
                     "idade mediana do municipio de " + municipio,
-                    new gerarRespostaRequisicaoService.RespostaDouble(idadeMediana)
+                    new RespostaRequisicao.ObjetoDeResposta(idadeMediana)
             );
 
             return ResponseEntity.ok(resposta);
@@ -73,7 +71,7 @@ public class saudeController {
             var respostaErro = service.criarCorpo(
                     "500",
                     "Ocorreu um erro ao processar a requisição",
-                    new gerarRespostaRequisicaoService.RespostaTexto(e.getMessage())
+                    new RespostaRequisicao.ObjetoDeResposta(e.getMessage())
             );
             return ResponseEntity.internalServerError().body(respostaErro);
         }

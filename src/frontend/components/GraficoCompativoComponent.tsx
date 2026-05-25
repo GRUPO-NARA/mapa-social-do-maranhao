@@ -22,40 +22,67 @@ ChartJS.register(
 );
 
 interface GraficoCompativoProps {
+    municipio?: String
     isVisualizacaoGrafica: boolean
+    dadosEvolucaoIndicadorMunicipal?: any
+    legendaDoGrafico?: string
+    fecharGrafico?: () => void
 }
 
-const LineChart = () => {
-  const data = {
-    labels: [1999, 2000, 2001, 2002, 2003],
-    datasets: [
-      {
-        label: 'IDH',
-        data: [65, 59, 80, 81, 56],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1, 
-      },
-    ],
-  };
+const LineChart = ({ dadosEvolucao, legenda }: { dadosEvolucao: any, legenda?: string }) => { 
+  if (dadosEvolucao?.resposta) {
+    const valor = dadosEvolucao.resposta.dados;
+    
+    if (typeof valor === 'object' && !Array.isArray(valor)) {
+      const anos = Object.keys(valor).sort();
+      const valores = anos.map(ano => valor[ano]);
+      const nomeGrafico = dadosEvolucao.indicador;
+      const legendaGrafico = legenda || "Evolução do Indicador";
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' as const },
-      title: { display: true, text: 'Histórico do IDH' },
-    },
-  };
+      const dados_grafico = {
+        labels: anos,
+        datasets: [
+          {
+            label: legendaGrafico,
+            data: valores,
+            fill: false,
+            borderColor: '#3b82f6',
+            borderWidth: 4,
+            pointRadius: 3,
+            tension: 0.6,
+          }
+        ]
+      };
 
-  return <Line data={data} options={options} />;
+      const configuracao_grafico = {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' as const },
+          title: { display: true, text: nomeGrafico  },
+        },
+      }
+
+      return <Line data={dados_grafico} options={configuracao_grafico} />;
+    }
+  }
+  
+  return null;
 };
 
-export default function GraficoCompativoComponent({ isVisualizacaoGrafica }: GraficoCompativoProps){
+export default function GraficoCompativoComponent({ municipio, isVisualizacaoGrafica, dadosEvolucaoIndicadorMunicipal, legendaDoGrafico, fecharGrafico }: GraficoCompativoProps){
     return (
-        <div className={`grid col-span-1 md:col-span-3  ${isVisualizacaoGrafica ? "visible" : "hidden"}`}>
+        <div className={`col-span-1 md:col-span-3 md:row-span-1 ${isVisualizacaoGrafica && municipio != "" ? "visible" : "hidden"}`}>
             <div className="flex justify-center">
-                <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <LineChart />
+                <div className="bg-white border border-gray-300 w-full h-full p-6 rounded-xl flex items-center justify-center relative">
+                    <button 
+                        onClick={fecharGrafico}
+                        className="absolute top-4 right-4 bg-gray-600 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors duration-200 font-bold text-lg"
+                        title="Fechar gráfico"
+                    >
+                        ✕
+                    </button>
+                    
+                    <LineChart dadosEvolucao={dadosEvolucaoIndicadorMunicipal} legenda={legendaDoGrafico} />
                 </div>
             </div>
         </div>

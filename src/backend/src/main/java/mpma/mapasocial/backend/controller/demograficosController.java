@@ -7,26 +7,23 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
+import mpma.mapasocial.backend.service.RespostaRequisicao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import mpma.mapasocial.backend.service.demograficos.demograficosService;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService.RespostaLong;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService.RespostaDouble;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/demograficos")
+@CrossOrigin("http://localhost:3000")
 @Tag(name = "Demográficos", description = "Endpoints para dados demográficos")
 public class demograficosController {
 
     @Autowired
-    private gerarRespostaRequisicaoService service;
+    private RespostaRequisicao service;
 
     @Autowired
     private demograficosService demograficosService;
@@ -74,10 +71,27 @@ public class demograficosController {
         var resposta = service.criarCorpo(
                 "200",
                 "População Total do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaLong(populacaoTotalDoMunicipio)
+                new RespostaRequisicao.ObjetoDeResposta(populacaoTotalDoMunicipio)
         );
 
         return ResponseEntity.ok().body(resposta);
+    }
+
+    @GetMapping("/buscarPopulacaoTotalDoEstado")
+    public ResponseEntity<?> buscarPopulacaoTotalDoEstado(){
+        HashMap<String, Object> populacaoTotalDoEstado = demograficosService.populacaoTotalAtualizadaDoEstado();
+
+        if (populacaoTotalDoEstado == null){
+            return ResponseEntity.noContent().build();
+        }
+
+        var resposta = service.criarCorpo(
+                "200",
+                "População Total do Estado",
+                new RespostaRequisicao.ObjetoDeResposta(populacaoTotalDoEstado)
+        );
+
+        return ResponseEntity.ok(resposta);
     }
 
     @Operation(summary = "Busca a quantidade de homens total por município",
@@ -122,7 +136,7 @@ public class demograficosController {
         var resposta = service.criarCorpo(
                 "200",
                 "Quantidade de Homens do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaLong(quantidadeDeHomensDoMunicipio)
+                new RespostaRequisicao.ObjetoDeResposta(quantidadeDeHomensDoMunicipio)
         );
 
         return ResponseEntity.ok().body(resposta);
@@ -170,7 +184,7 @@ public class demograficosController {
         var resposta = service.criarCorpo(
                 "200",
                 "Quantidade de Mulheres do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaLong(quantidadeDeMulheresDoMunicipio)
+                new RespostaRequisicao.ObjetoDeResposta(quantidadeDeMulheresDoMunicipio)
         );
 
         return ResponseEntity.ok().body(resposta);
@@ -222,49 +236,31 @@ public class demograficosController {
         var resposta = service.criarCorpo(
                 "200",
                 "Quantidade de Residentes Rurais do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaLong(quantidadeDeResidentesRuraisDoMunicipio)
+                new RespostaRequisicao.ObjetoDeResposta(quantidadeDeResidentesRuraisDoMunicipio)
         );
 
         return ResponseEntity.ok().body(resposta);
     }
 
-    @Operation(summary = "Busca o índice de desenvolvimento humano por município",
-    description = "Retorna o valor do índice de desenvolvimento humano do município com base no ano da coleta dos dados e do município informado")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-            description = "Índice de desenvolvimento humano encontrado com sucesso!",
-            content = @Content(
-                    examples = {
-                            @ExampleObject(
-                                    name = "Exemplo de requisição bem sucedida para o índice de desenvolvimento humano do município de São Luís no ano de 2010",
-                                    value = "{\n" +
-                                            "  \"indicador\": \"Índice de Desenvolvimento Humano do Município de São Luís\",\n" +
-                                            "  \"resposta\": {\n" +
-                                            "    \"valor\": 0.768\n" +
-                                            "  },\n" +
-                                            "  \"status\": \"200\"\n" +
-                                            "}"
-                            )
-                    }
-            )),
-            @ApiResponse(responseCode = "204",
-            description = "Não foi encontrado dados do índice de desenvolvimento humano para o município e ano informado!"),
-            @ApiResponse(responseCode = "400",
-            description = "Parâmetro município ou ano não informado ou inválido!"),
-            @ApiResponse(responseCode = "404",
-            description = "Endpoint não encontrado!"),
-            @ApiResponse(responseCode = "500",
-            description = "Erro na requisição dos dados!")
-    })
     @GetMapping("/buscarIndiceDeDesenvolvimentoHumano")
-    private ResponseEntity<?> buscarIndiceDeDesenvolvimentoHumano(
-            @Parameter(
-                    name = "ano",
-                    description = "ano de referência da coleta dos dados (ex: 2010)",
-                    example = "2010",
-                    required = true
-            )
-            @RequestParam("ano") Integer ano,
+    public ResponseEntity<?> buscarIndiceDeDesenvolvimentoHumano(@RequestParam("municipio") String municipio){
+        HashMap<String, Object> idhMunicipal = demograficosService.indiceDeDesenvolvimentoHumanoDoMunicipio(municipio);
+
+        if (idhMunicipal == null){
+            return ResponseEntity.noContent().build();
+        }
+
+        var resposta = service.criarCorpo(
+                "200",
+                "Índice de Desenvolvimento Humano do Município de " + municipio,
+                new RespostaRequisicao.ObjetoDeResposta(idhMunicipal)
+        );
+
+        return ResponseEntity.ok().body(resposta);
+    }
+
+    @GetMapping("/buscarEvolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio")
+    public ResponseEntity<?> buscarEvolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio(
             @Parameter(
                     name = "municipio",
                     description = "nome do município (ex: São Luís)",
@@ -272,17 +268,17 @@ public class demograficosController {
                     required = true
             )
             @RequestParam("municipio") String municipio
-    ){
-        Double indiceDeDesenvolvimentoHumanoDoMunicipio = demograficosService.indiceDeDesenvolvimentoHumanoDoMunicipio(ano, municipio);
+    ) {
+        HashMap<String, Object> evolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio = demograficosService.evolucaoIndiceDeDesenvolvimentoHumanoDoMunicipio(municipio);
 
-        if (indiceDeDesenvolvimentoHumanoDoMunicipio == null){
+        if (evolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio == null) {
             return ResponseEntity.noContent().build();
         }
 
         var resposta = service.criarCorpo(
                 "200",
-                "Índice de Desenvolvimento Humano do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaDouble(indiceDeDesenvolvimentoHumanoDoMunicipio)
+                "Evolução do Índice de Desenvolvimento Humano do Município de " + municipio,
+                new RespostaRequisicao.ObjetoDeResposta(evolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio)
         );
 
         return ResponseEntity.ok().body(resposta);

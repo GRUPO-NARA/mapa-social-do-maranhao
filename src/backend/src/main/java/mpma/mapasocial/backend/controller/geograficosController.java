@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import mpma.mapasocial.backend.service.gerarRespostaRequisicaoService;
+import mpma.mapasocial.backend.service.RespostaRequisicao;
 import mpma.mapasocial.backend.service.geograficos.geograficosService;
 
 @RestController
@@ -24,7 +24,7 @@ public class geograficosController {
     private geograficosService geograficosService;
 
     @Autowired
-    private gerarRespostaRequisicaoService service;
+    private RespostaRequisicao service;
 
     @Operation(summary = "Busca a área total do município",
             description = "Retorna o valor da área total (em km²) do município com base no nome do município informado")
@@ -77,7 +77,7 @@ public class geograficosController {
         var resposta = service.criarCorpo(
                 "200",
                 "Área Total do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaDouble(areaTotal)
+                new RespostaRequisicao.ObjetoDeResposta(areaTotal)
         );
 
         return ResponseEntity.ok().body(resposta);
@@ -134,7 +134,7 @@ public class geograficosController {
         var resposta = service.criarCorpo(
                 "200",
                 "Densidade Demográfica do Município de " + municipio,
-                new gerarRespostaRequisicaoService.RespostaDouble(densidadeDemografica)
+                new RespostaRequisicao.ObjetoDeResposta(densidadeDemografica)
         );
 
         return ResponseEntity.ok().body(resposta);
