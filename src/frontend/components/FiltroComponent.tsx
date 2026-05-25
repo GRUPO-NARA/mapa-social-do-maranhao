@@ -13,6 +13,8 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
 
     const[municipioSelecionado, setMunicipioSelecionado] = useState("");
 
+    const[tentouAplicarFiltro, setTentouAplicarFiltro] = useState(false);
+
 
     async function getMunicipios(){
         try{
@@ -48,6 +50,7 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
                     if(e.target.value != ""){
                       setIsMunicipioSelecionado(true);
                       setMunicipioSelecionado(e.target.value);
+                      setTentouAplicarFiltro(false);
                     }else{
                       setIsMunicipioSelecionado(false);
                       setMunicipioSelecionado("");
@@ -63,6 +66,12 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
                 ))}
                 </select>
               </div>
+
+              <div className={`w-full bg-yellow-500 rounded-lg p-2 ${tentouAplicarFiltro && !isMunicipioSelecionado ? "visible" : "hidden"}`}>
+                <p className="text-center text-gray-700 font-semibold">
+                  Nenhum município selecionado
+                </p>
+              </div>
               
               <div className="grid grid-cols-2 gap-4">
                   <button id="botao-aplicar-filtros" onClick={() =>
@@ -70,8 +79,10 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
                   if(isMunicipioSelecionado){
                     aoMudarMunicipio(municipioSelecionado);
                     isFiltrando(true);
+                    setTentouAplicarFiltro(false);
                   }else{
-                    alert("Selecione um município e um ano para aplicar os filtros.")
+                    isFiltrando(false);
+                    setTentouAplicarFiltro(true);
                   }
                 }} className="bg-sky-600 text-white p-3 rounded-lg hover:bg-sky-700 transition-colors duration-300 active:bg-sky-800">
                 Aplicar Filtros
@@ -81,7 +92,7 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
                   setIsMunicipioSelecionado(false);
                   setMunicipioSelecionado("");
                   aoMudarMunicipio("");
-
+                  setTentouAplicarFiltro(false);
                   isFiltrando(false);
                 }} className="bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 active:bg-gray-500 ml-2">
                 Limpar Filtros
