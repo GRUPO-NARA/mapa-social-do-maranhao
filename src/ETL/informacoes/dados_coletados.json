@@ -4,7 +4,7 @@
       "categoria": "demograficos",
       "indicadores": [
         {
-          "indicador": "população_residente",
+          "indicador": "populacao_residente",
           "fonte": "SIDRA",
           "formato": "csv",
           "link": "https://sidra.ibge.gov.br/geratabela/DownloadSelecaoComplexa/1420806406"

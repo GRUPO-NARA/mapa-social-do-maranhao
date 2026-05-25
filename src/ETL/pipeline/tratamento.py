@@ -18,7 +18,7 @@ class FluxoDeTratamento:
         self.coleta = FluxoDeColeta()
         self.salvamento = FluxoDeSalvamento()
         self.salvamento_logger = ConfiguracoesProcessoDeETL().configuracoes_logging_para_salvamento()
-        URL_DE_CONEXAO = os.environ.get("DB_URL")
+        URL_DE_CONEXAO = os.environ.get("DB_URL_DESENVOLVIMENTO")  
 
         self.conexao_com_o_banco = self.salvamento.criar_conexao_com_banco_de_dados(URL_DE_CONEXAO)
 
