@@ -11,8 +11,10 @@ public interface PessoasComDeficienciaCadastradasCadastroUnicoRepository extends
 
     @Query(value = "SELECT pdcu.valor FROM assistencia_social.pessoas_com_deficiencia_cadastradas_cadastro_unico pdcu " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON pdcu.cod_municipio = i.codigo_ibge " +
-            "WHERE pdcu.referencia = :ano AND i.municipio ILIKE :municipio",
+            "WHERE i.municipio ILIKE :municipio " +
+            "ORDER BY pdcu.referencia DESC " + // Ordena do ano mais recente para o mais antigo
+            "LIMIT 1",                         // Garante que apenas o primeiro (mais recente) seja retornado
             nativeQuery = true)
-    Long buscarPessoasComDeficienciaCadastradasCadastroUnicoPorMunicipio(@Param("ano") Integer ano, @Param("municipio") String municipio);
+    Long buscarPessoasComDeficienciaCadastradasCadastroUnicoPorMunicipio(@Param("municipio") String municipio);
 
 }

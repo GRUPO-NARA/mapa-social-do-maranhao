@@ -8,8 +8,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PessoasInscritasNoCadastroUnicoPorRacaECorRepository extends JpaRepository<pessoasInscritasNoCadastroUnicoPorRacaECorEntity, Long> {
-    @Query(value = "SELECT prc.valor FROM assistencia_social.pessoas_inscritas_cadastro_unico_raca_cor prc " +
+
+    @Query(value = "SELECT prc.valor FROM assistencia_social.pessoas_inscritas_no_cadastro_unico_por_raca_e_cor prc " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON prc.cod_municipio = i.codigo_ibge " +
-            "WHERE prc.referencia = :ano AND i.municipio ILIKE :municipio", nativeQuery = true)
-    Long buscarPessoasInscritasNoCadastroUnicoPorRacaECor(@Param("ano") Integer ano, @Param("municipio") String municipio);
+            "WHERE i.municipio ILIKE :municipio " +
+            "ORDER BY prc.referencia DESC " + // Corrigido o espaçamento e adicionada a ordenação decrescente
+            "LIMIT 1",                         // Limita para trazer apenas o ano mais recente
+            nativeQuery = true)
+    Long buscarPessoasInscritasNoCadastroUnicoPorRacaECor(@Param("municipio") String municipio);
 }
