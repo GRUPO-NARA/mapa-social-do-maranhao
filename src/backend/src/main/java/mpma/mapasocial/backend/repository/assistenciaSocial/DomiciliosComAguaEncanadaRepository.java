@@ -8,9 +8,12 @@ import mpma.mapasocial.backend.entity.assistenciaSocial.domiciliosComAguaEncanad
 
 @Repository
 public interface DomiciliosComAguaEncanadaRepository extends JpaRepository<domiciliosComAguaEncanadaEntity, Long> {
+
     @Query(value = "SELECT dae.valor FROM assistencia_social.domicilios_com_agua_encanada dae " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON dae.cod_municipio = i.codigo_ibge " +
-            "WHERE dae.referencia = :ano AND i.municipio ILIKE :municipio",
+            "WHERE i.municipio ILIKE :municipio " +
+            "ORDER BY dae.referencia DESC " + // Ordena do ano de referência mais recente para o mais antigo
+            "LIMIT 1",                         // Garante o retorno apenas da linha mais atualizada
             nativeQuery = true)
-    Long buscarDomiciliosComAguaEncanadaPorMunicipio(@Param("ano") Integer ano, @Param("municipio") String municipio);
+    Long buscarDomiciliosComAguaEncanadaPorMunicipio(@Param("municipio") String municipio);
 }

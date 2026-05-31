@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TotalDeFamiliasInscritasNoCadastroUnicoRepository extends JpaRepository<totalDeFamiliasInscritasNoCadastroUnicoEntity, Long> {
-    @Query(value = "SELECT tf.valor FROM assistencia_social.total_familias_inscritas_cadastro_unico tf " +
+
+    @Query(value = "SELECT tf.valor FROM assistencia_social.total_de_familias_inscritas_no_cadastro_unico tf " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON tf.cod_municipio = i.codigo_ibge " +
-            "WHERE tf.referencia = :ano AND i.municipio ILIKE :municipio",
+            "WHERE i.municipio ILIKE :municipio " +
+            "ORDER BY tf.referencia DESC " +
+            "LIMIT 1",
             nativeQuery = true)
-    Long buscarTotalDeFamiliasInscritasNoCadastroUnico(@Param("ano") Integer ano, @Param("municipio") String municipio);
+    Long buscarTotalDeFamiliasInscritasNoCadastroUnico(@Param("municipio") String municipio);
 }
