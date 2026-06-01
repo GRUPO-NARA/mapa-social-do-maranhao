@@ -15,6 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import mpma.mapasocial.backend.service.estadual.estadualService;
 import java.util.List;
 
+/**
+ * Controller estadual responsável por expor endpoints REST para dados do estado
+ * do Maranhão, como a lista de municípios.
+ *
+ * Este controller delega a obtenção de informações ao serviço estadual e retorna
+ * os resultados conforme o contrato HTTP definido pelo projeto.
+ */
 @RestController
 @RequestMapping("/estadual")
 @Tag(name="Estadual", description = "Endpoints para dados estaduais")
@@ -24,6 +31,15 @@ public class estadualController {
     @Autowired
     private estadualService estadualService;
 
+    /**
+     * Lista o nome de todos os municípios do Maranhão.
+     *
+     * O endpoint consulta o serviço estadual para obter a lista de municípios e
+     * responde com HTTP 200 quando a lista não estiver vazia. Se a lista estiver
+     * vazia, retorna HTTP 204 sem corpo.
+     *
+     * @return ResponseEntity contendo a lista de municípios ou 204 quando a lista estiver vazia
+     */
     @Operation(summary = "Busca o nome de todos os municípios do Maranhão",
     description = "Retorna uma lista que contêm todos os municípios do estado")
     @ApiResponses(value = {

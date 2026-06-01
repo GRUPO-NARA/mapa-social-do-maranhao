@@ -16,6 +16,13 @@ import mpma.mapasocial.backend.service.demograficos.demograficosService;
 
 import java.util.HashMap;
 
+/**
+ * Controller de dados demográficos que expõe endpoints REST para indicadores
+ * populacionais do Maranhão.
+ *
+ * As requisições são encaminhadas para o serviço de demográficos e retornam
+ * respostas no formato padrão de resposta do projeto.
+ */
 @RestController
 @RequestMapping("/demograficos")
 @CrossOrigin("http://localhost:3000")
@@ -28,6 +35,15 @@ public class demograficosController {
     @Autowired
     private demograficosService demograficosService;
 
+    /**
+     * Busca a população total residente no município informado.
+     *
+     * O método envia o nome do município para o serviço de demográficos e retorna
+     * o valor em uma resposta padrão. Se não houver registro, retorna 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com a população total ou 204 quando não houver resultado
+     */
     @Operation(summary = "Busca a população total por município",
     description = "Retorna o valor da população residente com base no nome do município informado")
     @ApiResponses(value = {
@@ -77,6 +93,14 @@ public class demograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    /**
+     * Busca a população total atualizada do estado.
+     *
+     * Retorna um mapa com os dados demográficos do estado no formato padrão.
+     * Se o serviço não encontrar dados, devolve 204.
+     *
+     * @return ResponseEntity com a população total do estado ou 204 quando não houver dados
+     */
     @GetMapping("/buscarPopulacaoTotalDoEstado")
     public ResponseEntity<?> buscarPopulacaoTotalDoEstado(){
         HashMap<String, Object> populacaoTotalDoEstado = demograficosService.populacaoTotalAtualizadaDoEstado();
@@ -94,6 +118,15 @@ public class demograficosController {
         return ResponseEntity.ok(resposta);
     }
 
+    /**
+     * Busca a quantidade total de homens no município informado.
+     *
+     * O serviço retorna o valor demográfico do município e o controller monta a
+     * resposta padrão. Quando não há dados, responde 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com a quantidade de homens ou 204 quando não houver dados
+     */
     @Operation(summary = "Busca a quantidade de homens total por município",
     description = "Retorna a quantidade de homens total por município informado")
     @ApiResponses(value = {
@@ -142,6 +175,15 @@ public class demograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    /**
+     * Busca a quantidade total de mulheres no município informado.
+     *
+     * O valor retornado pelo serviço é envelopado na resposta padrão do projeto.
+     * Se não existe dado para o município, a resposta é 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com a quantidade de mulheres ou 204 quando não houver dados
+     */
     @Operation(summary = "Busca a quantidade de mulheres total por município",
     description = "Retorna a quantidade de mulheres total por município informado")
     @ApiResponses(value = {
@@ -190,6 +232,15 @@ public class demograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    /**
+     * Busca a quantidade total de residentes rurais no município informado.
+     *
+     * O serviço de demográficos retorna o número de residentes rurais e o controller
+     * monta a resposta padrão. Se não houver dado, retorna 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com a quantidade de residentes rurais ou 204 quando não houver dados
+     */
     @Operation(summary = "Busca a quantidade de residentes rurais total por município",
     description = "Retorna a quantidade de residentes rurais total por município informado")
     @ApiResponses(value = {
@@ -242,6 +293,16 @@ public class demograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    /**
+     * Busca o Índice de Desenvolvimento Humano (IDH) para o município informado.
+     *
+     * O valor retornado pelo serviço é encapsulado em um mapa e envelopado na
+     * resposta padrão do projeto. Se não houver registro para o município,
+     * retorna 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com o IDH do município ou 204 quando não houver dados
+     */
     @GetMapping("/buscarIndiceDeDesenvolvimentoHumano")
     public ResponseEntity<?> buscarIndiceDeDesenvolvimentoHumano(@RequestParam("municipio") String municipio){
         HashMap<String, Object> idhMunicipal = demograficosService.indiceDeDesenvolvimentoHumanoDoMunicipio(municipio);
@@ -259,6 +320,15 @@ public class demograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    /**
+     * Busca a evolução do Índice de Desenvolvimento Humano (IDH) para o município informado.
+     *
+     * A consulta retorna um histórico de evolução do IDH no formato de mapa e o valor
+     * é entregue na resposta padrão do projeto. Se não houver dados, responde 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com a evolução do IDH ou 204 quando não houver dados
+     */
     @GetMapping("/buscarEvolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio")
     public ResponseEntity<?> buscarEvolucaoIndiceDeDesenvolvimentoHumanoPorMunicipio(
             @Parameter(

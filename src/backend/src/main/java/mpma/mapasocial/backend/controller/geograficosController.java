@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import mpma.mapasocial.backend.service.RespostaRequisicao;
 import mpma.mapasocial.backend.service.geograficos.geograficosService;
 
+/**
+ * Controller geográfico responsável por expor endpoints REST para indicadores
+ * geográficos dos municípios do Maranhão.
+ *
+ * O controller delega as consultas de área territorial e densidade demográfica
+ * ao serviço geográfico e retorna os resultados usando o formato padrão de
+ * resposta do projeto.
+ */
 @RestController
 @RequestMapping("/geograficos")
 @Tag(name = "Geográficos", description = "Endpoints para dados geográficos")
@@ -26,6 +34,16 @@ public class geograficosController {
     @Autowired
     private RespostaRequisicao service;
 
+    /**
+     * Busca a área total do município informado em quilômetros quadrados.
+     *
+     * O endpoint repassa o nome do município para o serviço geográfico e retorna
+     * o valor estruturado no formato de resposta padrão. Quando o serviço não
+     * encontra dados, responde com HTTP 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com o valor da área total ou 204 quando não houver dados
+     */
     @Operation(summary = "Busca a área total do município",
             description = "Retorna o valor da área total (em km²) do município com base no nome do município informado")
     @ApiResponses(value = {
@@ -83,6 +101,16 @@ public class geograficosController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    /**
+     * Busca a densidade demográfica do município informado, em habitantes por km².
+     *
+     * O controller solicita o cálculo ao serviço geográfico e envelopa o resultado
+     * no padrão de resposta do projeto. Quando não há dados para o município,
+     * retorna HTTP 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com o valor da densidade demográfica ou 204 quando não houver dados
+     */
     @Operation(summary = "Busca a densidade demográfica do município",
             description = "Retorna o valor da densidade demográfica (em habitantes por km²) do município com base no nome do município informado")
     @ApiResponses(value = {

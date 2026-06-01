@@ -15,6 +15,13 @@ import mpma.mapasocial.backend.service.economicos.economicosService;
 
 import java.util.HashMap;
 
+/**
+ * Controller de dados econômicos responsável por expor endpoints REST para
+ * indicadores de Produto Interno Bruto no estado do Maranhão.
+ *
+ * As requisições são encaminhadas ao serviço econômico e retornam resultados
+ * no formato padrão de resposta do projeto.
+ */
 @RestController
 @RequestMapping("/economicos")
 @CrossOrigin("http://localhost:3000")
@@ -26,6 +33,16 @@ public class economicosController {
     @Autowired
     private RespostaRequisicao RespostaRequisicao;
 
+    /**
+     * Busca o Produto Interno Bruto municipal para o município informado.
+     *
+     * O método repassa o nome do município para o serviço econômico e, se o
+     * resultado estiver disponível, retorna o PIB encapsulado na resposta
+     * padrão do projeto. Quando não houver dados, retorna 204.
+     *
+     * @param municipio nome do município para busca textual
+     * @return ResponseEntity com o PIB municipal ou 204 quando não houver dados
+     */
     @Operation(summary = "Busca o Produto Interno Bruto municipal",
     description = "Retorna o PIB do municípip informado")
     @ApiResponses(value = {
@@ -91,6 +108,15 @@ public class economicosController {
         );
         return ResponseEntity.ok().body(resposta);
     }
+
+    /**
+     * Busca o Produto Interno Bruto agregado mais recente do estado do Maranhão.
+     *
+     * O endpoint consulta o serviço econômico e retorna o PIB estadual no formato
+     * padrão do projeto. Caso o serviço não encontre resultado, retorna 204.
+     *
+     * @return ResponseEntity com o PIB agregado ou 204 quando não houver dados
+     */
     @GetMapping("/buscarProdutoInternoBrutoAgregado")
     public ResponseEntity<?> buscarProdutoInternoBrutoAgregado(){
         HashMap<String, Object> pibAgregadoEstadual = economicosService.produtoInternoBrutoAgregadoRecente();

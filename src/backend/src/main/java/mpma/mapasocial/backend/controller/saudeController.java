@@ -17,6 +17,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import mpma.mapasocial.backend.service.saude.saudeService;
 import mpma.mapasocial.backend.service.RespostaRequisicao;
 
+/**
+ * Controller responsável por expor os endpoints de saúde do backend.
+ *
+ * Os métodos desta classe delegam a lógica de negócio ao serviço
+ * {@link mpma.mapasocial.backend.service.saude.saudeService} e utilizam
+ * {@link RespostaRequisicao} para construir respostas consistentes.
+ */
 @RestController
 @RequestMapping("/saude")
 @CrossOrigin("http://localhost:3000")
@@ -29,6 +36,13 @@ public class saudeController {
     @Autowired
     private saudeService saudeService;
 
+    /**
+     * Endpoint que retorna a idade mediana da população para o município solicitado.
+     *
+     * O método chama {@link saudeService#buscarIdadeMedianaPorMunicipio(String, String)}
+     * e retorna um corpo de resposta padronizado. Se não houver dados, responde com 204;
+     * em caso de exceção, responde com 500 e a mensagem de erro.
+     */
     @Operation(
             summary = "Busca a idade mediana por município",
             description = "Retorna o valor da idade mediana da população com base no município informado"
