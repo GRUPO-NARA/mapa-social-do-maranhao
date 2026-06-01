@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Serviço responsável por orquestrar a consulta de informações SIDRA para um município.
+ *
+ * A classe delega a obtenção dos dados ao repositório, faz parse do JSON retornado
+ * e converte o resultado em uma lista de DTOs usados pela camada de apresentação.
+ */
 @Service
 public class Informacoes {
 
@@ -19,6 +25,16 @@ public class Informacoes {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Busca os principais dados SIDRA de um município e formata o JSON em DTOs.
+     *
+     * O método chama o repositório para obter uma string JSON. Se não houver conteúdo,
+     * retorna lista vazia. Caso contrário, faz o parse do JSON em um array e itera cada
+     * elemento, extraindo os campos esperados para montar os objetos de saída.
+     *
+     * @param municipio nome do município usado na consulta SIDRA
+     * @return lista de DadosPrincipaisSidraDTO contendo indicador, valor e data de coleta
+     */
     public List<DadosPrincipaisSidraDTO> dadosPrincipaisSIDRA(String municipio) {
         String jsonResult = informacoesRepository.buscarDadosPrincipaisSIDRA(municipio);
 
@@ -30,7 +46,7 @@ public class Informacoes {
 
         try {
             JsonNode arrayNode = objectMapper.readTree(jsonResult);
-            // Mudar o formato dos dados do valor para Object
+            // Parse do JSON retornado pelo repositório e conversão em lista de DTOs
             if (arrayNode.isArray()) {
                 for (JsonNode node : arrayNode) {
                     String indicador = node.get("indicador").asText();

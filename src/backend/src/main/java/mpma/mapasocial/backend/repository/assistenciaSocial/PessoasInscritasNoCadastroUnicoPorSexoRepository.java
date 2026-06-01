@@ -8,8 +8,23 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository para o indicador de pessoas inscritas no Cadastro Único por sexo.
+ *
+ * Esta interface representa a persistência do indicador na camada de Assistência Social,
+ * retornando apenas o registro mais recente por município.
+ */
 @Repository
 public interface PessoasInscritasNoCadastroUnicoPorSexoRepository extends JpaRepository<pessoasInscritasNoCadastroUnicoPorSexoEntity, Long> {
+    /**
+     * Busca o valor do indicador de pessoas inscritas no Cadastro Único por sexo para o município informado.
+     *
+     * A query nativa ordena por referência decrescente e limita o resultado a one para garantir a
+     * recuperação da fotografia mais atual no banco de dados, ignorando registros anteriores.
+     *
+     * @param municipio nome do município usado na pesquisa
+     * @return Optional<Long> valor do indicador no registro mais recente encontrado
+     */
     @Query(value = "SELECT ps.valor " +
                    "FROM assistencia_social.pessoas_inscritas_no_cadastro_unico_por_sexo ps " +
                    "JOIN dados_estadual.referencias_codigos_municipais i ON ps.cod_municipio = i.codigo_ibge " +
