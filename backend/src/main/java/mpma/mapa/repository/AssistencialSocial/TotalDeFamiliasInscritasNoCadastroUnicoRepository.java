@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
  * de assistênca social, evitando a exposição de registros históricos defasados.
  */
 @Repository
-public interface TotalDeFamiliasInscritasNoCadastroUnicoRepository extends JpaRepository<totalDeFamiliasInscritasNoCadastroUnicoEntity, Long> {
-    @Query(value = "SELECT tf.valor FROM assistencia_social.total_familias_inscritas_cadastro_unico tf " +
+public interface TotalDeFamiliasInscritasNoCadastroUnicoRepository extends JpaRepository<TotalDeFamiliasInscritasNoCadastroUnicoEntity, Long> {
+    @Query(value = "SELECT tf.valor FROM assistencia_social.total_de_familias_inscritas_no_cadastro_unico tf " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON tf.cod_municipio = i.codigo_ibge " +
             "WHERE i.municipio ILIKE :municipio " +
             "ORDER BY tf.referencia DESC " +
