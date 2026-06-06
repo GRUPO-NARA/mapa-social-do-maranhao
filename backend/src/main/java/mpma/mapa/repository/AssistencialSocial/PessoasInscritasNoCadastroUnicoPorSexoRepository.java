@@ -16,12 +16,6 @@ import java.util.Optional;
  */
 @Repository
 public interface PessoasInscritasNoCadastroUnicoPorSexoRepository extends JpaRepository<PessoasInscritasNoCadastroUnicoPorSexoEntity, Long> {
-    @Query(value = "SELECT ps.valor FROM assistencia_social.pessoas_inscritas_cadastro_unico_sexo ps " +
-            "JOIN dados_estadual.referencias_codigos_municipais i ON ps.cod_municipio = i.codigo_ibge " +
-            "WHERE ps.referencia = :ano AND i.municipio ILIKE :municipio",
-            nativeQuery = true)
-    Long buscarPessoasInscritasNoCadastroUnicoPorSexo(@Param("ano") Integer ano, @Param("municipio") String municipio);
-public interface PessoasInscritasNoCadastroUnicoPorSexoRepository extends JpaRepository<pessoasInscritasNoCadastroUnicoPorSexoEntity, Long> {
     /**
      * Busca o valor do indicador de pessoas inscritas no Cadastro Único por sexo para o município informado.
      *

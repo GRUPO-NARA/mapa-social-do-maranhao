@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * que seja devolvido apenas o registro mais recente disponível.
  */
 @Repository
-public interface ProgramaAuxilioGasParaBrasileiroRepository extends JpaRepository<programaAuxilioGasParaBrasileiroEntity, Long> {
+public interface ProgramaAuxilioGasParaBrasileiroRepository extends JpaRepository<ProgramaAuxilioGasParaBrasileiroEntity, Long> {
     @Query(value = "SELECT pag.valor FROM assistencia_social.programa_auxilio_gas_para_brasileiros pag " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON pag.cod_municipio = i.codigo_ibge " +
             "WHERE i.municipio ILIKE :municipio " +

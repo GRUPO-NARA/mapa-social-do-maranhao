@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
  * selecionando o registro mais recente por município para evitar informações defasadas.
  */
 @Repository
-public interface PessoasInscritasNoCadastroUnicoPorRacaECorRepository extends JpaRepository<pessoasInscritasNoCadastroUnicoPorRacaECorEntity, Long> {
-    @Query(value = "SELECT prc.valor FROM assistencia_social.pessoas_inscritas_cadastro_unico_raca_cor prc " +
+public interface PessoasInscritasNoCadastroUnicoPorRacaECorRepository extends JpaRepository<PessoasInscritasNoCadastroUnicoPorRacaECorEntity, Long> {
+    @Query(value = "SELECT prc.valor FROM assistencia_social.pessoas_inscritas_no_cadastro_unico_por_raca_e_cor prc " +
             "JOIN dados_estadual.referencias_codigos_municipais i ON prc.cod_municipio = i.codigo_ibge " +
             "WHERE i.municipio ILIKE :municipio " +
             "ORDER BY prc.referencia DESC " + // Corrigido o espaçamento e adicionada a ordenação decrescente

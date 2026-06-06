@@ -15,7 +15,7 @@ import java.util.Optional;
  * mais recente seja devolvido para evitar duplicidades em diferentes anos de referência.
  */
 @Repository
-public interface FamiliasEmSituacaoDeTrabalhoInfantilCadastroUnicoRepository extends JpaRepository<familiasEmSituacaoDeTrabalhoInfantilCadastroUnicoEntity, Long> {
+public interface FamiliasEmSituacaoDeTrabalhoInfantilCadastroUnicoRepository extends JpaRepository<FamiliasEmSituacaoDeTrabalhoInfantilCadastroUnicoEntity, Long> {
     /**
      * Busca a quantidade de famílias em situação de trabalho infantil inscritas no Cadastro Único para o município informado.
      *
