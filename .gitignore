@@ -1,57 +1,24 @@
-# Variáveis de ambiente
-.env
-.env.local
-.env.*.local
-.env.*.example
+# Environment files
+.env.docker
+.env.localhost
+.env.development
+.env.production
+.env.test
 
-# Backend (Java/Maven)
-src/backend/target/
-src/backend/*.iml
-src/backend/.classpath
-src/backend/.project
-src/backend/.settings/
-src/backend/.gradle/
+# Permitir apenas o exemplo
+!.env.example
 
-# ETL (Python)
-src/ETL/.ambiente-virtual-desenvolvimento/
-src/ETL/venv/
-src/ETL/env/
-src/ETL/ENV/
-src/ETL/.venv/
-src/ETL/*.pyc
-src/ETL/__pycache__/
-src/ETL/.pytest_cache/
-src/ETL/.coverage
-src/ETL/htmlcov/
-src/ETL/logs/
-src/ETL/*.log
-**/__pycache__/
-**/.pytest_cache/
+.venv/
 
+# Next.js
+.next/
 
-# Frontend (Next.js)
-src/frontend/node_modules/
-src/frontend/.next/
-src/frontend/out/
-src/frontend/npm-debug.log
-src/frontend/yarn-error.log
+# Node
+node_modules/
 
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-*.sublime-project
-*.sublime-workspace
-*.code-workspace
+# Python
+__pycache__/
+*.pyc
 
-# Arquivos do sistema
-.DS_Store
-Thumbs.db
-.gitkeep
-
-# Arquivos temporários
-*.tmp
-*.bak
-*.backup
+# Java
+target/
