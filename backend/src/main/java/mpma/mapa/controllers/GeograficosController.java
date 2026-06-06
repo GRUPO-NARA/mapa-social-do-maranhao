@@ -20,6 +20,7 @@ import mpma.mapa.service.Geograficos.GeograficosService;
 
 import java.util.HashMap;
 
+
 @RestController
 @RequestMapping("/geograficos")
 @RateLimiter(name = "RateLimiter")
@@ -32,8 +33,8 @@ public class GeograficosController {
     @Autowired
     private Resposta resposta;
 
-    @Operation(summary = "Busca a área territorial do município",
-            description = "Retorna o valor da área territorial (em km²) do município com base no nome do município informado")
+    @Operation(summary = "Busca a área total do município",
+            description = "Retorna o valor da área total (em km²) do município com base no nome do município informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Área territorial encontrada e retornada com sucesso!",
@@ -77,6 +78,7 @@ public class GeograficosController {
         );
         return ResponseEntity.ok().body(respostaDaRequisicao);
     }
+
 
     @Operation(summary = "Busca a densidade demográfica do município",
             description = "Retorna o valor da densidade demográfica (em habitantes por km²) do município com base no nome do município informado")

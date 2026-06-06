@@ -20,6 +20,7 @@ import mpma.mapa.service.Resposta;
 
 import java.util.HashMap;
 
+
 @RestController
 @RequestMapping("/saude")
 @RateLimiter(name = "RateLimiter")
@@ -44,7 +45,6 @@ public class SaudeController {
                       "Indicador da Requisição": "Idade Mediana do Município de São Luís"
                     }"""))),
             @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"error\": \"Parâmetros de entrada inválidos\"}"))),
-            @ApiResponse(responseCode = "404", description = "Dados não encontrados", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"error\": \"Dados de idade mediana não encontrados para o município e ano informados\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"error\": \"Ocorreu um erro ao processar a requisição\"}")))
     })
     @GetMapping("/idadeMediana")
