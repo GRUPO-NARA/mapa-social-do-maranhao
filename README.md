@@ -1,466 +1,462 @@
-# 🗺️ Mapa Social do Maranhão
+# Mapa Social do Maranhão
 
-O **Mapa Social do Maranhão** é um projeto desenvolvido pelo **NARA - Núcleo de Análise e Recursos Analíticos** juntamente ao **Ministério Público do Maranhão** com o propósito de fornecer visibilidade a dados públicos de **Educação**, **Saúde** e **Assistência Social** para a população e governantes do estado. Dessa forma, proporcionando entendimento da situação dos municípios e do estado, podendo influenciar na tomada de decisões para a melhoria da qualidade de vida da população.
+O **Mapa Social do Maranhão** reúne indicadores públicos dos 217 municípios
+maranhenses em uma interface única, facilitando a consulta e a comparação de
+informações demográficas, geográficas, econômicas, de saúde e de assistência
+social.
 
-> ⚠️ **Nota**: Esta documentação refere-se à execução local do projeto para desenvolvimento e testes. Futuramente, o Mapa Social do Maranhão será integrado à plataforma oficial do **Ministério Público do Maranhão**.
+O projeto é desenvolvido pelo **NARA - Núcleo de Análise e Recursos
+Analíticos**, em colaboração com o **Ministério Público do Maranhão (MPMA)**.
 
----
+> Esta documentação descreve a execução do projeto em ambiente local para
+> desenvolvimento e testes.
 
-## 📋 Índice
+## Visão geral
 
-- [Resumo](#-resumo)
-- [Importância do Projeto](#-importância-do-projeto)
-- [Cobertura dos Dados](#-cobertura-dos-dados)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Fluxograma da Aplicação](#-fluxograma-da-aplicação)
-- [Estruturação do Projeto](#-estruturação-do-projeto)
-- [Endpoints da API](#-endpoints-da-api)
-- [Como Rodar a Aplicação](#️-como-rodar-a-aplicação)
-- [Testando a API](#-testando-a-api)
-- [Integração com o MPMA](#️-integração-com-o-ministério-público-do-maranhão)
-- [Desenvolvedores](#-desenvolvedores-e-contato)
+A aplicação é formada por quatro serviços:
 
----
-
-## 📄 Resumo
-
-- **Objetivo**: Centralizar e visualizar dados públicos de múltiplas fontes governamentais
-- **Cobertura**: 217 municípios do Maranhão com mais de 20 indicadores
-- **Fontes de Dados**: SIDRA (IBGE), SAGICAD (Cidadania), IPEADATA
-- **Público-alvo**: Governantes, pesquisadores, população em geral
-- **Tecnologia**: Full-stack moderno (Next.js, Spring Boot, PostgreSQL)
-- **Disponibilidade**: API REST documentada, frontend responsivo, dados atualizados automaticamente
-
----
-
-## 📌 Importância do Projeto
-
-O objetivo do projeto é disponibilizar dados públicos de forma simplificada e confiável para governantes e população, priorizando a transparência das fontes de coleta e o salvamento das informações.
-
-Além disso, a importância do Mapa Social é proporcionar um agrupamento de dados que outrora estavam separados em diferentes órgãos municipais e estaduais. Dessa forma, simplificando o processo de coleta e visualização.
-
----
-
-## 📶 Cobertura dos Dados
-
-> Todos os dados obtidos podem ser encontrados em suas respectivas fontes originais. Priorizamos somente fontes confiáveis.
-
-- **SIDRA** — https://sidra.ibge.gov.br/acervo#/S/Q
-- **SAGICAD** — https://aplicacoes.cidadania.gov.br/vis/data3/data-explorer.php
-- **IPEADATA** — https://www.ipeadata.gov.br/Default.aspx
-- **IBGE Cidades** — https://cidades.ibge.gov.br/
-
-### 👥 Demográficos
-
-| Fonte | Indicador | Formato |
-| :---- | :-------: | ------: |
-| SIDRA | População Residente | CSV |
-| SIDRA | Quantidade de Homens | CSV |
-| SIDRA | Quantidade de Mulheres | CSV |
-| SIDRA | Quantidade de Residentes Urbanos | CSV |
-| SIDRA | Quantidade de Residentes Rurais | CSV |
-| SIDRA | População Residente em Favelas | CSV |
-| IPEADATA | Índice de Desenvolvimento Humano | CSV |
-
-### 🗺️ Geográficos
-
-| Fonte | Indicador | Formato |
-| :---- | :-------: | ------: |
-| SIDRA | Área Territorial | CSV |
-| SIDRA | Densidade Demográfica | CSV |
-
-### 💰 Econômicos
-
-| Fonte | Indicador | Formato |
-| :---- | :-------: | ------: |
-| SIDRA | Produto Interno Bruto | CSV |
-
-### 📚 Educação
-
-> 🚧 Indicadores de educação em desenvolvimento. Serão adicionados em breve.
-
-### 🏥 Saúde
-
-| Fonte | Indicador | Formato |
-| :---- | :-------: | ------: |
-| SIDRA | Percentual de Envelhecimento | CSV |
-| SIDRA | Idade Mediana | CSV |
-| SIDRA | Pessoas de 2 Anos ou Mais com Deficiência | CSV |
-
-### 🤝 Assistência Social
-
-| Fonte | Indicador | Formato |
-| :---- | :-------: | ------: |
-| SAGICAD | Total de Famílias Inscritas no Cadastro Único | CSV |
-| SAGICAD | Famílias em Situação de Trabalho Infantil — Cadastro Único | CSV |
-| SAGICAD | Famílias em Situação de Rua Inscritas no Cadastro Único | CSV |
-| SAGICAD | Programa Auxílio Gás para Brasileiros | CSV |
-| SAGICAD | Pessoas Inscritas no Cadastro Único por Sexo | CSV |
-| SAGICAD | Pessoas Inscritas no Cadastro Único por Raça e Cor | CSV |
-| SAGICAD | Pessoas com Deficiência Cadastradas no Cadastro Único | CSV |
-| IPEADATA | Domicílios com Água Encanada | CSV |
-| IPEADATA | Domicílios com Energia Elétrica | CSV |
-
----
-
-## 💻 Tecnologias Utilizadas
-
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white) ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
-
-> A fim de proporcionar manutenibilidade e escalabilidade da aplicação para futuras atualizações e acervo de diferentes dados, estas são as tecnologias que utilizamos no desenvolvimento do projeto:
-
-**Frontend**
-- **Next.js** — Framework focado na criação de aplicações web responsivas e ágeis para dispositivos móveis e desktop.
-- **TailwindCSS** — Estilização do Mapa Social com praticidade no desenvolvimento para dispositivos móveis.
-
-**Backend**
-- **Spring Boot** — Framework utilizado na criação de APIs escaláveis, seguras e de fácil manutenção, com bom suporte para grandes volumes de requisições de dados.
-- **Java** — Linguagem de programação confiável no mercado, priorizando robustez e tipagem forte.
-- **Python** — Linguagem de programação muito utilizada em análise de dados, com suporte a processos de aprendizado de máquina e processamento de linguagem natural.
-
-**Dados**
-- **PostgreSQL** — Banco de dados relacional que prioriza escalabilidade e suporte a grandes fluxos de dados, realizando consultas de forma rápida e segura.
-- **Pandas** — Biblioteca utilizada no processo de ETL (Extração, Transformação e Carregamento) dos dados, oferecendo suporte a diferentes tipos e formatos de dados.
-
----
-
-## 🔄 Fluxograma da Aplicação
-
-> Todo o processo de coleta, tratamento, salvamento e visualização dos dados é feito de forma automatizada e assíncrona.
+| Serviço | Tecnologia | Responsabilidade |
+| --- | --- | --- |
+| Frontend | Next.js e TypeScript | Interface para visualização dos indicadores |
+| Backend | Spring Boot e Java | API REST que consulta os dados |
+| Pipeline | Python e Pandas | Coleta, tratamento e carga dos dados |
+| Banco de dados | PostgreSQL | Armazenamento dos indicadores processados |
 
 ```mermaid
 flowchart LR
-    A["Usuário"]
-    B["Next.js"]
-    C["Spring Boot"]
-    D["PostgreSQL"]
-    E["Python/ETL"]
-    F["SIDRA / SAGICAD / IPEADATA / IBGE"]
+    fontes["SIDRA / SAGICAD / IPEADATA"]
+    pipeline["Pipeline Python"]
+    banco["PostgreSQL"]
+    backend["API Spring Boot"]
+    frontend["Frontend Next.js"]
+    usuario["Usuário"]
 
-    A --> B
-    B --> |"requisição"| C
-    C --> |"resposta"| B
-    D <--> |"leitura"| C
-    E --> |"salva"| D
-    F --> |"coleta"| E
+    fontes -->|"coleta"| pipeline
+    pipeline -->|"tratamento e carga"| banco
+    banco -->|"consulta"| backend
+    backend -->|"API REST"| frontend
+    frontend --> usuario
 ```
 
----
+## Início rápido com Docker
 
-## 📁 Estruturação do Projeto
+Esta é a maneira recomendada de executar o projeto completo. É necessário ter
+o [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e
+em execução.
 
-```
-📦 MAPA SOCIAL DO MARANHÃO
-    ├── 📂 frontend (Next.js + TypeScript)
-    │   ├── app/                          # Layout principal e páginas
-    │   ├── components/                   # Componentes React reutilizáveis
-    │   │   ├── MapaComponent.tsx         # Visualização de dados geográficos
-    │   │   ├── GraficoCompativoComponent.tsx # Gráficos comparativos
-    │   │   ├── IndicadoresPrincipaisComponent.tsx # KPIs principais
-    │   │   └── ...
-    │   ├── utils/                        # Utilitários e helpers
-    │   ├── .env.local                    # Variáveis de ambiente (não versionado)
-    │   └── package.json                  # Dependências do frontend
-    │
-    ├── 📂 backend (Spring Boot + Java)
-    │   ├── src/main/java/mpma/mapa/
-    │   │   ├── controllers/              # Endpoints da API REST
-    │   │   │   ├── DemograficosController.java
-    │   │   │   ├── GeograficosController.java
-    │   │   │   ├── EconomicosController.java
-    │   │   │   ├── SaudeController.java
-    │   │   │   ├── EstadualController.java
-    │   │   │   └── ...
-    │   │   ├── service/                  # Lógica de negócio
-    │   │   ├── repository/               # Acesso a dados (JPA)
-    │   │   ├── entity/                   # Modelos JPA
-    │   │   └── config/                   # Configurações do Spring
-    │   ├── pom.xml                       # Dependências do backend
-    │   └── mvnw                          # Maven wrapper
-    │
-    └── 📂 pipeline (Python)
-        ├── main.py                       # Script principal de ETL
-        ├── fluxo/
-        │   ├── coleta.py                 # Coleta de dados das APIs
-        │   ├── tratamento.py             # Limpeza e transformação
-        │   └── salvamento.py             # Persistência em banco de dados
-        ├── tratamentos/                  # Tratamentos por fonte de dados
-        │   ├── SIDRA.py
-        │   ├── SAGICAD.py
-        │   ├── IPEADATA.py
-        │   └── AprendizadoQEDU.py
-        ├── apoio/                        # Funções auxiliares
-        ├── informacoes/                  # Dados de referência
-        ├── config/                       # Configurações de Loggers e arquivos
-        └── requirements.txt              # Dependências Python
-```
-
----
-
-## 🔌 Endpoints da API
-
-### Base URL: `http://localhost:8080`
-
-#### 📊 Dados Estaduais
-
-| Método | Endpoint | Descrição | Parâmetros |
-| :----: | :------- | :-------: | ---------: |
-| GET | `/estadual/municipios` | Lista todos os municípios do Maranhão | — |
-
-#### 👥 Dados Demográficos
-
-| Método | Endpoint | Descrição | Parâmetros |
-| :----: | :------- | :-------: | ---------: |
-| GET | `/demograficos/populacao` | População total de um município | `municipio` (string) |
-| GET | `/demograficos/populacaoEstadualRecente` | População total do estado | — |
-| GET | `/demograficos/quantidadeDeHomens` | Quantidade de homens por município | `municipio` (string) |
-| GET | `/demograficos/quantidadeDeMulheres` | Quantidade de mulheres por município | `municipio` (string) |
-| GET | `/demograficos/idh` | Índice de Desenvolvimento Humano | `municipio` (string) |
-| GET | `/demograficos/quantidadeDeResidentesRurais` | Quantidade de residentes rurais | `municipio` (string) |
-| GET | `/demograficos/evolucaoIDH` | Evolução do Índice de Desenvolvimento Humano | `municipio` (string) |
-
-#### 🗺️ Dados Geográficos
-
-| Método | Endpoint | Descrição | Parâmetros |
-| :----: | :------- | :-------: | ---------: |
-| GET | `/geograficos/areaTotal` | Área territorial de um município (km²) | `municipio` (string) |
-| GET | `/geograficos/densidadeDemografica` | Densidade demográfica (hab/km²) | `municipio` (string) |
-
-#### 💰 Dados Econômicos
-
-| Método | Endpoint | Descrição | Parâmetros |
-| :----: | :------- | :-------: | ---------: |
-| GET | `/economicos/produtoInternoBruto` | PIB municipal | `municipio` (string) |
-| GET | `/economicos/produtoInternoBrutoAgregadoEstadual` | PIB agregado do estado | — |
-
-#### 🏥 Dados de Saúde
-
-| Método | Endpoint | Descrição | Parâmetros |
-| :----: | :------- | :-------: | ---------: |
-| GET | `/saude/idadeMediana` | Idade mediana da população | `municipio` (string) |
-
-#### 📋 Informações Gerais
-
-| Método | Endpoint | Descrição | Parâmetros |
-| :----: | :------- | :-------: | ---------: |
-| GET | `/informacoes/dadosPrincipaisMunicipal` | Dados principais de um município | `municipio` (string) |
-
----
-
-## 🛠️ Como Rodar a Aplicação
-
-> Para executar a aplicação com sucesso são necessárias as seguintes tecnologias:
-
-| Tecnologia | Versão Recomendada |
-| :--------- | :----------------: |
-| Node.js | 18+ |
-| Python | 3.11+ |
-| Java (JDK) | 17+ |
-| Docker | 24+ |
-
-**Todas as tecnologias podem ser baixadas nos respectivos links abaixo:**
-- [Node.js](https://nodejs.org/en/download) — necessário para rodar o Next.js
-- [Python](https://www.python.org/downloads)
-- [Java JDK 17](https://www.oracle.com/java/technologies/downloads/#java17)
-- [Docker](https://www.docker.com/products/docker-desktop)
-
----
-
-### 📥 1 — Clonar o repositório
+### 1. Clone o repositório
 
 ```bash
 git clone https://github.com/GRUPO-NARA/mapa-social-do-maranhao.git
-```
-
-### 📂 2 — Entrar na pasta do projeto
-
-```bash
 cd mapa-social-do-maranhao
 ```
 
----
+### 2. Crie o arquivo de ambiente
 
-### ⚙️ Configuração de Variáveis de Ambiente
+No PowerShell:
 
-O repositório contém exemplos de arquivos `.env` com os modelos necessários. Copie cada um, renomeie removendo o `.exemplo` e preencha com os seus valores.
+```powershell
+Copy-Item .env.exemplo .env
+```
 
-### 3 — Criar o arquivo `.env` na raiz do projeto
+No Linux ou macOS:
 
 ```bash
 cp .env.exemplo .env
 ```
 
-O arquivo `.env.exemplo` contém todas as variáveis necessárias para execução do projeto:
+Abra o arquivo `.env` e substitua `sua_senha_aqui` por uma senha local. A mesma
+senha deve ser usada em `POSTGRES_PASSWORD`, `SQLALCHEMY_DATABASE_URI` e
+`SPRING_DATASOURCE_PASSWORD`.
+
+Exemplo:
 
 ```env
-# PostgreSQL
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=sua_senha_aqui
+POSTGRES_PASSWORD=minha_senha
 POSTGRES_DB=postgres
 
-# Pipeline (Python)
-SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://postgres:sua_senha_aqui@db:5432/postgres
+SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://postgres:minha_senha@db:5432/postgres
 
-# Backend (Spring Boot)
 SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
 SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=sua_senha_aqui
+SPRING_DATASOURCE_PASSWORD=minha_senha
 
 BACKEND_PORT=8080
 BACKEND_HOST=0.0.0.0
-
-# Frontend
 NEXT_PUBLIC_API_URL=http://localhost:8080
-
-# CORS
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-Para ambiente de desenvolvimento local, basta substituir `sua_senha_aqui` pela senha desejada do PostgreSQL.
+> Se a senha contiver caracteres especiais, eles podem precisar ser
+> codificados na URL de `SQLALCHEMY_DATABASE_URI`. Para evitar esse problema no
+> ambiente de desenvolvimento, prefira uma senha alfanumérica.
 
-### 4 — Criar o arquivo `.env.local` na pasta `/frontend`
+### 3. Suba a aplicação
+
+```bash
+docker compose up --build
+```
+
+Na primeira execução, o Docker precisa baixar as imagens e instalar as
+dependências. Além disso, o pipeline coleta e processa os indicadores antes de
+liberar o backend. Por isso, a inicialização pode levar alguns minutos.
+
+Quando a aplicação estiver pronta:
+
+| Recurso | Endereço |
+| --- | --- |
+| Frontend | http://localhost:3000 |
+| API | http://localhost:8080 |
+| Swagger UI | http://localhost:8080/swagger-ui/index.html |
+| Saúde da API | http://localhost:8080/actuator/health |
+
+O PostgreSQL fica disponível apenas para os serviços da rede Docker e não é
+publicado diretamente em uma porta do computador.
+
+### Comandos úteis
+
+Executar em segundo plano:
+
+```bash
+docker compose up --build -d
+```
+
+Ver o estado dos serviços:
+
+```bash
+docker compose ps -a
+```
+
+Acompanhar os logs:
+
+```bash
+docker compose logs -f
+```
+
+Ver apenas os logs do frontend:
+
+```bash
+docker compose logs -f frontend
+```
+
+Parar os serviços:
+
+```bash
+docker compose down
+```
+
+Apagar também o banco local e reprocessar todos os dados na próxima execução:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+> `docker compose down -v` remove permanentemente o volume do PostgreSQL.
+
+### Comportamento esperado dos containers
+
+O serviço `pipeline` é executado uma vez durante a inicialização. Depois que a
+carga termina com sucesso, seu estado aparece como `Exited (0)`. Isso é
+esperado: o backend só inicia depois que o pipeline termina, e o frontend só
+inicia quando a API está saudável.
+
+## Execução local para desenvolvimento
+
+Neste modo, cada parte da aplicação roda diretamente no computador. É útil
+para desenvolver com recarregamento automático e acompanhar os logs de cada
+serviço separadamente.
+
+### Pré-requisitos
+
+| Tecnologia | Versão recomendada |
+| --- | --- |
+| Node.js | 22 |
+| Python | 3.11 |
+| Java JDK | 17 ou superior |
+| PostgreSQL | 14 ou superior |
+
+Também é necessário ter uma instância local do PostgreSQL em execução. Os
+exemplos abaixo consideram:
+
+```text
+host: localhost
+porta: 5432
+banco: postgres
+usuário: postgres
+senha: minha_senha
+```
+
+Altere os valores conforme a configuração da sua máquina.
+
+### Ordem de inicialização
+
+No modo local, execute os componentes nesta ordem:
+
+1. PostgreSQL
+2. Pipeline
+3. Backend
+4. Frontend
+
+O pipeline cria e alimenta as tabelas consumidas pelo backend.
+
+### 1. Execute o pipeline
+
+Abra um terminal na raiz do projeto.
+
+No PowerShell:
+
+```powershell
+cd pipeline
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+$env:SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres:minha_senha@localhost:5432/postgres"
+python main.py
+```
+
+No Linux ou macOS:
+
+```bash
+cd pipeline
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+export SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres:minha_senha@localhost:5432/postgres"
+python main.py
+```
+
+Aguarde a mensagem `ETL concluído com sucesso!` antes de iniciar o backend.
+
+### 2. Execute o backend
+
+Abra outro terminal na raiz do projeto.
+
+No PowerShell:
+
+```powershell
+$env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/postgres"
+$env:SPRING_DATASOURCE_USERNAME="postgres"
+$env:SPRING_DATASOURCE_PASSWORD="minha_senha"
+$env:BACKEND_PORT="8080"
+$env:BACKEND_HOST="0.0.0.0"
+$env:CORS_ALLOWED_ORIGINS="http://localhost:3000"
+
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+No Linux ou macOS:
+
+```bash
+export SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/postgres"
+export SPRING_DATASOURCE_USERNAME="postgres"
+export SPRING_DATASOURCE_PASSWORD="minha_senha"
+export BACKEND_PORT="8080"
+export BACKEND_HOST="0.0.0.0"
+export CORS_ALLOWED_ORIGINS="http://localhost:3000"
+
+cd backend
+./mvnw spring-boot:run
+```
+
+Confirme que a API está disponível:
+
+```bash
+curl http://localhost:8080/actuator/health
+```
+
+A resposta esperada é:
+
+```json
+{"status":"UP"}
+```
+
+### 3. Execute o frontend
+
+Abra um terceiro terminal na raiz do projeto.
+
+No PowerShell:
+
+```powershell
+cd frontend
+Copy-Item .env.local.exemplo .env.local
+npm ci
+npm run dev
+```
+
+No Linux ou macOS:
 
 ```bash
 cd frontend
 cp .env.local.exemplo .env.local
+npm ci
+npm run dev
 ```
 
-Conteúdo do arquivo:
+O arquivo `frontend/.env.local` deve conter:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
-Essa variável informa ao frontend onde a API Spring Boot está disponível durante o desenvolvimento local.
+Acesse http://localhost:3000.
 
----
+## Testando a API
 
-### 📦 Instalação de Dependências
+A documentação interativa está disponível no
+[Swagger UI](http://localhost:8080/swagger-ui/index.html).
 
-### 5 — Instalar dependências do Frontend
-
-> Dentro da pasta `/frontend`, execute:
-
-```bash
-npm install
-```
-
-### 6 — Instalar dependências do ETL (Python)
-
-> Acesse a pasta `/ETL`:
+Alguns exemplos:
 
 ```bash
-cd ../ETL
-```
-
-> Crie um ambiente virtual:
-
-**Windows:**
-```bash
-python -m venv .venv
-```
-
-**Linux/Mac:**
-```bash
-python3 -m venv .venv
-```
-
-> Ative o ambiente virtual:
-
-**Windows:**
-```bash
-.venv\Scripts\activate
-```
-
-**Linux/Mac:**
-```bash
-source .venv/bin/activate
-```
-
-> Instale as dependências:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 7 — Instalar dependências do Backend
-
-> Acesse a pasta `/backend` e execute:
-
-```bash
-cd ../backend
-./mvnw install
-```
-
----
-
-### 🚀 Executando a Aplicação
-
-#### Com Docker (Recomendado)
-
-Com o Docker instalado, na raiz do projeto execute:
-
-```bash
-docker compose --env-file .env up --build -d
-```
-
-
-#### Serviços Docker
-
-Isso sobe todos os serviços automaticamente:
-
-| Serviço | Endereço | Descrição |
-| :------ | :------: | --------: |
-| Frontend (Next.js) | http://localhost:3000 | Visualização dos dados |
-| Backend (Spring Boot) | http://localhost:8080 | API REST |
-| Swagger (Documentação) | http://localhost:8080/swagger-ui.html | Documentação interativa dos endpoints |
-| Banco de Dados (PostgreSQL) | localhost:5432 | Base de dados |
-
-> Caso prefira rodar sem Docker, execute cada serviço separadamente seguindo os passos acima.
-
----
-
-## 🧪 Testando a API
-
-### Usando o Swagger UI
-
-Acesse `http://localhost:8080/swagger-ui.html` para testar os endpoints interativamente.
-
-### Usando curl
-
-```bash
-# Listar todos os municípios
+# Lista os municípios
 curl "http://localhost:8080/estadual/municipios"
 
-# Buscar população de um município
-curl "http://localhost:8080/demograficos/populacao?municipio=São%20Luís"
+# Consulta a população de São Luís
+curl "http://localhost:8080/demograficos/populacao?municipio=S%C3%A3o%20Lu%C3%ADs"
 
-# Buscar PIB municipal
-curl "http://localhost:8080/economicos/produtoInternoBruto?municipio=São%20Luís"
+# Consulta o PIB municipal
+curl "http://localhost:8080/economicos/produtoInternoBruto?municipio=S%C3%A3o%20Lu%C3%ADs"
 
-# Buscar idade mediana
-curl "http://localhost:8080/saude/idadeMediana?municipio=São%20Luís"
+# Consulta os principais dados municipais
+curl "http://localhost:8080/informacoes/dadosPrincipaisMunicipal?municipio=S%C3%A3o%20Lu%C3%ADs"
 ```
 
-### Usando Postman/Insomnia
+### Principais endpoints
 
-Importe a base URL http://localhost:8080 e teste os endpoints listados na seção [Endpoints da API](#-endpoints-da-api).
+| Método | Endpoint | Parâmetro |
+| --- | --- | --- |
+| GET | `/estadual/municipios` | Nenhum |
+| GET | `/demograficos/populacao` | `municipio` |
+| GET | `/demograficos/populacaoEstadualRecente` | Nenhum |
+| GET | `/demograficos/quantidadeDeHomens` | `municipio` |
+| GET | `/demograficos/quantidadeDeMulheres` | `municipio` |
+| GET | `/demograficos/quantidadeDeResidentesRurais` | `municipio` |
+| GET | `/demograficos/idh` | `municipio` |
+| GET | `/demograficos/evolucaoIDH` | `municipio` |
+| GET | `/geograficos/areaTotal` | `municipio` |
+| GET | `/geograficos/densidadeDemografica` | `municipio` |
+| GET | `/economicos/produtoInternoBruto` | `municipio` |
+| GET | `/economicos/produtoInternoBrutoAgregadoEstadual` | Nenhum |
+| GET | `/saude/idadeMediana` | `municipio` |
+| GET | `/informacoes/dadosPrincipaisMunicipal` | `municipio` |
 
----
+## Fontes e indicadores
 
-## 🏛️ Integração com o Ministério Público do Maranhão
+Os dados são obtidos de fontes públicas:
 
-Este projeto está em desenvolvimento e futuramente será integrado à plataforma oficial do **Ministério Público do Maranhão (MPMA)**, permitindo que gestores públicos e a sociedade acessem dados sociais consolidados de forma centralizada e segura.
+- [SIDRA/IBGE](https://sidra.ibge.gov.br/)
+- [SAGICAD](https://aplicacoes.cidadania.gov.br/vis/data3/data-explorer.php)
+- [IPEADATA](https://www.ipeadata.gov.br/)
+- [IBGE Cidades](https://cidades.ibge.gov.br/)
 
----
+Atualmente, o projeto trabalha com indicadores como:
 
-## 👨‍💻 Desenvolvedores e Contato
+- população residente, homens, mulheres e residentes rurais;
+- Índice de Desenvolvimento Humano;
+- área territorial e densidade demográfica;
+- Produto Interno Bruto municipal e estadual;
+- idade mediana e indicadores relacionados à saúde;
+- famílias e pessoas inscritas no Cadastro Único;
+- acesso domiciliar à água encanada e energia elétrica.
 
-> Todos os desenvolvedores fazem parte do **Núcleo de Análise e Recursos Analíticos — NARA**, grupo de discentes do curso de Engenharia da Computação da **Universidade Estadual do Maranhão (UEMA)**. Este projeto é fruto da união de esforços do nosso grupo com o **Ministério Público do Maranhão — MPMA**.
+Indicadores de educação ainda estão em desenvolvimento.
 
-| Membro | Função | GitHub |
-| :----- | :----- | :----: |
-| Júlio César | FullStack & Gestão | [@JulioCesra](https://github.com/JulioCesra) |
+## Estrutura do projeto
+
+```text
+mapa-social-do-maranhao/
+|-- backend/                 API Spring Boot
+|   |-- src/main/java/       controllers, services, repositories e entidades
+|   |-- src/main/resources/  configuração da aplicação
+|   |-- pom.xml
+|   `-- Dockerfile
+|-- frontend/                aplicação Next.js
+|   |-- app/                 páginas e layout
+|   |-- components/          componentes React
+|   |-- public/              imagens e ícones
+|   |-- utils/               funções auxiliares
+|   |-- package.json
+|   `-- Dockerfile
+|-- pipeline/                processo de ETL em Python
+|   |-- fluxo/               coleta, tratamento e salvamento
+|   |-- tratamentos/         regras específicas por fonte
+|   |-- informacoes/         URLs e referências municipais
+|   |-- main.py
+|   |-- requirements.txt
+|   `-- Dockerfile
+|-- docker-compose.yml
+|-- .env.exemplo
+`-- README.md
+```
+
+## Solução de problemas
+
+### O frontend falha durante a instalação no Docker
+
+Reconstrua apenas essa imagem sem cache:
+
+```bash
+docker compose build --no-cache frontend
+docker compose up
+```
+
+O Dockerfile usa `npm ci`, portanto `frontend/package.json` e
+`frontend/package-lock.json` precisam permanecer sincronizados.
+
+### O frontend abre, mas não carrega os dados
+
+Verifique primeiro a saúde do backend:
+
+```bash
+curl http://localhost:8080/actuator/health
+```
+
+Depois confirme que `NEXT_PUBLIC_API_URL` aponta para
+`http://localhost:8080`. Como variáveis `NEXT_PUBLIC_*` são incorporadas
+durante o build do Next.js, reconstrua o frontend após alterar esse valor.
+
+### O backend não conecta ao banco
+
+Confira usuário, senha, host e nome do banco. No Docker, o host deve ser `db`.
+Na execução local, deve ser `localhost`.
+
+```text
+Docker: jdbc:postgresql://db:5432/postgres
+Local:  jdbc:postgresql://localhost:5432/postgres
+```
+
+### A porta 3000 ou 8080 já está em uso
+
+Encerre o processo que ocupa a porta ou altere o mapeamento correspondente em
+`docker-compose.yml`.
+
+### O pipeline aparece como encerrado
+
+Use `docker compose ps -a`. O estado `Exited (0)` indica conclusão normal. Para
+investigar uma saída com erro:
+
+```bash
+docker compose logs pipeline
+```
+
+## Desenvolvimento e contato
+
+Os desenvolvedores fazem parte do **NARA**, grupo de discentes de Engenharia da
+Computação da **Universidade Estadual do Maranhão (UEMA)**.
+
+| Membro | Atuação | GitHub |
+| --- | --- | --- |
+| Júlio César | Full stack e gestão | [@JulioCesra](https://github.com/JulioCesra) |
 | Carlos Vinícius | Frontend | [@amorimcarlos](https://github.com/amorimcarlos) |
 | Bruno Raphael | Backend | [@BrunoAndrade-dev](https://github.com/BrunoAndrade-dev) |
 | Ana Elise | Backend | [@elisasilva06](https://github.com/elisasilva06) |
+
+O projeto está em desenvolvimento e deverá ser integrado futuramente à
+plataforma oficial do Ministério Público do Maranhão.
