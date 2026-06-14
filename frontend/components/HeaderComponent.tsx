@@ -1,7 +1,8 @@
+import Link from 'next/link';
 
 export default function HeaderComponent(){
     return (
-        <header className="flex justify-between items-center p-6 text-white ">     
+        <header className="flex justify-between items-center p-6 text-white">     
             <div className="flex items-center">
                 <img className="h-20 w-30" src="logo.png" alt="" />
                 <div>
@@ -10,13 +11,13 @@ export default function HeaderComponent(){
                 </div>
             </div>
             <ul className="flex gap-4 items-center hidden md:block">
-                <a className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="">Home</a>
+                <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/">Home</Link>
                 <span className="text-[#061F56]">|</span>
-                <a className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="">Educação</a>
+                <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/educacao">Educação</Link>
                 <span className="text-[#061F56]">|</span>
-                <a className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="">Saúde</a>
+                <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/saude">Saúde</Link>
                 <span className="text-[#061F56]">|</span>
-                <a className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="">Assistência Social</a>
+                <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/assistencia">Assistência Social</Link>
             </ul>
             
 
