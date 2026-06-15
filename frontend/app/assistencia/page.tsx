@@ -95,11 +95,11 @@ export default function AssistenciaSocial(){
                     <FiltroComponent/>
                     <MapaComponent municipio="" isFiltrando={false} />
 
-                    <div className="p-4 bg-white md:col-span-1 rounded-2xl border-gray-700 border">
+                    <div className="p-4 bg-gray-600 md:col-span-1 rounded-2xl border-gray-700 border">
                         <Pie data={data} options={options} />
                     </div>
 
-                    <div className="p-4 bg-white md:col-span-1 rounded-2xl border-gray-700 border">
+                    <div className="p-4 bg-gray-600 md:col-span-1 rounded-2xl border-gray-700 border">
                         <p>Domicilios com agua encanada</p>
                     </div>
 
@@ -148,9 +148,17 @@ export default function AssistenciaSocial(){
                         </fieldset>
                     </div>
 
-                    {/* CORREÇÃO: Removido h-20 fixo para o gráfico de linha não ser esmagado */}
                     <div className="p-4 bg-white md:col-span-3 rounded-2xl border-gray-700 border">
                         <Line data={dataLine} options={config.options} />
+                    </div>
+
+                    <div className="grid grid-cols-2 p-4 bg-white md:col-span-5 rounded-2xl border-gray-700 border gap-4 h-40">
+                        <div className="w-full bg-yellow-500 rounded-lg p-2">
+                            <p>LOCAL QUE VAI FICAR A CLUSTERIZAÇÃO</p>
+                        </div>
+                        <div className="w-full bg-yellow-500 rounded-lg p-2">
+                            <p>LOCAL QUE VAI FICAR A PREDIÇÃO</p>
+                        </div>
                     </div>
                 </div>
                 <FooterComponent />

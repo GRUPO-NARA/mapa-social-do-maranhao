@@ -39,7 +39,7 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
     },[])
 
     return (
-        <div className="group flex flex-col gap-4 p-6 h-fit rounded-2xl">
+        <div className="group flex flex-col gap-4 p-6  rounded-2xl bg-gray-600">
             <div className="flex items-center gap-2">
               <p className="w-1 h-6 rounded bg-sky-600"></p>
               <h1 className="text-lg font-bold group-hover:text-sky-800 transition-colors duration-300">Filtros</h1>
