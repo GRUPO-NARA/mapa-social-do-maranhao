@@ -1,6 +1,7 @@
 
 from io import BytesIO
 from fluxo.coleta import FluxoDeColeta
+from tratamentos.IMESC import TratamentoIMESC
 from tratamentos.SIDRA import TratamentoSIDRA
 from tratamentos.SAGICAD import TratamentoSAGICAD
 from tratamentos.IPEADATA import TratamentoIPEADATA
@@ -43,24 +44,27 @@ class FluxoDeTratamento:
             
             # Converte os bytes do arquivo para um objeto de arquivo em memória
             arquivo = BytesIO(bytes_do_arquivo)
-
             try:
-                if fonte_dos_dados == "SIDRA":
+                if fonte_dos_dados == "SIDRAX":
                     tabela = TratamentoSIDRA(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
 
                    
-                elif fonte_dos_dados == "SAGICAD":
+                elif fonte_dos_dados == "SAGICADX":
                     tabela = TratamentoSAGICAD(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
 
-                elif fonte_dos_dados == "IPEADATA":
+                elif fonte_dos_dados == "IPEADATAX":
                     tabela = TratamentoIPEADATA(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
 
+                elif fonte_dos_dados == "IMESC":
+                    tabela = TratamentoIMESC(arquivo, informacoes_do_indicador)
+                    self.tabelas_tratadas[indice] = tabela
+                    logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
                 else:
                     logger_tratamento.warning(f"Fonte '{fonte_dos_dados}' não reconhecida para {indicador}")
                     self.tabelas_tratadas[indice] = None

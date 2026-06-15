@@ -48,7 +48,7 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
     
         if (municipio == "") {
             console.warn("Nenhum município selecionado.")
-            setZoom(6)
+            setZoom(5)
             return
         }
 
@@ -68,7 +68,7 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
     }
 
     return (
-        <div className="col-span-1 md:col-span-3 h-screen">
+        <div className="col-span-1 md:col-span-3">
           <div className="h-screen md:h-full rounded-2xl overflow-hidden ">
             <div className="relative h-full w-full">
               <Map center={coordenadasMunicipio} zoom={zoom}>
