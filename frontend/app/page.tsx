@@ -10,7 +10,7 @@ import { useState } from "react"
 
 export default function Home(){
   const [municipio, setMunicipio] = useState<String>("");
-  const [isFiltrando, setIsFiltrando] = useState(false);
+  const [isFiltrando, setIsFiltrando] = useState<boolean>(false);
 
   return (
     <div className="flex justify-center items-center bg-[#F0F0F0]">
