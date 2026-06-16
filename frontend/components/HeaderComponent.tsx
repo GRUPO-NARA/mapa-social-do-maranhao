@@ -1,6 +1,9 @@
 import Link from 'next/link';
+import MenuMobileComponent from './MenuMobileComponent';
+import { useState } from 'react';
 
 export default function HeaderComponent(){
+    const [menuAberto, setMenuAberto] = useState(false);
     return (
         <header className="flex justify-between items-center p-6 text-white">     
             <div className="flex items-center">
@@ -10,7 +13,7 @@ export default function HeaderComponent(){
                     <p className="text-sm text-[#061F56] hidden md:block">Plataforma de mapeamento social</p>
                 </div>
             </div>
-            <ul className="flex gap-4 items-center hidden md:block">
+            <ul className="flex gap-4 items-center hidden invisible md:block md:visible">
                 <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/">Home</Link>
                 <span className="text-[#061F56]">|</span>
                 <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/educacao">Educação</Link>
@@ -19,6 +22,15 @@ export default function HeaderComponent(){
                 <span className="text-[#061F56]">|</span>
                 <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/assistencia">Assistência Social</Link>
             </ul>
+            <div>
+                <button className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000] md:hidden" onClick={() => {
+                    setMenuAberto(!menuAberto);
+                }}>
+                    ☰
+                </button>
+            </div>
+            <MenuMobileComponent menuAberto={menuAberto} setMenuAberto={setMenuAberto} />
+            
             
 
         </header>
