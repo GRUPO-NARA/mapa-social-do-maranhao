@@ -12,10 +12,10 @@ export default function IndicadoresSociaisComponent(){
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div>
-                                    <h1 className="font-bold text-sm">Taxa de Natalidade</h1>
+                                    <h1 className="font-bold text-sm">Taxa de Analfabetismo 15+</h1>
                                     <p className="text-gray-600 text-sm">por mil habitantes</p>
                                 </div>
-
+                                <span className="rounded bg-gray-100 p-2 text-xs font-semibold w-fit h-fit text-gray-800">Educação</span>
                             </div>
                             <h1 className="font-bold text-2xl">
                                 --
@@ -26,26 +26,64 @@ export default function IndicadoresSociaisComponent(){
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div>
-                                    <h1 className="font-bold text-sm">Mortalidade Infantil</h1>
+                                    <h1 className="font-bold text-sm">Aprovação no Ensino Fundamental</h1>
                                     <p className="text-gray-600 text-sm">por mil habitantes nascidos vivos</p>
                                 </div>
-
+                                <span className="rounded bg-gray-100 p-2 text-xs font-semibold w-fit h-fit text-gray-800">Educação</span>
                             </div>
                             <h1 className="font-bold text-2xl">--</h1>
                         </div>
                     </div>
-                     <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div>
-                                    <h1 className="font-bold text-sm">Taxa de Escolaridade</h1>
+                                    <h1 className="font-bold text-sm">Aprovação no Ensino Médio</h1>
                                     <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
                                 </div>
-      
+                                <span className="rounded bg-gray-100 p-2 text-xs font-semibold w-fit h-fit text-gray-800">Educação</span>
                             </div>
                             <h1 className="font-bold text-2xl">--</h1>
                         </div>
                     </div>  
+                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h1 className="font-bold text-sm">Mortalidade Infantil</h1>
+                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
+                                </div>
+                                <span className="rounded bg-red-100 p-2 text-xs font-semibold w-fit h-fit text-red-800">Saúde</span>
+                            </div>
+                            <h1 className="font-bold text-2xl">--</h1>
+                        </div>
+                    </div>  
+                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h1 className="font-bold text-sm">Nascidos Vivos de Mães Adolescentes</h1>
+                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
+                                </div>
+                                <span className="rounded bg-red-100 p-2 text-xs font-semibold w-fit h-fit text-red-800">Saúde</span>
+                            </div>
+                            <h1 className="font-bold text-2xl">--</h1>
+                        </div>
+                    </div>  
+                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h1 className="font-bold text-sm">Razão de Mortalidade Materna</h1>
+                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
+                                </div>
+                                <span className="rounded bg-red-100 p-2 text-xs font-semibold w-fit h-fit text-red-800">Saúde</span>
+                            </div>
+                            <h1 className="font-bold text-2xl">--</h1>
+                        </div>
+                    </div>  
+
+                    
                 </div>
             </div>
             

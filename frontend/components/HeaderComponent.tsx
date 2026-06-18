@@ -22,7 +22,7 @@ export default function HeaderComponent(){
                 <span className="text-[#061F56]">|</span>
                 <Link className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000]" href="/assistencia">Assistência Social</Link>
             </ul>
-            <div>
+            <div className="flex items-center gap-4 md:hidden">
                 <button className="text-[#061F56] text-[20px] font-bold p-2 rounded-2xl hover:text-[#790000] md:hidden" onClick={() => {
                     setMenuAberto(!menuAberto);
                 }}>
