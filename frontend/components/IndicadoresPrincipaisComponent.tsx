@@ -107,10 +107,10 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div>
-                                    <h1 className="font-bold text-sm">Produto Interno Bruto</h1>
+                                    <h1 className="font-bold text-sm">PIB Municipal</h1>
                                     <p className="text-gray-600 text-sm">PIB Municipal - {referenciaPibMunicipal} - {fontePibMunicipal}</p>
                                 </div>
-                                <div className="w-10 h-10 bg-sky-600 md:bg-black group-hover/div:bg-sky-600 transition-colors duration-300" style={{ maskImage: `url('pib_municipal_icon.svg')`, maskSize: 'contain', maskRepeat: 'no-repeat' }}></div>
+                                <span className="rounded bg-green-100 p-2 text-xs font-semibold w-fit h-fit text-green-800">Economia</span>
                             </div>
                             <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600 transition-colors duration-300">
                                 {pibMunicipal && isFiltrando ? pibMunicipal + " Bilhões" : "--"}
@@ -118,6 +118,19 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
             
                         </div>
                     </div>
+                     <div className="group/div bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h1 className="font-bold text-sm">PIB per Capita</h1>
+                                    <p className="text-gray-600 text-sm">População economicamente ativa</p>
+                                </div>
+                                <span className="rounded bg-green-100 p-2 text-xs font-semibold w-fit h-fit text-green-800">Economia</span>
+                            </div>
+                            <h1 className="font-bold text-2xl text-gray-800">--</h1>
+                            
+                        </div>
+                    </div>  
                     <div id="idhMunicipal" className="group/div bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
@@ -125,7 +138,7 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                                     <h1 className="font-bold text-sm">Índice de Desenvolvimento Humano</h1>
                                     <p className="text-gray-600 text-sm">IDH Municipal - {referenciaIdhMunicipal} - {fonteIdhMunicipal}</p>
                                 </div>
-                                <div className="w-10 h-10 bg-sky-600 md:bg-black group-hover/div:bg-sky-600 transition-colors duration-300" style={{ maskImage: `url('crescimento-profissional.svg')`, maskSize: 'contain', maskRepeat: 'no-repeat' }}></div>
+                                <span className="rounded bg-indigo-100 p-2 w-fit h-fit text-xs font-semibold text-indigo-800">Desenvolvimento</span>
 
                             </div>
                             <div className="flex justify-between">
@@ -147,14 +160,40 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                             
                         </div>
                     </div>
-                     <div className="group/div bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                    <div className="group/div bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div>
-                                    <h1 className="font-bold text-sm">Taxa de Desemprego</h1>
+                                    <h1 className="font-bold text-sm">População Urbana</h1>
                                     <p className="text-gray-600 text-sm">População economicamente ativa</p>
                                 </div>
-                                <div className="w-10 h-10 bg-sky-600 md:bg-black group-hover/div:bg-sky-600 transition-colors duration-300" style={{ maskImage: `url('homem-empregado.svg')`, maskSize: 'contain', maskRepeat: 'no-repeat' }}></div>
+                                <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
+                            </div>
+                            <h1 className="font-bold text-2xl text-gray-800">--</h1>
+                            
+                        </div>
+                    </div>  
+                    <div className="group/div bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h1 className="font-bold text-sm">População Rural</h1>
+                                    <p className="text-gray-600 text-sm">População economicamente ativa</p>
+                                </div>
+                                <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
+                            </div>
+                            <h1 className="font-bold text-2xl text-gray-800">--</h1>
+                            
+                        </div>
+                    </div>  
+                    <div className="group/div bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h1 className="font-bold text-sm">População em Favelas</h1>
+                                    <p className="text-gray-600 text-sm">População economicamente ativa</p>
+                                </div>
+                                <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
                             </div>
                             <h1 className="font-bold text-2xl text-gray-800">--</h1>
                             
