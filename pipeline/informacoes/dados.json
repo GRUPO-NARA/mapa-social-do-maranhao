@@ -127,7 +127,141 @@
           "formato": "csv",
           "link": "https://dataimesc.imesc.ma.gov.br/getData?id=717&scope=4&from=2005&to=2021",
           "data-de-referencia": "2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "corbertura_da_estrategia_de_saude_familiar",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=720&scope=&from=2007&to=2020",
+          "data-de-referencia": "2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "cobertura_de_agentes_comunitarios_de_saude",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=719&scope=&from=2007&to=2020",
+          "data-de-referencia": "2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "cobertura_vacinal",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=847&scope=&from=1994&to=2020",
+          "data-de-referencia": "1994-1995-1996-1997-1998-1999-2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "numero_centro_saude",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=716&scope=&from=2005&to=2021",
+          "data-de-referencia": "2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "numero_leitos_internacao",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=839&scope=&from=2005&to=2021",
+          "data-de-referencia": "2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "numero_leitos_urgencia",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=841&scope=&from=2005&to=2021",
+          "data-de-referencia": "2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "numero_medicos_total",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=837&scope=&from=2007&to=2018",
+          "data-de-referencia": "2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018"
+        },
+        {
+          "indicador": "taxa_mortalidade_infantil",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=710&scope=&from=1996&to=2020",
+          "data-de-referencia": "1994-1995-1996-1997-1998-1999-2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "razao_mortalidade_materna",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=711&scope=&from=1996&to=2020",
+          "data-de-referencia": "1994-1995-1996-1997-1998-1999-2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "casos_hanseniase",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=943&scope=&from=2009&to=2021",
+          "data-de-referencia": "2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "casos_turbeculose",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=846&scope=&from=2001&to=2021",
+          "data-de-referencia": "2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "internacoes_diabetes_mellitus",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=1072&scope=&from=2008&to=2021",
+          "data-de-referencia": "2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "internacoes_hipertensao_primaria",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=1073&scope=&from=2008&to=2021",
+          "data-de-referencia": "2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020-2021"
+        },
+        {
+          "indicador": "nascidos_vivos_maes_adolescentes",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=1076&scope=&from=2000&to=2020",
+          "data-de-referencia": "2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "desnutricao_infantil_um_ano_de_idade",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=888&scope=&from=1998&to=2015",
+          "data-de-referencia": "1998-1999-2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015"
+        },
+        {
+          "indicador": "obitos_doencas_isquemicas_coracao",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=1102&scope=&from=2000&to=2020",
+          "data-de-referencia": "2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "obitos_doencas_cerebrovasculares",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=1100&scope=&from=2000&to=2020",
+          "data-de-referencia": "2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "obitos_diabetes_mellitus",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=1099&scope=&from=2000&to=2020",
+          "data-de-referencia": "2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
+        },
+        {
+          "indicador": "taxa_mortalidade_neoplasia_malignas",
+          "fonte": "IMESC",
+          "formato": "csv",
+          "link": "https://dataimesc.imesc.ma.gov.br/getData?id=712&scope=&from=1996&to=2020",
+          "data-de-referencia": "1996-1997-1998-1999-2000-2001-2002-2003-2004-2005-2006-2007-2008-2009-2010-2011-2012-2013-2014-2015-2016-2017-2018-2019-2020"
         }
+      
       ]
     },
     {
