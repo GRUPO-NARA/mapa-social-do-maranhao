@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { formatarPibEmBilhoes } from "../utils/formatarNumeros";
 
+
 export default function PanoramaGeralComponent() {
 
     useEffect(() => {

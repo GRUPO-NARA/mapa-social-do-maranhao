@@ -1,8 +1,7 @@
 "use client"
 
 import { Map, GeoJsonLoader } from "pigeon-maps"
-import { use, useEffect, useState } from "react"
-import Papa from "papaparse"
+import { useEffect, useState } from "react"
 import IndicadoresMapaComponent from "./IndicadoresMapaComponent"
 
 interface GeoJsonData {
@@ -13,11 +12,12 @@ interface GeoJsonData {
 }
 
 interface MapaProps{
-    municipio: String,
-    isFiltrando?: boolean
+    municipio: string,
+    isFiltrando?: boolean,
+    isMostrarApenasMapa?: boolean
 }
 
-export default function MapaComponent({municipio, isFiltrando} : MapaProps){
+export default function MapaComponent({municipio, isFiltrando, isMostrarApenasMapa} : MapaProps){
     const [coordenadasMunicipais, setCoordenadasMunicipais] = useState<GeoJsonData | null>(null);
     const [coordenadasMunicipio, setCoordenadasMunicipio] = useState<[number, number]>([-5.0892, -45.3806]);
     const [zoom, setZoom] = useState(7);
@@ -68,11 +68,15 @@ export default function MapaComponent({municipio, isFiltrando} : MapaProps){
         }
     }
 
+    const alturaResponsiva = isMostrarApenasMapa
+      ? "h-[22rem] sm:h-[28rem] md:h-full md:min-h-[30rem]"
+      : "h-screen md:h-full";
+
     return (
-        <div className="col-span-1 md:col-span-2">
-          <div className="h-screen md:h-full rounded-2xl overflow-hidden ">
+        <div className={`group min-w-0 overflow-hidden rounded-2xl ${alturaResponsiva}`}>
+          <div className="h-full min-w-0 overflow-hidden rounded-2xl">
             <div className="relative h-full w-full">
-              <IndicadoresMapaComponent municipio={municipio} isFiltrando={isFiltrando}/>
+              <IndicadoresMapaComponent municipio={municipio} isFiltrando={isFiltrando} isMostrarApenasMapa={isMostrarApenasMapa} />
               <Map center={coordenadasMunicipio} zoom={zoom}>
                 <GeoJsonLoader
                   link="https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-21-mun.json"

@@ -45,18 +45,18 @@ class FluxoDeTratamento:
             # Converte os bytes do arquivo para um objeto de arquivo em memória
             arquivo = BytesIO(bytes_do_arquivo)
             try:
-                if fonte_dos_dados == "SIDRAX":
+                if fonte_dos_dados == "SIDRA":
                     tabela = TratamentoSIDRA(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
 
                    
-                elif fonte_dos_dados == "SAGICADX":
+                elif fonte_dos_dados == "SAGICAD":
                     tabela = TratamentoSAGICAD(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
 
-                elif fonte_dos_dados == "IPEADATAX":
+                elif fonte_dos_dados == "IPEADATA":
                     tabela = TratamentoIPEADATA(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")

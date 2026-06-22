@@ -6,6 +6,7 @@ Script principal para executar o processo completo de ETL
 import asyncio
 import sys
 from pathlib import Path
+import time
 
 # Adiciona o diretório pipeline ao path para importações
 sys.path.insert(0, str(Path(__file__).parent))
@@ -69,6 +70,7 @@ async def executar_etl_completo():
 
 
 if __name__ == "__main__":
+    inicio = time.time()
     try:
         asyncio.run(executar_etl_completo())
     except KeyboardInterrupt:
@@ -77,3 +79,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n⚠️  Execução finalizada com erro\n")
         sys.exit(1)
+    fim = time.time()
+    duracao = fim - inicio
+    print(f"\nTempo total de execução: {duracao:.2f} segundos\n")
