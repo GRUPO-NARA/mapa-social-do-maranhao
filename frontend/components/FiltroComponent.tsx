@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 
 interface FiltroProps{
-    aoMudarMunicipio: (municipio:string) => void
-    isFiltrando: (filtrando: boolean) => void
+    aoMudarMunicipio?: (municipio:string) => void
+    isFiltrando?: (filtrando: boolean) => void
 }
 
-export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : FiltroProps){
+export default function FiltroComponent({
+    aoMudarMunicipio = () => undefined,
+    isFiltrando = () => undefined,
+} : FiltroProps = {}){
 
     const[municipios, setMunicipios] = useState<any>(null);
 
@@ -17,7 +20,35 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
 
     const[tentouAplicarFiltro, setTentouAplicarFiltro] = useState(false);
 
+    function limparFiltros(){
+      setIsMunicipioSelecionado(false);
+      setMunicipioSelecionado("");
+      aoMudarMunicipio("");
+      setTentouAplicarFiltro(false);
+      isFiltrando(false);
+    }
 
+    function AplicarFiltros(){
+      if(isMunicipioSelecionado){
+        aoMudarMunicipio(municipioSelecionado);
+        isFiltrando(true);
+        setTentouAplicarFiltro(false);
+      }else{
+        isFiltrando(false);
+        setTentouAplicarFiltro(true);
+      }
+    }
+
+    function ValidarMunicipioSelecionado(municipio: string){
+      if(municipio != ""){
+        setIsMunicipioSelecionado(true);
+        setMunicipioSelecionado(municipio);
+        setTentouAplicarFiltro(false);
+      }else{
+        setIsMunicipioSelecionado(false);
+        setMunicipioSelecionado("");
+      }
+    }
     async function getMunicipios(){
         try{
             const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/estadual/municipios`, 
@@ -54,16 +85,7 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
                   id="seletor-municipio"
                   className="rounded-lg shadow-sm p-2 bg-sky-700 text-white"
                   value={municipioSelecionado}
-                  onChange={(e) => {
-                    if(e.target.value != ""){
-                      setIsMunicipioSelecionado(true);
-                      setMunicipioSelecionado(e.target.value);
-                      setTentouAplicarFiltro(false);
-                    }else{
-                      setIsMunicipioSelecionado(false);
-                      setMunicipioSelecionado("");
-                    }
-                  }}
+                  onChange={(e) => ValidarMunicipioSelecionado(e.target.value)}
                 >
                 <option value="">Selecione um município</option>
 
@@ -84,24 +106,13 @@ export default function FiltroComponent({aoMudarMunicipio, isFiltrando} : Filtro
               <div className="grid grid-cols-2 gap-4">
                   <button id="botao-aplicar-filtros" onClick={() =>
                 {
-                  if(isMunicipioSelecionado){
-                    aoMudarMunicipio(municipioSelecionado);
-                    isFiltrando(true);
-                    setTentouAplicarFiltro(false);
-                  }else{
-                    isFiltrando(false);
-                    setTentouAplicarFiltro(true);
-                  }
+                  AplicarFiltros();
                 }} className="bg-sky-600 text-white p-3 rounded-lg hover:bg-sky-700 transition-colors duration-300 active:bg-sky-800">
                 Aplicar Filtros
                 </button>
                 <button id="botao-limpar-filtros" onClick={() =>
                 {
-                  setIsMunicipioSelecionado(false);
-                  setMunicipioSelecionado("");
-                  aoMudarMunicipio("");
-                  setTentouAplicarFiltro(false);
-                  isFiltrando(false);
+                  limparFiltros();
                 }} className="bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 active:bg-gray-500 ml-2">
                 Limpar Filtros
                 </button>

@@ -28,9 +28,17 @@ type TipoGrafico = "linha" | "barra";
 
 interface GraficoLinhaComponentProps {
     tipoGrafico?: TipoGrafico | null;
+    isFiltroAplicado?: boolean;
+    indicador?: string;
+    municipio?: string;
 }
 
-export default function GraficoLinhaComponent({ tipoGrafico }: GraficoLinhaComponentProps){
+export default function GraficoLinhaComponent({
+    tipoGrafico,
+    isFiltroAplicado,
+    indicador,
+    municipio,
+}: GraficoLinhaComponentProps){
     const legendas = ["2009", "2010", "2011", "2012", "2013", "2014", "2015"];
     const dadosLinha = {
         labels: legendas,
@@ -65,32 +73,46 @@ export default function GraficoLinhaComponent({ tipoGrafico }: GraficoLinhaCompo
 
     const configuracao = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: "top" as const,
             },
             title: {
                 display: true,
-                text: tipoGrafico === "barra" ? "Grafico de Barras - Comparacao" : "Grafico de Linha - Evolucao"
+                text: tipoGrafico === "barra"
+                    ? `${indicador} — comparação municipal`
+                    : `${indicador} — evolução${municipio ? ` em ${municipio}` : " no Maranhão"}`
             }
         },
     };
 
-    if (!tipoGrafico) {
+    if (!isFiltroAplicado || !tipoGrafico) {
         return (
-            <div className="p-4 bg-white md:col-span-3 rounded-2xl border-gray-700 border flex min-h-64 items-center justify-center">
-                <p className="text-sm text-gray-500">Selecione um indicador e o tipo de grafico.</p>
+            <div className="col-span-1 flex min-h-48 min-w-0 items-center justify-center rounded-2xl border border-gray-300 bg-white p-4 text-center md:col-span-3 md:min-h-64">
+                <p className="max-w-md text-sm text-gray-500">Selecione um indicador, escolha o tipo de grafico e aplique os filtros.</p>
             </div>
         )
     }
 
     return (
-        <div className="p-4 bg-white md:col-span-3 rounded-2xl border-gray-700 border">
-            {tipoGrafico === "linha" ? (
-                <Line data={dadosLinha} options={configuracao} />
-            ) : (
-                <Bar data={dadosBarra} options={configuracao} />
-            )}
-        </div>
+        <section className="col-span-1 min-w-0 overflow-hidden rounded-2xl border border-gray-300 bg-white p-4 sm:p-5 md:col-span-3">
+            <div className="mb-4 flex flex-col gap-1">
+                <span className="text-xs font-semibold uppercase tracking-wide text-sky-700">
+                    {tipoGrafico === "linha" ? "Evolução histórica" : "Comparação territorial"}
+                </span>
+                <h2 className="text-lg font-bold text-[#061F56]">{indicador}</h2>
+                <p className="text-sm text-gray-500">
+                    {municipio ? `Recorte municipal: ${municipio}.` : "Recorte estadual do Maranhão."}
+                </p>
+            </div>
+            <div className="relative h-72 w-full min-w-0 sm:h-96">
+                {tipoGrafico === "linha" ? (
+                    <Line data={dadosLinha} options={configuracao} />
+                ) : (
+                    <Bar data={dadosBarra} options={configuracao} />
+                )}
+            </div>
+        </section>
     )
 }

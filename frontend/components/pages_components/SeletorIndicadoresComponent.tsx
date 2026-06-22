@@ -7,13 +7,21 @@ type TipoGrafico = "linha" | "barra";
 interface SeletorIndicadoresProps {
     indicadores: string[];
     setTipoGraficoAtivo?: (tipo: TipoGrafico | null) => void;
+    setIndicadorAtivo?: (indicador: string) => void;
+    setIsFiltroAplicado?: (isAplicado: boolean) => void;
 }
 
-export default function SeletorIndicadoresComponent({ indicadores, setTipoGraficoAtivo }: SeletorIndicadoresProps) {
+export default function SeletorIndicadoresComponent({
+    indicadores,
+    setTipoGraficoAtivo,
+    setIndicadorAtivo,
+    setIsFiltroAplicado,
+}: SeletorIndicadoresProps) {
     const [isIndicadorSelecionado, setIsIndicadorSelecionado] = useState(false);
     const [tentouAplicarFiltro, setTentouAplicarFiltro] = useState(false);
     const [indicadorSelecionado, setIndicadorSelecionado] = useState("");
     const [tipoGraficoSelecionado, setTipoGraficoSelecionado] = useState<TipoGrafico | null>(null);
+    const [anoPrevisao, setAnoPrevisao] = useState(2026);
 
     const referenciasDoIndicador = [
       2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
@@ -21,7 +29,34 @@ export default function SeletorIndicadoresComponent({ indicadores, setTipoGrafic
 
     function selecionarTipoGrafico(tipo: TipoGrafico) {
       setTipoGraficoSelecionado(tipo);
-      setTipoGraficoAtivo?.(tipo);
+      setIsFiltroAplicado?.(false);
+      setTipoGraficoAtivo?.(null);
+    }
+
+    function selecionarIndicador(novoIndicador: string) {
+      setIndicadorSelecionado(novoIndicador);
+      setTentouAplicarFiltro(false);
+      setIsIndicadorSelecionado(novoIndicador !== "");
+      setIsFiltroAplicado?.(false);
+      setTipoGraficoAtivo?.(null);
+      setIndicadorAtivo?.("");
+
+      if (novoIndicador === "") {
+        setTipoGraficoSelecionado(null);
+      }
+    }
+
+    function aplicarFiltros() {
+      setTentouAplicarFiltro(true);
+      if (isIndicadorSelecionado && tipoGraficoSelecionado) {
+        setTipoGraficoAtivo?.(tipoGraficoSelecionado);
+        setIndicadorAtivo?.(indicadorSelecionado);
+        setIsFiltroAplicado?.(true);
+      } else {
+        setTipoGraficoAtivo?.(null);
+        setIndicadorAtivo?.("");
+        setIsFiltroAplicado?.(false);
+      }
     }
 
     function limparFiltros() {
@@ -29,11 +64,14 @@ export default function SeletorIndicadoresComponent({ indicadores, setTipoGrafic
       setIsIndicadorSelecionado(false);
       setTentouAplicarFiltro(false);
       setTipoGraficoSelecionado(null);
+      setAnoPrevisao(2026);
       setTipoGraficoAtivo?.(null);
+      setIndicadorAtivo?.("");
+      setIsFiltroAplicado?.(false);
     }
 
     return (
-        <div className="group flex flex-col md:p-6 gap-4 rounded-2xl">
+        <section className="group col-span-1 flex min-w-0 flex-col gap-4 rounded-2xl sm:p-4 md:col-span-3 md:p-6">
             <div className="flex items-center gap-2">
               <p className="w-1 h-6 rounded bg-sky-600"></p>
               <h1 className="text-lg font-bold group-hover:text-sky-800 transition-colors duration-300">Indicadores Municipais</h1>
@@ -46,19 +84,9 @@ export default function SeletorIndicadoresComponent({ indicadores, setTipoGrafic
 
                 <select
                   id="seletor-indicador"
-                  className="rounded-lg shadow-sm p-2 bg-sky-700 text-white"
+                  className="w-full min-w-0 rounded-lg bg-sky-700 p-2 text-sm text-white shadow-sm sm:text-base"
                   value={indicadorSelecionado}
-                  onChange={(e) => {
-                    const novoIndicador = e.target.value;
-                    setIndicadorSelecionado(novoIndicador);
-                    setTentouAplicarFiltro(false);
-                    setIsIndicadorSelecionado(novoIndicador !== "");
-
-                    if (novoIndicador === "") {
-                      setTipoGraficoSelecionado(null);
-                      setTipoGraficoAtivo?.(null);
-                    }
-                  }}
+                  onChange={(e) => selecionarIndicador(e.target.value)}
                 >
                     <option value="">Selecione um indicador</option>
                     {indicadores.map((indicador) => (
@@ -69,44 +97,26 @@ export default function SeletorIndicadoresComponent({ indicadores, setTipoGrafic
                 </select>
               </div>
               
-              {isIndicadorSelecionado && (
-                <div className="flex flex-col gap-1">
-                  <label className="text-[15px]" htmlFor="seletor-referencia-indicador">
-                    Referencias do Indicador
-                  </label>
 
-                  <select
-                    id="seletor-referencia-indicador"
-                    className="rounded-lg shadow-sm p-2 bg-sky-700 text-white"
-                  >
-                      <option value="">Selecione uma referencia</option>
-                      {referenciasDoIndicador.map((referencia) => (
-                          <option key={referencia} value={referencia}>
-                              {referencia}
-                          </option>
-                      ))}
-                  </select>
-                </div>
-              )}
               
               {isIndicadorSelecionado && (
-                <div className="w-full bg-gray-300 rounded-lg p-3 flex flex-col items-center justify-center gap-3">
+                <div className="flex w-full min-w-0 flex-col items-center justify-center gap-3 rounded-lg bg-gray-300 p-3">
                   <p className="text-center text-gray-700 font-semibold">
                     Selecione qual tipo de grafico deseja visualizar
                   </p>
-                  <fieldset className="flex gap-4">
+                  <fieldset className="w-full min-w-0">
                     <legend className="sr-only">Tipo de Grafico</legend>
-                    <div className="flex items-center gap-3">
+                    <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
                       <button
                         type="button"
-                        className={`px-3 py-2 rounded-lg text-white cursor-pointer transition-colors duration-300 ${tipoGraficoSelecionado === "linha" ? "bg-sky-900" : "bg-sky-700 hover:bg-sky-800"}`}
+                        className={`w-full rounded-lg px-3 py-2 text-sm text-white cursor-pointer transition-colors duration-300 sm:text-base ${tipoGraficoSelecionado === "linha" ? "bg-sky-900" : "bg-sky-700 hover:bg-sky-800"}`}
                         onClick={() => selecionarTipoGrafico("linha")}
                       >
                         Grafico de Linha
                       </button>
                       <button
                         type="button"
-                        className={`px-3 py-2 rounded-lg text-white cursor-pointer transition-colors duration-300 ${tipoGraficoSelecionado === "barra" ? "bg-sky-900" : "bg-sky-700 hover:bg-sky-800"}`}
+                        className={`w-full rounded-lg px-3 py-2 text-sm text-white cursor-pointer transition-colors duration-300 sm:text-base ${tipoGraficoSelecionado === "barra" ? "bg-sky-900" : "bg-sky-700 hover:bg-sky-800"}`}
                         onClick={() => selecionarTipoGrafico("barra")}
                       >
                         Grafico de Barras
@@ -134,20 +144,18 @@ export default function SeletorIndicadoresComponent({ indicadores, setTipoGrafic
                   </p>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                 <button
                   id="botao-aplicar-filtros"
-                  className="bg-sky-600 text-white p-3 rounded-lg hover:bg-sky-700 transition-colors duration-300 active:bg-sky-800"
-                  onClick={() => {
-                    setTentouAplicarFiltro(true);
-                  }}
+                  className="w-full rounded-lg bg-sky-600 p-3 text-white transition-colors duration-300 hover:bg-sky-700 active:bg-sky-800"
+                  onClick={aplicarFiltros}
                 >
                     Aplicar Filtros
                 </button>
 
                 <button
                   id="botao-limpar-filtros"
-                  className="bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 active:bg-gray-500 ml-2"
+                  className="w-full rounded-lg bg-gray-300 p-3 text-gray-700 transition-colors duration-300 hover:bg-gray-400 active:bg-gray-500"
                   onClick={limparFiltros}
                 >
                     Limpar Filtros
@@ -156,12 +164,32 @@ export default function SeletorIndicadoresComponent({ indicadores, setTipoGrafic
                 
               <div>
                 {isIndicadorSelecionado && referenciasDoIndicador.length > 3 && tentouAplicarFiltro && tipoGraficoSelecionado === "linha" && (
-                  <button className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-colors duration-300 active:bg-green-700">
-                    Ver Previsao
-                  </button>
+                  <div className="flex flex-col gap-3 rounded-lg bg-white p-3 border border-sky-300">
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="text-sm font-semibold text-gray-700" htmlFor="ano-previsao">
+                        Ano da previsao
+                      </label>
+                      <span className="rounded bg-green-100 px-2 py-1 text-sm font-bold text-green-800">
+                        {anoPrevisao}
+                      </span>
+                    </div>
+                    <input
+                      id="ano-previsao"
+                      type="range"
+                      min="2026"
+                      max="2040"
+                      step="1"
+                      value={anoPrevisao}
+                      onChange={(e) => setAnoPrevisao(Number(e.target.value))}
+                      className="w-full accent-sky-600"
+                    />
+                    <button className="w-full bg-sky-500 text-white p-3 rounded-lg hover:bg-sky-600 transition-colors duration-300 active:bg-sky-700">
+                      Ver Previsao para {anoPrevisao}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
-        </div>
+        </section>
     )
 }

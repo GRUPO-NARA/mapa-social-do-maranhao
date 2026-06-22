@@ -9,7 +9,7 @@ import PanoramaGeralComponent from "@/components/PanoramaGeralComponent"
 import { useState } from "react"
 
 export default function Home(){
-  const [municipio, setMunicipio] = useState<String>("");
+  const [municipio, setMunicipio] = useState<string>("");
   const [isFiltrando, setIsFiltrando] = useState<boolean>(false);
 
   return (
@@ -18,11 +18,13 @@ export default function Home(){
             <HeaderComponent />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
               <div className="flex flex-col gap-8">
-                <FiltroComponent aoMudarMunicipio={setMunicipio} isFiltrando={setIsFiltrando}/>
+                <FiltroComponent aoMudarMunicipio={setMunicipio} isFiltrando={setIsFiltrando} />
                 <PanoramaGeralComponent />
               </div>
-              <MapaComponent municipio={municipio} isFiltrando={isFiltrando}/>
-              <AgrupamentoIndicadoresMunicipaisComponent municipio={municipio} isFiltrando={isFiltrando} />
+              <div className="col-span-1 md:col-span-2">
+                <MapaComponent municipio={municipio} isFiltrando={isFiltrando} isMostrarApenasMapa={true}/>
+              </div>
+              <AgrupamentoIndicadoresMunicipaisComponent municipio={municipio} isFiltrando={isFiltrando}/>
             </div>
             <FooterComponent />
         </main>

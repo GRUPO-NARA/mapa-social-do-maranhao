@@ -5,10 +5,11 @@ import Papa from "papaparse"
 
 interface IndicadoresMapaProps{
     municipio: String,
-    isFiltrando?: boolean
+    isFiltrando?: boolean,
+    isMostrarApenasMapa?: boolean
 }
 
-export default function IndicadoresMapaComponent({municipio, isFiltrando} : IndicadoresMapaProps){
+export default function IndicadoresMapaComponent({municipio, isFiltrando, isMostrarApenasMapa} : IndicadoresMapaProps){
 
     useEffect(() => {
         if (municipio) {
@@ -195,7 +196,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando} : Indi
     
 
     return (
-        <div className="absolute m-2 z-10 md:left-4 md:top-4 md:z-10">
+        <div className={`absolute m-2 z-10 md:left-4 md:top-4 md:z-10 ${isMostrarApenasMapa ? "hidden" : ""}`}>
             <div className={`flex flex-col gap-1 w-fit-content rounded-xl border border-indigo-400 bg-white/95 p-4 shadow-lg
                 ${isFiltrando && municipio !== "" ? "visible" : "invisible"}`}>
                 <div className="flex gap-2">
