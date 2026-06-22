@@ -30,7 +30,7 @@ public class EconomicosController {
     private Resposta resposta;
 
     @Operation(summary = "Busca o Produto Interno Bruto municipal",
-    description = "Retorna o Produto Interno Bruto (PIB) do município especificado, com base nos dados mais recentes disponíveis. O PIB é um indicador econômico que representa a soma de todos os bens e serviços produzidos em um município durante um determinado período.")
+            description = "Retorna o Produto Interno Bruto (PIB) do município especificado, com base nos dados mais recentes disponíveis. O PIB é um indicador econômico que representa a soma de todos os bens e serviços produzidos em um município durante um determinado período.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -50,18 +50,10 @@ public class EconomicosController {
                             }
                     )
             ),
-            @ApiResponse(responseCode = "204",
-                    description = "Não foram encontrados dados do município informado"
-            ),
-            @ApiResponse(responseCode = "400",
-                    description = "Parâmetro município não informado ou inválido"
-            ),
-            @ApiResponse(responseCode = "404",
-                    description = "Endpoint não encontrado"
-            ),
-            @ApiResponse(responseCode = "500",
-                    description = "Erro na requisição dos dados"
-            )
+            @ApiResponse(responseCode = "204", description = "Não foram encontrados dados do município informado"),
+            @ApiResponse(responseCode = "400", description = "Parâmetro município não informado ou inválido"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados")
     })
     @GetMapping("/produtoInternoBruto")
     public ResponseEntity<HashMap<String, Object>> BuscarProdutoInternoBrutoDoEstado(
@@ -72,12 +64,12 @@ public class EconomicosController {
                     required = true
             )
             @Valid @RequestParam("municipio") String municipio){
-            HashMap<String, Object> respostaDaRequisicao = resposta.CorpoDaResposta(
-                    "Produto Interno Bruto do Município de " + municipio,
-                    economicosService.produtoInternoBrutoMunicipal(municipio),
-                    "200"
-            );
-            return ResponseEntity.ok().body(respostaDaRequisicao);
+        HashMap<String, Object> respostaDaRequisicao = resposta.CorpoDaResposta(
+                "Produto Interno Bruto do Município de " + municipio,
+                economicosService.produtoInternoBrutoMunicipal(municipio),
+                "200"
+        );
+        return ResponseEntity.ok().body(respostaDaRequisicao);
     }
 
     @Operation(summary = "Busca o Produto Interno Bruto agregado do estado do Maranhão",
@@ -101,15 +93,9 @@ public class EconomicosController {
                             }
                     )
             ),
-            @ApiResponse(responseCode = "204",
-                    description = "Não foram encontrados dados para o estado do Maranhão"
-            ),
-            @ApiResponse(responseCode = "404",
-                    description = "Endpoint não encontrado"
-            ),
-            @ApiResponse(responseCode = "500",
-                    description = "Erro na requisição dos dados"
-            )
+            @ApiResponse(responseCode = "204", description = "Não foram encontrados dados para o estado do Maranhão"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados")
     })
     @GetMapping("/produtoInternoBrutoAgregadoEstadual")
     public ResponseEntity<HashMap<String, Object>> BuscarProdutoInternoBrutoAgregadoDoEstado(){
@@ -119,6 +105,48 @@ public class EconomicosController {
                 "200"
         );
         return ResponseEntity.ok().body(respostaDaRequisicao);
+    }
 
+    @Operation(summary = "Busca o Produto Interno Bruto per capita municipal",
+            description = "Retorna o Produto Interno Bruto (PIB) per capita do município especificado, dividindo o valor do PIB total pela população local. Representa uma média de quanto cada habitante produziria caso a riqueza fosse dividida igualmente.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "PIB per capita encontrado e retornado com sucesso!",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Exemplo de requisição bem sucedida para o PIB per capita do município de São Luís",
+                                            value = """
+                                                    {
+                                                      "Resposta da Requisição": "{\\"PIB Per Capita\\" : 39250.42, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\\" : \\"SIDRA\\"}",
+                                                      "Status da Requisição": "200",
+                                                      "Indicador da Requisição": "PIB Per Capita do Município de São Luís"
+                                                    }"""
+                                    )
+                            }
+                    )
+            ),
+            @ApiResponse(responseCode = "204", description = "Não foram encontrados dados do município informado"),
+            @ApiResponse(responseCode = "400", description = "Parâmetro município não informado ou inválido"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados")
+    })
+    @GetMapping("/pibPerCapita")
+    public ResponseEntity<HashMap<String, Object>> BuscarPibPerCapitaDoMunicipio(
+            @Parameter(
+                    name = "municipio",
+                    description = "nome do município (ex: São Luís)",
+                    example = "São Luís",
+                    required = true
+            )
+            @Valid @RequestParam("municipio") String municipio) {
+        HashMap<String, Object> respostaDaRequisicao = resposta.CorpoDaResposta(
+                "PIB Per Capita do Município de " + municipio,
+                economicosService.produtoInternoBrutoPerCapitaMunicipal(municipio),
+                "200"
+        );
+        return ResponseEntity.ok().body(respostaDaRequisicao);
     }
 }

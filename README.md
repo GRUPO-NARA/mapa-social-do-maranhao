@@ -294,7 +294,7 @@ No Linux ou macOS:
 
 ```bash
 cd frontend
-cp .env.local.exemplo .env.local
+cp .env.local .env.local
 npm ci
 npm run dev
 ```
