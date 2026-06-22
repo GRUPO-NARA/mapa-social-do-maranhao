@@ -28,6 +28,10 @@ public class DemograficosService {
     @Autowired
     private IndiceDeDesenvolvimentoHumanoRepository indiceDeDesenvolvimentoHumanoRepository;
 
+    // novo: repository para população residente em favela
+    @Autowired
+    private PopulacaoResidenteEmFavelaRepository populacaoResidenteEmFavelaRepository;
+
     public String populacaoMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
             @NotBlank(message = "Municipio não pode ser em branco")
@@ -38,7 +42,7 @@ public class DemograficosService {
     public String populacaoEstadualRecente () {
         return populacaoResidenteRepository.buscarPopulacaoEstadualRecente();
     }
-    
+
     public String quantidadeDeHomensMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
             @NotBlank(message = "Municipio não pode ser em branco")
@@ -72,5 +76,33 @@ public class DemograficosService {
             @NotBlank(message = "Municipio não pode ser em branco")
             String municipio){
         return indiceDeDesenvolvimentoHumanoRepository.buscarEvolucaoIndiceDeDesenvolvimentoHumanoDoMunicipio(municipio);
+    }
+
+    /* ===========================
+       Métodos adicionados para População Residente em Favelas
+       =========================== */
+
+    public String populacaoResidenteEmFavelaMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio) {
+        return populacaoResidenteEmFavelaRepository.buscarPopulacaoResidenteEmFavelaDoMunicipio(municipio);
+    }
+
+    public List<String> evolucaoPopulacaoResidenteEmFavelaMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio) {
+        return populacaoResidenteEmFavelaRepository.buscarEvolucaoPopulacaoResidenteEmFavelaDoMunicipio(municipio);
+    }
+
+    public String populacaoResidenteEmFavelaMunicipalPorAno(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio,
+            @Size(min = 1, max = 10, message = "Referência deve conter entre 1 e 10 caracteres")
+            @NotBlank(message = "Referência não pode ser em branco")
+            String referencia) {
+        return populacaoResidenteEmFavelaRepository.buscarPopulacaoResidenteEmFavelaDoMunicipioPorAno(municipio, referencia);
     }
 }
