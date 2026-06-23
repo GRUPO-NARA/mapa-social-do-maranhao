@@ -14,16 +14,18 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
 
     useEffect(() => {
         if (municipio != "") {
-          getPibMunicipal()
-          getEvolucaoIdhMunicipal()
-          getIdhMunicipal()
+          buscarPibMunicipal()
+          buscarEvolucaoIdhMunicipal()
+          buscarIdhMunicipal()
+          buscarPopulacaoRural()
+          buscarPopulacaoEmFavelas()
         }
       }, [municipio]);
       
     const [pibMunicipal, setPibMunicipal] = useState<any>();
     const [referenciaPibMunicipal, setReferenciaPibMunicipal] = useState("");
     const [fontePibMunicipal, setFontePibMunicipal] = useState("");
-    async function getPibMunicipal(){
+    async function buscarPibMunicipal(){
       try{
         if(municipio != ""){
           const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/economicos/produtoInternoBruto?municipio=${municipio}`);
@@ -53,7 +55,7 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
     const [idhMunicipal, setIdhMunicipal] = useState(0);
     const [referenciaIdhMunicipal, setReferenciaIdhMunicipal] = useState("");
     const [fonteIdhMunicipal, setFonteIdhMunicipal] = useState("");
-    async function getIdhMunicipal(){
+    async function buscarIdhMunicipal(){
       try{
         if(municipio != ""){
           const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/idh?municipio=${municipio}`);
@@ -81,7 +83,7 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
     }
 
     const [dadosEvolucaoIdhMunicipal, setDadosEvolucaoIdhMunicipal] = useState<any>({});
-    async function getEvolucaoIdhMunicipal(){
+    async function buscarEvolucaoIdhMunicipal(){
       try{
         if(municipio != ""){
           const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/evolucaoIDH?municipio=${municipio}`);
@@ -92,6 +94,66 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
         }
       }catch(error){
         console.error("Ocorreu um erro ao buscar dados referentes à evolução do IDH Municipal!");
+      }
+    }
+
+    const [populacaoRural, setPopulacaoRural] = useState(0);
+    const [referenciaPopulacaoRural, setReferenciaPopulacaoRural] = useState("");
+    const [fontePopulacaoRural, setFontePopulacaoRural] = useState("");
+    async function buscarPopulacaoRural(){
+      try{
+        if(municipio != ""){
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeResidentesRurais?municipio=${municipio}`);
+            if(requisicao.ok){
+                const resposta = await requisicao.json();
+                var dadosInternos = resposta?.["Resposta da Requisição"];
+                if(dadosInternos){
+                    try{
+                        var objetoFormatado = JSON.parse(dadosInternos);
+                        var populacaoRural = objetoFormatado["Quantidade de Residentes Rurais"].toLocaleString("pt-BR");
+                        setPopulacaoRural(populacaoRural);
+                        var dataDeColeta = objetoFormatado["Referência dos Dados"];
+                        setReferenciaPopulacaoRural(dataDeColeta);
+                        var fonte = objetoFormatado["Fonte dos Dados"];
+                        setFontePopulacaoRural(fonte);
+                    }catch(erro){
+                        console.error("Erro ao converter JSON:", erro);
+                    }
+                }
+            }
+        }
+      }catch(error){
+        console.error("Ocorreu um erro ao buscar dados referentes à população rural!");
+      }
+    }
+
+    const [populacaoEmFavelas, setPopulacaoEmFavelas] = useState(0);
+    const [referenciaPopulacaoEmFavelas, setReferenciaPopulacaoEmFavelas] = useState("");
+    const [fontePopulacaoEmFavelas, setFontePopulacaoEmFavelas] = useState("");
+    async function buscarPopulacaoEmFavelas(){
+      try{
+        if(municipio != ""){
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/populacaoEmFavela?municipio=${municipio}`);
+            if(requisicao.ok){
+                const resposta = await requisicao.json();
+                var dadosInternos = resposta?.["Resposta da Requisição"];
+                if(dadosInternos){
+                    try{
+                        var objetoFormatado = JSON.parse(dadosInternos);
+                        var populacaoEmFavelas = objetoFormatado["Quantidade de Pessoas em Favelas"].toLocaleString("pt-BR");
+                        setPopulacaoEmFavelas(populacaoEmFavelas);
+                        var dataDeColeta = objetoFormatado["Referência dos Dados"];
+                        setReferenciaPopulacaoEmFavelas(dataDeColeta);
+                        var fonte = objetoFormatado["Fonte dos Dados"];
+                        setFontePopulacaoEmFavelas(fonte);
+                    }catch(erro){
+                        console.error("Erro ao converter JSON:", erro);
+                    }
+                }
+            }
+        }
+      }catch(error){
+        console.error("Ocorreu um erro ao buscar dados referentes à população em favelas!");
       }
     }
 
@@ -178,11 +240,11 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                             <div className="flex justify-between">
                                 <div>
                                     <h1 className="font-bold text-sm">População Rural</h1>
-                                    <p className="text-gray-600 text-sm">População economicamente ativa</p>
+                                    <p className="text-gray-600 text-sm">População residente no campo - {referenciaPopulacaoRural} - {fontePopulacaoRural}</p>
                                 </div>
                                 <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
                             </div>
-                            <h1 className="font-bold text-2xl text-gray-800">--</h1>
+                            <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600">{populacaoRural ? populacaoRural : "--"}</h1>
                             
                         </div>
                     </div>  
@@ -191,11 +253,11 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                             <div className="flex justify-between">
                                 <div>
                                     <h1 className="font-bold text-sm">População em Favelas</h1>
-                                    <p className="text-gray-600 text-sm">População economicamente ativa</p>
+                                    <p className="text-gray-600 text-sm">População residente em favelas - {referenciaPopulacaoEmFavelas} - {fontePopulacaoEmFavelas}</p>
                                 </div>
                                 <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
                             </div>
-                            <h1 className="font-bold text-2xl text-gray-800">--</h1>
+                            <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600">{populacaoEmFavelas ? populacaoEmFavelas : "--"}</h1>
                             
                         </div>
                     </div>  

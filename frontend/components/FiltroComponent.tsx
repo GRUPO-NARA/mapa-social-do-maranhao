@@ -49,7 +49,8 @@ export default function FiltroComponent({
         setMunicipioSelecionado("");
       }
     }
-    async function getMunicipios(){
+    
+    async function buscarMunicipios(){
         try{
             const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/estadual/municipios`, 
               {
@@ -66,13 +67,13 @@ export default function FiltroComponent({
     }
 
     useEffect(() => {
-        getMunicipios()
+        buscarMunicipios();
     },[])
 
     return (
         <div className="group flex flex-col gap-5 rounded-2xl p-5 md:p-6">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-700s">
                 <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M4 5h16M7 12h10M10 19h4" strokeLinecap="round" />
                 </svg>

@@ -1,6 +1,6 @@
 export default function AcessibilidadeComponent() {
     return (
-        <div className="a11y-toolbar fixed bottom-4 right-4 z-[100]">
+        <div className="a11y-toolbar fixed bottom-4 right-4 z-100">
             <p id="a11y-anuncio" className="sr-only" aria-live="polite" />
 
             <details className="relative">
