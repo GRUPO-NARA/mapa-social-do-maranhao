@@ -1,21 +1,21 @@
-package mpma.mapa.repository.Saude;
+package mpma.mapa.repository.Educacao;
 
-import mpma.mapa.entity.Saude.ObitosDoencasCerebrovascularesEntity;
+import mpma.mapa.entity.Educacao.TaxaDeAprovacaoNoEnsinoFundamentalEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 
-public interface ObitosDoencasCerebrovascularesRepository extends JpaRepository<ObitosDoencasCerebrovascularesEntity, Long> {
+public interface TaxaDeAprovacaoNoEnsinoFundamentalRepository extends JpaRepository<TaxaDeAprovacaoNoEnsinoFundamentalEntity, Long> {
     @Query(
             value = """
                     SELECT json_build_object(
-                                        'Óbitos por Doenças Cerebrovasculares', t.valor,
+                                        'Taxa de Aprovação no Ensino Fundamental', t.valor,
                                         'Referência dos Dados', t.referencia,
                                         'Fonte dos Dados', t.fonte
                                  )
-                                 FROM saude.obitos_doencas_cerebrovasculares as t
+                                 FROM educacao.taxa_de_aprovacao_no_ensino_fundamental as t
                                  JOIN dados_estadual.referencias_codigos_municipais rcm on t.cod_municipio = rcm.codigo_ibge
                                  WHERE rcm.municipio = :municipio
                                  GROUP BY t.valor, t.referencia, t.fonte
@@ -24,5 +24,5 @@ public interface ObitosDoencasCerebrovascularesRepository extends JpaRepository<
                     """
             , nativeQuery = true
     )
-    String buscarObitosDoencasCerebrovascularesDoMunicipio(String municipio);
+    String buscarTaxaDeAprovacaoNoEnsinoFundamentalDoMunicipio(String municipio);
 }
