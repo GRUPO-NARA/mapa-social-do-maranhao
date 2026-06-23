@@ -1,0 +1,127 @@
+package mpma.mapa.controllers;
+
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import mpma.mapa.service.Educacao.EducacaoService;
+import mpma.mapa.service.Resposta;
+
+import java.util.HashMap;
+
+@RestController
+@RequestMapping("/educacao")
+@RateLimiter(name = "RateLimiter")
+@Tag(name = "Educação", description = "Endpoints relacionados a dados de educação dos municípios do Maranhão.")
+public class EducacaoController {
+
+    @Autowired
+    private Resposta resposta;
+
+    @Autowired
+    private EducacaoService educacaoService;
+
+    @Operation(
+            summary = "Busca a taxa de analfabetismo (15 anos ou mais) do município",
+            description = "Retorna o percentual da população com 15 anos ou mais de idade que não sabe ler e escrever, baseado no ano mais recente disponível."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Taxa de analfabetismo encontrada com sucesso",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {
+                              "Resposta da Requisição": "{\\"Taxa de Analfabetismo (15 anos ou mais)\\" : 14.2, \\"Referência dos Dados\\" : \\"2022\\", \\"Fonte dos Dados\\" : \\"SIDRA\\"}",
+                              "Status da Requisição": "200",
+                              "Indicador da Requisição": "Taxa de Analfabetismo (15 anos ou mais) do Município de São Luís"
+                            }"""))),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/taxaAnalfabetismo15AnosOuMais")
+    public ResponseEntity<HashMap<String, Object>> BuscarTaxaAnalfabetismo15AnosOuMais(
+            @Parameter(name = "municipio", description = "nome do município (ex: São Luís)", example = "São Luís", required = true)
+            @Valid @RequestParam("municipio") String municipio
+    ) {
+        return ResponseEntity.ok().body(
+                resposta.CorpoDaResposta(
+                        "Taxa de Analfabetismo (15 anos ou mais) do Município de " + municipio,
+                        educacaoService.taxaDeAnalfabetismo15AnosOuMaisMunicipal(municipio),
+                        "200"
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Busca a taxa de aprovação no Ensino Fundamental do município",
+            description = "Retorna o percentual de alunos aprovados no Ensino Fundamental no município cadastrado."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Taxa de aprovação no ensino fundamental encontrada com sucesso",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {
+                              "Resposta da Requisição": "{\\"Taxa de Aprovação no Ensino Fundamental\\" : 88.5, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\" : \\"INEP\\"}",
+                              "Status da Requisição": "200",
+                              "Indicador da Requisição": "Taxa de Aprovação no Ensino Fundamental do Município de São Luís"
+                            }"""))),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/taxaAprovacaoEnsinoFundamental")
+    public ResponseEntity<HashMap<String, Object>> BuscarTaxaAprovacaoEnsinoFundamental(
+            @Parameter(name = "municipio", description = "nome do município (ex: São Luís)", example = "São Luís", required = true)
+            @Valid @RequestParam("municipio") String municipio
+    ) {
+        return ResponseEntity.ok().body(
+                resposta.CorpoDaResposta(
+                        "Taxa de Aprovação no Ensino Fundamental do Município de " + municipio,
+                        educacaoService.taxaDeAprovacaoNoEnsinoFundamentalMunicipal(municipio),
+                        "200"
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Busca a taxa de aprovação no Ensino Médio do município",
+            description = "Retorna o percentual de alunos aprovados no Ensino Médio no município cadastrado."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Taxa de aprovação no ensino médio encontrada com sucesso",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {
+                              "Resposta da Requisição": "{\\"Taxa de Aprovação no Ensino Médio\\" : 82.1, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\" : \\"INEP\\"}",
+                              "Status da Requisição": "200",
+                              "Indicador da Requisição": "Taxa de Aprovação no Ensino Médio do Município de São Luís"
+                            }"""))),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/taxaAprovacaoEnsinoMedio")
+    public ResponseEntity<HashMap<String, Object>> BuscarTaxaAprovacaoEnsinoMedio(
+            @Parameter(name = "municipio", description = "nome do município (ex: São Luís)", example = "São Luís", required = true)
+            @Valid @RequestParam("municipio") String municipio
+    ) {
+        return ResponseEntity.ok().body(
+                resposta.CorpoDaResposta(
+                        "Taxa de Aprovação no Ensino Médio do Município de " + municipio,
+                        educacaoService.taxaDeAprovacaoNoEnsinoMedioMunicipal(municipio),
+                        "200"
+                )
+        );
+    }
+}
