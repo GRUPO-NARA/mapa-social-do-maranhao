@@ -1,21 +1,21 @@
-package mpma.mapa.repository.Saude;
+package mpma.mapa.repository.Educacao;
 
-import mpma.mapa.entity.Saude.ObitosDoencasCerebrovascularesEntity;
+import mpma.mapa.entity.Educacao.TaxaDeAnalfabetismo15AnosOuMaisEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 
-public interface ObitosDoencasCerebrovascularesRepository extends JpaRepository<ObitosDoencasCerebrovascularesEntity, Long> {
+public interface TaxaDeAnalfabetismo15AnosOuMaisRepository extends JpaRepository<TaxaDeAnalfabetismo15AnosOuMaisEntity, Long> {
     @Query(
             value = """
                     SELECT json_build_object(
-                                        'Óbitos por Doenças Cerebrovasculares', t.valor,
+                                        'Taxa de Analfabetismo (15 anos ou mais)', t.valor,
                                         'Referência dos Dados', t.referencia,
                                         'Fonte dos Dados', t.fonte
                                  )
-                                 FROM saude.obitos_doencas_cerebrovasculares as t
+                                 FROM educacao.taxa_de_analfabetismo_15_anos_ou_mais as t
                                  JOIN dados_estadual.referencias_codigos_municipais rcm on t.cod_municipio = rcm.codigo_ibge
                                  WHERE rcm.municipio = :municipio
                                  GROUP BY t.valor, t.referencia, t.fonte
@@ -24,5 +24,5 @@ public interface ObitosDoencasCerebrovascularesRepository extends JpaRepository<
                     """
             , nativeQuery = true
     )
-    String buscarObitosDoencasCerebrovascularesDoMunicipio(String municipio);
+    String buscarTaxaDeAnalfabetismo15AnosOuMaisDoMunicipio(String municipio);
 }
