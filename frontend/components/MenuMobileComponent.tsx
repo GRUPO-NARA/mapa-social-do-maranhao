@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface MenuMobileProps {
@@ -19,11 +20,11 @@ export default function MenuMobileComponent({ menuAberto, setMenuAberto }: MenuM
     const pathname = usePathname();
 
     return (
-        <div className={`flex-col gap-4 items-center md:hidden top-0 left-0 w-full h-fit bg-white z-50 p-6 absolute shadow-lg ${menuAberto ? 'flex' : 'hidden'}`}>
-            <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none" onClick={() => setMenuAberto(!menuAberto)}>
+        <nav id="menu-mobile" aria-label="Navegação para dispositivos móveis" className={`flex-col gap-4 items-center md:hidden top-0 left-0 w-full h-fit bg-white z-50 p-6 absolute shadow-lg ${menuAberto ? 'flex' : 'hidden'}`}>
+            <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none" aria-label="Fechar menu de navegação" onClick={() => setMenuAberto(!menuAberto)}>
                 &times;
             </button>
-            <img className="h-20 w-30" src="logo.png" alt="" />
+            <Image className="h-20 w-[120px] object-contain" src="/logo.png" width={120} height={80} alt="Logotipo do Mapa Social do Maranhão" />
             <div className="flex flex-col items-center">
                 <h1 className="text-2xl font-bold text-[#061F56]">Mapa Social do Maranhão</h1>
                 <p className="text-sm text-[#061F56]">Plataforma de mapeamento social</p>
@@ -44,6 +45,6 @@ export default function MenuMobileComponent({ menuAberto, setMenuAberto }: MenuM
                     );
                 })}
             </ul>
-        </div>
+        </nav>
     );
 }

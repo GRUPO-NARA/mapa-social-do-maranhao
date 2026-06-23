@@ -70,20 +70,27 @@ export default function FiltroComponent({
     },[])
 
     return (
-        <div className="group flex flex-col md:p-6 gap-4 rounded-2xl">
-            <div className="flex items-center gap-2">
-              <p className="w-1 h-6 rounded bg-sky-600"></p>
-              <h1 className="text-lg font-bold group-hover:text-sky-800 transition-colors duration-300">Filtros</h1>
+        <div className="group flex flex-col gap-5 rounded-2xl p-5 md:p-6">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M4 5h16M7 12h10M10 19h4" strokeLinecap="round" />
+                </svg>
+              </span>
+              <div>
+                <h1 className="text-lg font-bold text-slate-900">Filtro territorial</h1>
+                <p className="text-xs text-slate-500">Selecione o recorte municipal</p>
+              </div>
             </div>
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-1">
-                <label className="text-[15px]" htmlFor="seletor-municipio">
+                <label className="text-sm font-semibold text-slate-700" htmlFor="seletor-municipio">
                   Município
                 </label>
 
                 <select
                   id="seletor-municipio"
-                  className="rounded-lg shadow-sm p-2 bg-sky-700 text-white"
+                  className="w-full min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100"
                   value={municipioSelecionado}
                   onChange={(e) => ValidarMunicipioSelecionado(e.target.value)}
                 >
@@ -97,23 +104,23 @@ export default function FiltroComponent({
                 </select>
               </div>
 
-              <div className={`w-full bg-yellow-500 rounded-lg p-2 ${tentouAplicarFiltro && !isMunicipioSelecionado ? "visible" : "hidden"}`}>
-                <p className="text-center text-gray-700 font-semibold">
+              <div className={`w-full rounded-2xl border border-amber-200 bg-amber-50 p-3 ${tentouAplicarFiltro && !isMunicipioSelecionado ? "visible" : "hidden"}`}>
+                <p className="text-center text-sm font-semibold text-amber-800">
                   Nenhum município selecionado
                 </p>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <button id="botao-aplicar-filtros" onClick={() =>
                 {
                   AplicarFiltros();
-                }} className="bg-sky-600 text-white p-3 rounded-lg hover:bg-sky-700 transition-colors duration-300 active:bg-sky-800">
+                }} className="rounded-xl bg-[#061F56] p-3 text-sm font-semibold text-white shadow-md shadow-blue-950/10 transition hover:-translate-y-0.5 hover:bg-[#0A3477]">
                 Aplicar Filtros
                 </button>
                 <button id="botao-limpar-filtros" onClick={() =>
                 {
                   limparFiltros();
-                }} className="bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 active:bg-gray-500 ml-2">
+                }} className="rounded-xl bg-slate-100 p-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">
                 Limpar Filtros
                 </button>
               </div>

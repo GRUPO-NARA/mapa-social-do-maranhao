@@ -4,7 +4,10 @@ import mpma.mapa.entity.Demograficos.PopulacaoResidenteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface InformacoesRepository extends JpaRepository<PopulacaoResidenteEntity, Long> {
@@ -39,4 +42,12 @@ public interface InformacoesRepository extends JpaRepository<PopulacaoResidenteE
             
             """, nativeQuery = true)
     String buscarDadosPrincipaisDoMunicipio(String municipio);
+
+    @Query(value = """
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = ?1
+        AND table_type = 'BASE TABLE';
+    """, nativeQuery = true)
+    List<String> buscarTabelasDoSchema(@Param("schema") String schema);
 }

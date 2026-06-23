@@ -1,2 +1,97 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
+*:focus-visible {
+  outline: 3px solid #f59e0b !important;
+  outline-offset: 3px !important;
+}
+
+html.a11y-fonte-legivel body,
+html.a11y-fonte-legivel button,
+html.a11y-fonte-legivel input,
+html.a11y-fonte-legivel select,
+html.a11y-fonte-legivel textarea {
+  font-family: Arial, Verdana, sans-serif !important;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+html.a11y-links-sublinhados a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+}
+
+.a11y-opcao[aria-checked="true"] {
+  border-color: #7dd3fc;
+  background-color: #f0f9ff;
+  color: #0c4a6e;
+}
+
+.a11y-opcao[aria-checked="true"] .a11y-switch {
+  background-color: #0369a1;
+}
+
+.a11y-opcao[aria-checked="true"] .a11y-switch-thumb {
+  transform: translateX(1.25rem);
+}
+
+html.a11y-movimento-reduzido *,
+html.a11y-movimento-reduzido *::before,
+html.a11y-movimento-reduzido *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+html.a11y-alto-contraste body,
+html.a11y-alto-contraste [class*="bg-"],
+html.a11y-alto-contraste main,
+html.a11y-alto-contraste section,
+html.a11y-alto-contraste article,
+html.a11y-alto-contraste aside,
+html.a11y-alto-contraste header,
+html.a11y-alto-contraste footer {
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: #fff !important;
+}
+
+html.a11y-alto-contraste body *,
+html.a11y-alto-contraste input,
+html.a11y-alto-contraste select,
+html.a11y-alto-contraste textarea {
+  color: #fff !important;
+  border-color: #fff !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html.a11y-alto-contraste a,
+html.a11y-alto-contraste button {
+  color: #ff0 !important;
+}
+
+html.a11y-alto-contraste button,
+html.a11y-alto-contraste input,
+html.a11y-alto-contraste select,
+html.a11y-alto-contraste textarea {
+  background-color: #000 !important;
+  border: 2px solid #fff !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
