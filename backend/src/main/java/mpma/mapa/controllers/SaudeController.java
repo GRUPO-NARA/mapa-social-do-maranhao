@@ -331,13 +331,16 @@ public class SaudeController {
         return ResponseEntity.ok().body(resposta.CorpoDaResposta("Óbitos por Doenças Cerebrovasculares do Município de " + municipio, saudeService.obitosDoencasCerebrovascularesMunicipal(municipio), "200"));
     }
 
-    @Operation(summary = "Busca a taxa de mortalidade infantil do município")
+    @Operation(
+            summary = "Busca a média histórica da taxa de mortalidade infantil do município",
+            description = "Retorna a média consolidada de toda a série histórica disponível para a taxa de mortalidade infantil do município informado."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Taxa de mortalidade infantil encontrada com sucesso", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+            @ApiResponse(responseCode = "200", description = "Média da taxa de mortalidade infantil calculada com sucesso", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
                     {
-                      "Resposta da Requisição": "{\\"Taxa de Mortalidade Infantil\\" : 12.4, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\" : \\"SIM\\"}",
+                      "Resposta da Requisição": "{\\"Média da Taxa de Mortalidade Infantil\\" : 12.45, \\"Referência dos Dados\\" : \\"Média Histórica\\", \\"Fonte dos Dados\\" : \\"SIM\\"}",
                       "Status da Requisição": "200",
-                      "Indicador da Requisição": "Taxa de Mortalidade Infantil do Município de São Luís"
+                      "Indicador da Requisição": "Média da Taxa de Mortalidade Infantil do Município de São Luís"
                     }"""))),
             @ApiResponse(responseCode = "400", description = "Requisição inválida"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
@@ -347,6 +350,12 @@ public class SaudeController {
             @Parameter(name = "municipio", description = "nome do município (ex: São Luís)", example = "São Luís", required = true)
             @Valid @RequestParam("municipio") String municipio
     ) {
-        return ResponseEntity.ok().body(resposta.CorpoDaResposta("Taxa de Mortalidade Infantil do Município de " + municipio, saudeService.taxaMortalidadeInfantilMunicipal(municipio), "200"));
+        return ResponseEntity.ok().body(
+                resposta.CorpoDaResposta(
+                        "Média da Taxa de Mortalidade Infantil do Município de " + municipio,
+                        saudeService.taxaMortalidadeInfantilMunicipal(municipio),
+                        "200"
+                )
+        );
     }
 }
