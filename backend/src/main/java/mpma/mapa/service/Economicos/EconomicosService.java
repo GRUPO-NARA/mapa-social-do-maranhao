@@ -33,8 +33,8 @@ public class EconomicosService {
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
             @NotBlank(message = "Municipio não pode ser em branco")
             String municipio){
-        // CORRIGIDO: Nome do método alterado para corresponder ao Repository criado
-        return produtoInternoBrutoPerCapitaRepository.buscarPibPerCapitaDoMunicipio(municipio);
+
+        return produtoInternoBrutoPerCapitaRepository.buscarMediaDoPibPerCapitaDoMunicipio(municipio);
     }
 
 }

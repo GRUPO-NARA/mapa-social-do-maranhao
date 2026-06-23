@@ -33,18 +33,18 @@ public class EducacaoController {
     private EducacaoService educacaoService;
 
     @Operation(
-            summary = "Busca a taxa de analfabetismo (15 anos ou mais) do município",
-            description = "Retorna o percentual da população com 15 anos ou mais de idade que não sabe ler e escrever, baseado no ano mais recente disponível."
+            summary = "Busca a média histórica da taxa de analfabetismo (15 anos ou mais) do município",
+            description = "Retorna a média consolidada de toda a série histórica disponível para o percentual da população com 15 anos ou mais de idade que não sabe ler e escrever."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Taxa de analfabetismo encontrada com sucesso",
+                    description = "Média da taxa de analfabetismo calculada com sucesso",
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
                             {
-                              "Resposta da Requisição": "{\\"Taxa de Analfabetismo (15 anos ou mais)\\" : 14.2, \\"Referência dos Dados\\" : \\"2022\\", \\"Fonte dos Dados\\" : \\"SIDRA\\"}",
+                              "Resposta da Requisição": "{\\"Média da Taxa de Analfabetismo (15 anos ou mais)\\" : 14.25, \\"Referência dos Dados\\" : \\"Média Histórica\\", \\"Fonte dos Dados\\" : \\"SIDRA\\"}",
                               "Status da Requisição": "200",
-                              "Indicador da Requisição": "Taxa de Analfabetismo (15 anos ou mais) do Município de São Luís"
+                              "Indicador da Requisição": "Média da Taxa de Analfabetismo (15 anos ou mais) do Município de São Luís"
                             }"""))),
             @ApiResponse(responseCode = "400", description = "Requisição inválida"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
@@ -56,7 +56,7 @@ public class EducacaoController {
     ) {
         return ResponseEntity.ok().body(
                 resposta.CorpoDaResposta(
-                        "Taxa de Analfabetismo (15 anos ou mais) do Município de " + municipio,
+                        "Média da Taxa de Analfabetismo (15 anos ou mais) do Município de " + municipio,
                         educacaoService.taxaDeAnalfabetismo15AnosOuMaisMunicipal(municipio),
                         "200"
                 )

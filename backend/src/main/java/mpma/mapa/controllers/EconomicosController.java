@@ -20,7 +20,7 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/economicos")
 @RateLimiter(name = "RateLimiter")
-@Tag(name = "Econômicos", description = "Endpoints relacionados a dados econômicos dos municípios do Maranhão.")
+@Tag(name = "Econômicos", description = "Endpoints relacionados a dados económicos dos municípios do Maranhão.")
 public class EconomicosController {
 
     @Autowired
@@ -107,22 +107,22 @@ public class EconomicosController {
         return ResponseEntity.ok().body(respostaDaRequisicao);
     }
 
-    @Operation(summary = "Busca o Produto Interno Bruto per capita municipal",
-            description = "Retorna o Produto Interno Bruto (PIB) per capita do município especificado, dividindo o valor do PIB total pela população local. Representa uma média de quanto cada habitante produziria caso a riqueza fosse dividida igualmente.")
+    @Operation(summary = "Busca a média histórica do Produto Interno Bruto per capita municipal",
+            description = "Retorna a média calculada de toda a série histórica disponível para o Produto Interno Bruto (PIB) per capita do município especificado.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "PIB per capita encontrado e retornado com sucesso!",
+                    description = "Média do PIB per capita calculada com sucesso!",
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
-                                            name = "Exemplo de requisição bem sucedida para o PIB per capita do município de São Luís",
+                                            name = "Exemplo de requisição bem sucedida para a média do PIB per capita de São Luís",
                                             value = """
                                                     {
-                                                      "Resposta da Requisição": "{\\"PIB Per Capita\\" : 39250.42, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\\" : \\"SIDRA\\"}",
+                                                      "Resposta da Requisição": "{\\"Média do PIB Per Capita\\" : 39250.42, \\"Referência dos Dados\\" : \\"Média Histórica\\", \\"Fonte dos Dados\\" : \\"SIDRA\\"}",
                                                       "Status da Requisição": "200",
-                                                      "Indicador da Requisição": "PIB Per Capita do Município de São Luís"
+                                                      "Indicador da Requisição": "Média do PIB Per Capita do Município de São Luís"
                                                     }"""
                                     )
                             }
@@ -143,7 +143,7 @@ public class EconomicosController {
             )
             @Valid @RequestParam("municipio") String municipio) {
         HashMap<String, Object> respostaDaRequisicao = resposta.CorpoDaResposta(
-                "PIB Per Capita do Município de " + municipio,
+                "Média do PIB Per Capita do Município de " + municipio,
                 economicosService.produtoInternoBrutoPerCapitaMunicipal(municipio),
                 "200"
         );

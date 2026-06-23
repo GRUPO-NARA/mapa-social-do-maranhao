@@ -32,6 +32,9 @@ public class DemograficosService {
     @Autowired
     private PopulacaoResidenteEmFavelaRepository populacaoResidenteEmFavelaRepository;
 
+    @Autowired
+    private QuantidadeDeResidentesUrbanoRepository quantidadeDeResidentesUrbanoRepository;
+
     public String populacaoMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
             @NotBlank(message = "Municipio não pode ser em branco")
@@ -78,9 +81,6 @@ public class DemograficosService {
         return indiceDeDesenvolvimentoHumanoRepository.buscarEvolucaoIndiceDeDesenvolvimentoHumanoDoMunicipio(municipio);
     }
 
-    /* ===========================
-       Métodos adicionados para População Residente em Favelas
-       =========================== */
 
     public String populacaoResidenteEmFavelaMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
@@ -104,5 +104,12 @@ public class DemograficosService {
             @NotBlank(message = "Referência não pode ser em branco")
             String referencia) {
         return populacaoResidenteEmFavelaRepository.buscarPopulacaoResidenteEmFavelaDoMunicipioPorAno(municipio, referencia);
+    }
+
+    public String quantidadeDeResidentesUrbanoMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+        return quantidadeDeResidentesUrbanoRepository.buscarQuantidadeDeResidentesUrbanoDoMunicipio(municipio);
     }
 }

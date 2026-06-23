@@ -12,18 +12,16 @@ public interface ProdutoInternoBrutoPerCapitaRepository extends JpaRepository<Pr
     @Query(
             value = """
             SELECT json_build_object(
-                               'PIB Per Capita', t.valor,
-                               'Referência dos Dados', t.referencia,
+                               'Média do PIB Per Capita', ROUND(AVG(t.valor)::numeric, 2),
+                               'Referência dos Dados', 'Média Histórica',
                                'Fonte dos Dados', t.fonte
                         )
                         FROM economicos.pib_per_capita as t
                         JOIN dados_estadual.referencias_codigos_municipais rcm on t.cod_municipio = rcm.codigo_ibge
                         WHERE rcm.municipio = :municipio
-                        GROUP BY t.valor, t.referencia, t.fonte
-                        ORDER BY t.referencia DESC
-                        LIMIT 1;
+                        GROUP BY t.fonte;
             """
             , nativeQuery = true
     )
-    String buscarPibPerCapitaDoMunicipio(@Param("municipio") String municipio);
+    String buscarMediaDoPibPerCapitaDoMunicipio(@Param("municipio") String municipio);
 }

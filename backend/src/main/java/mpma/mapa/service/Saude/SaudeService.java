@@ -205,6 +205,6 @@ public class SaudeService {
             @NotBlank(message = "Municipio não pode ser em branco")
             String municipio){
 
-        return taxaMortalidadeInfantilRepository.buscarTaxaMortalidadeInfantilDoMunicipio(municipio);
+        return taxaMortalidadeInfantilRepository.buscarMediaDaTaxaMortalidadeInfantilDoMunicipio(municipio);
     }
 }
