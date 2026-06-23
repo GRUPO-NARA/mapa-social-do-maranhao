@@ -2,11 +2,7 @@ package mpma.mapa.service.Saude;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import mpma.mapa.repository.Saude.CoberturaDaEstrategiaDeSaudeFamiliarRepository;
-import mpma.mapa.repository.Saude.CasosTuberculoseRepository;
-import mpma.mapa.repository.Saude.CoberturaDeAgentesComunitariosDeSaudeRepository;
-import mpma.mapa.repository.Saude.IdadeMedianaRepository;
-import mpma.mapa.repository.Saude.CasosHanseniaseRepository;
+import mpma.mapa.repository.Saude.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +25,9 @@ public class SaudeService {
 
     @Autowired
     private CoberturaDeAgentesComunitariosDeSaudeRepository coberturaDeAgentesComunitariosDeSaudeRepository;
+
+    @Autowired
+    private CoberturaVacinaRepository coberturaVacinaRepository;
 
     public String idadeMedianaMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
@@ -67,5 +66,13 @@ public class SaudeService {
             String municipio) {
 
         return coberturaDeAgentesComunitariosDeSaudeRepository.buscarCoberturaDeAgentesComunitariosDeSaudeDoMunicipio(municipio);
+    }
+
+    public String coberturaVacinaMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+
+        return coberturaVacinaRepository.buscarCoberturaVacinalDoMunicipio(municipio);
     }
 }
