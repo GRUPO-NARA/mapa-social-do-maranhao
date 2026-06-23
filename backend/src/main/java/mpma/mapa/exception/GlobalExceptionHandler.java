@@ -30,6 +30,38 @@ public class GlobalExceptionHandler {
                 .body(respostaRateLimit);
     }
 
+    @ExceptionHandler(ServicoPredicaoException.class)
+    public ResponseEntity<HashMap<String, Object>> handleServicoPredicao(ServicoPredicaoException e) {
+        HashMap<String, Object> respostaError = resposta.CorpoDaRespostaError(
+                "Serviço de predição indisponível",
+                e.getMessage(),
+                String.valueOf(HttpStatus.BAD_GATEWAY.value())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(respostaError);
+    }
+
+    @ExceptionHandler(ServicoClusterizacaoException.class)
+    public ResponseEntity<HashMap<String, Object>> handleServicoClusterizacao(
+            ServicoClusterizacaoException e
+    ) {
+        HashMap<String, Object> respostaError = resposta.CorpoDaRespostaError(
+                "Serviço de clusterização indisponível",
+                e.getMessage(),
+                String.valueOf(HttpStatus.BAD_GATEWAY.value())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(respostaError);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<HashMap<String, Object>> handleInvalidArgument(IllegalArgumentException e) {
+        HashMap<String, Object> respostaError = resposta.CorpoDaRespostaError(
+                "Dados inválidos",
+                e.getMessage(),
+                String.valueOf(HttpStatus.BAD_REQUEST.value())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respostaError);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HashMap<String, Object>> handleGenericException(Exception e) {
         HashMap<String, Object> respostaError = resposta.CorpoDaRespostaError(

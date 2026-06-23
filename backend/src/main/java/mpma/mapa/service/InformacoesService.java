@@ -2,6 +2,7 @@ package mpma.mapa.service;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import mpma.mapa.dto.ClusterizacaoDTO;
 import mpma.mapa.repository.InformacoesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -141,6 +142,59 @@ public class InformacoesService {
         params.put("municipios", municipios);
 
         return namedParameterJdbcTemplate.queryForList(sql, params, String.class);
+    }
+
+    public List<ClusterizacaoDTO.PontoMunicipal> buscarDadosParaClusterizacao(
+            String schema,
+            String indicador
+    ) {
+        if (!SCHEMAS_PERMITIDOS.contains(schema)) {
+            throw new IllegalArgumentException("Schema inválido: " + schema);
+        }
+
+        if (!indicador.matches("[a-zA-Z0-9_]+")) {
+            throw new IllegalArgumentException("Indicador inválido: " + indicador);
+        }
+
+        String sql = String.format(
+                "SELECT i.municipio, AVG(x.valor)::double precision AS valor " +
+                        "FROM %s.%s x " +
+                        "JOIN dados_estadual.referencias_codigos_municipais i " +
+                        "ON i.codigo_ibge = x.cod_municipio " +
+                        "WHERE x.referencia = (" +
+                        "    SELECT MAX(referencia) FROM %s.%s WHERE valor IS NOT NULL" +
+                        ") " +
+                        "AND x.valor IS NOT NULL " +
+                        "GROUP BY i.municipio " +
+                        "ORDER BY i.municipio",
+                schema, indicador, schema, indicador
+        );
+
+        return jdbcTemplate.query(
+                sql,
+                (resultado, linha) -> new ClusterizacaoDTO.PontoMunicipal(
+                        resultado.getString("municipio"),
+                        resultado.getDouble("valor")
+                )
+        );
+    }
+
+    public Integer buscarReferenciaMaisRecente(String schema, String indicador) {
+        if (!SCHEMAS_PERMITIDOS.contains(schema)) {
+            throw new IllegalArgumentException("Schema inválido: " + schema);
+        }
+
+        if (!indicador.matches("[a-zA-Z0-9_]+")) {
+            throw new IllegalArgumentException("Indicador inválido: " + indicador);
+        }
+
+        String sql = String.format(
+                "SELECT MAX(referencia) FROM %s.%s WHERE valor IS NOT NULL",
+                schema,
+                indicador
+        );
+
+        return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
 }

@@ -26,6 +26,7 @@ interface GraficosComponentProps {
     indicador?: string;
     tipoDoIndicador?: string;
     municipio?: string;
+    anoPrevisao?: number;
     municipiosComparacao?: string[];
 }
 
@@ -38,6 +39,18 @@ interface PontoComparacao extends PontoIndicador {
     Município: string;
 }
 
+interface ModeloPredicao {
+    modelo: string;
+    mae: number;
+    r2: number | null;
+}
+
+interface RespostaPredicao {
+    modelo: string;
+    predicao: number;
+    modelosAvaliados: ModeloPredicao[];
+}
+
 export default function GraficosComponent({
     tipoGrafico,
     isFiltroAplicado,
@@ -45,12 +58,66 @@ export default function GraficosComponent({
     tipoDoIndicador,
     municipio,
     municipiosComparacao = [],
+    anoPrevisao,
 }: GraficosComponentProps) {
     const [legendas, setLegendas] = useState<string[]>([]);
     const [valores, setValores] = useState<number[]>([]);
+    const [valorDaPrevisao, setValorDaPrevisao] = useState<number | null>(null);
+    const [dadosDaPrevisao, setDadosDaPrevisao] = useState<RespostaPredicao | null>(null);
+    const [isCarregandoPrevisao, setIsCarregandoPrevisao] = useState(false);
+    const [erroPrevisao, setErroPrevisao] = useState(false);
     const [referenciaComparacao, setReferenciaComparacao] = useState<string | number | null>(null);
     const [isCarregando, setIsCarregando] = useState(false);
     const [erro, setErro] = useState(false);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        async function buscarPrevisao() {
+        if (!isFiltroAplicado || tipoGrafico !== "linha" || !indicador || !municipio || !anoPrevisao) {
+            setValorDaPrevisao(null);
+            setDadosDaPrevisao(null);
+            return;
+        }
+
+        try {
+            setIsCarregandoPrevisao(true);
+            setErroPrevisao(false);
+            setDadosDaPrevisao(null);
+            const parametros = new URLSearchParams({
+                schema: tipoDoIndicador || "educacao",
+                indicador: indicador,
+                municipio: municipio || "",
+                ano: String(anoPrevisao)
+            });
+
+            const requisicao = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/predicoes?${parametros.toString()}`,
+                { signal: controller.signal }
+            );
+
+            if (!requisicao.ok) {
+                throw new Error("Falha ao buscar dados de previsão");
+            }
+
+            const resposta: RespostaPredicao = await requisicao.json();
+            setValorDaPrevisao(Number(resposta.predicao));
+            setDadosDaPrevisao(resposta);
+        }catch (error) {
+            if ((error as Error).name !== "AbortError") {
+            console.error("Erro ao buscar dados de previsão:", error);
+            setErroPrevisao(true);
+            setValorDaPrevisao(null);
+            setDadosDaPrevisao(null);
+            }
+        } finally {
+            setIsCarregandoPrevisao(false);
+        }
+        }
+
+        buscarPrevisao();
+        return () => controller.abort();
+    }, [isFiltroAplicado, tipoGrafico, indicador, tipoDoIndicador, municipio, anoPrevisao]);
 
     useEffect(() => {
         if (!isFiltroAplicado || !tipoGrafico || !indicador) {
@@ -117,12 +184,19 @@ export default function GraficosComponent({
         return () => controller.abort();
     }, [isFiltroAplicado, tipoGrafico, indicador, tipoDoIndicador, municipio, municipiosComparacao]);
 
+    const possuiPrevisao = anoPrevisao !== undefined && valorDaPrevisao !== null;
+    const legendasLinha = possuiPrevisao ? [...legendas, String(anoPrevisao)] : legendas;
+    const valoresObservados: Array<number | null> = possuiPrevisao ? [...valores, null] : valores;
+    const valoresProjetados: Array<number | null> = possuiPrevisao
+        ? [...Array(Math.max(legendas.length - 1, 0)).fill(null), valores.at(-1) ?? null, valorDaPrevisao]
+        : [];
+
     const dadosLinha = {
-        labels: legendas,
+        labels: legendasLinha,
         datasets: [
             {
                 label: "Valor observado",
-                data: valores,
+                data: valoresObservados,
                 borderColor: "#0369A1",
                 backgroundColor: "rgba(14, 165, 233, 0.14)",
                 pointBackgroundColor: "#FFFFFF",
@@ -134,6 +208,21 @@ export default function GraficosComponent({
                 tension: 0.34,
                 fill: true,
             },
+            {
+                label: "Previsão",
+                data: valoresProjetados,
+                borderColor: "#1D4ED8",
+                backgroundColor: "rgba(37, 99, 235, 0.12)",
+                pointBackgroundColor: "#FFFFFF",
+                pointBorderColor: "#1D4ED8",
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 3,
+                tension: 0.34,
+                borderDash: [7, 5],
+                fill: false,
+            }
         ],
     };
 
@@ -213,7 +302,7 @@ export default function GraficosComponent({
                     </p>
                 </div>
                 <div className="flex w-fit items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600">
-                    <span className={`h-2 w-2 rounded-full ${erro ? "bg-rose-500" : isCarregando ? "animate-pulse bg-amber-400" : "bg-emerald-500"}`} />
+                    <span className={`h-2 w-2 rounded-full ${erro ? "bg-rose-500" : isCarregando ? "animate-pulse bg-amber-400" : "bg-sky-500"}`} />
                     {erro ? "Dados indisponíveis" : isCarregando ? "Atualizando dados" : "Dados carregados"}
                 </div>
             </div>
@@ -239,6 +328,43 @@ export default function GraficosComponent({
                     />
                 )}
             </div>
+            {tipoGrafico === "linha" && anoPrevisao && (
+                <div className={`mt-3 rounded-xl px-4 py-3 text-sm ${erroPrevisao ? "bg-rose-50 text-rose-700" : "border border-sky-100 bg-sky-50 text-sky-900"}`}>
+                    {isCarregandoPrevisao ? (
+                        "Calculando projeção..."
+                    ) : erroPrevisao ? (
+                        "Não foi possível gerar a projeção para este recorte."
+                    ) : valorDaPrevisao !== null ? (
+                        <>
+                            <p className="font-semibold">
+                                Projeção estimada para {anoPrevisao}: {valorDaPrevisao.toLocaleString("pt-BR", { minimumFractionDigits: 3, maximumFractionDigits: 3 })}
+                            </p>
+                            {dadosDaPrevisao && (
+                                <div className="mt-3 border-t border-sky-200 pt-3">
+                                    <p className="text-xs font-bold uppercase tracking-wide text-sky-700">
+                                        Algoritmos utilizados
+                                    </p>
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {dadosDaPrevisao.modelosAvaliados.map((modelo) => (
+                                            <span
+                                                key={modelo.modelo}
+                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${modelo.modelo === dadosDaPrevisao.modelo ? "bg-sky-800 text-white" : "bg-white text-sky-800 ring-1 ring-sky-200"}`}
+                                            >
+                                                {modelo.modelo}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <p className="mt-2 text-xs leading-5 text-sky-700">
+                                        O algoritmo escolhido para esta projeção foi <strong>{dadosDaPrevisao.modelo}</strong>, por apresentar o menor erro nos testes com os dados históricos.
+                                    </p>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        "Selecione um município para gerar a projeção."
+                    )}
+                </div>
+            )}
             {tipoGrafico === "barra" && referenciaComparacao && !isCarregando && !erro && (
                 <p className="mt-3 text-right text-xs font-medium text-slate-500">
                     Dados referentes a {referenciaComparacao}

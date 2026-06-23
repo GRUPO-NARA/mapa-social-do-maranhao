@@ -29,7 +29,7 @@ export default function Home(){
                     <h2 className="font-bold text-slate-800">Mapa Social do Maranhão</h2>
                     <p className="text-xs text-slate-500">{municipio || "Visão estadual"}</p>
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${isFiltrando ? "bg-emerald-100 text-emerald-700" : "bg-sky-100 text-sky-700"}`}>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${isFiltrando ? "bg-sky-100 text-sky-700" : "bg-sky-100 text-sky-700"}`}>
                     {isFiltrando ? "Município selecionado" : "217 municípios"}
                   </span>
                 </div>

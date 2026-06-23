@@ -28,6 +28,20 @@ services:
       db:
         condition: service_healthy
 
+  api-python:
+    build:
+      context: ./api_python
+    expose:
+      - "8000"
+    networks:
+      - rede-mapa
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   backend:
     build:
       context: ./backend
@@ -37,7 +51,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       BACKEND_PORT: ${BACKEND_PORT}
       BACKEND_HOST: ${BACKEND_HOST}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      PYTHON_API_URL: ${PYTHON_API_URL:-http://api-python:8000}
     ports:
       - "8080:8080"
     networks:
@@ -53,6 +68,8 @@ services:
         condition: service_healthy
       pipeline:
         condition: service_completed_successfully
+      api-python:
+        condition: service_healthy
   frontend:
     build:
       context: ./frontend
