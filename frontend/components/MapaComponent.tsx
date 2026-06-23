@@ -23,7 +23,7 @@ export default function MapaComponent({municipio, isFiltrando, isMostrarApenasMa
     const [zoom, setZoom] = useState(7);
 
     useEffect(() => {
-          getCoordenadasMunicipais()
+          buscarCoordenadasMunicipais()
       }, [])
 
       useEffect(() => {
@@ -32,11 +32,11 @@ export default function MapaComponent({municipio, isFiltrando, isMostrarApenasMa
           }
       }, [coordenadasMunicipais, municipio])
 
-    async function getCoordenadasMunicipais(){
+    async function buscarCoordenadasMunicipais(){
         try {
             const requisicao = await fetch("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-21-mun.json",
               {
-                next: { revalidate: 86400 }
+                cache: "force-cache"
               }
             )
             const dados = await requisicao.json()

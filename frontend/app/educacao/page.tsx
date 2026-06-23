@@ -20,13 +20,22 @@ export default function Educacao(){
     const [municipio, setMunicipio] = useState("");
     const [isFiltroMunicipioAplicado, setIsFiltroMunicipioAplicado] = useState(false);
     const [municipiosComparacao, setMunicipiosComparacao] = useState<string[]>([]);
+    const [anoPrevisao, setAnoPrevisao] = useState<number | null>(null);
+
+    function atualizarMunicipio(novoMunicipio: string) {
+        setMunicipio(novoMunicipio);
+        setIsFiltroEducacaoAplicado(false);
+        setTipoGraficoAtivo(null);
+        setIndicadorAtivo("");
+        setMunicipiosComparacao([]);
+        setAnoPrevisao(null);
+    }
 
     return (
         <div className="flex min-h-screen justify-center bg-slate-50">
-                <main className="h-full w-full min-w-0 px-4 sm:px-6 lg:w-[88%] lg:max-w-[1440px] lg:px-0">
+                <main className="h-full w-full min-w-0 px-4 sm:px-6 lg:w-[88%] lg:max-w-360 lg:px-0">
                     <HeaderComponent />
-
-                    <section className="relative mb-8 overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 px-6 py-8 text-white shadow-xl shadow-sky-950/10 sm:px-10 sm:py-10">
+                    <section className="relative mb-8 overflow-hidden rounded-4xl bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 px-6 py-8 text-white shadow-xl shadow-sky-950/10 sm:px-10 sm:py-10">
                       <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
                       <div className="absolute -bottom-24 right-1/3 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" aria-hidden="true" />
                       <div className="relative grid items-end gap-8 lg:grid-cols-[1.5fr_1fr]">
@@ -62,12 +71,11 @@ export default function Educacao(){
                           <h2 className="mt-1 text-2xl font-bold text-slate-900">Explore o território</h2>
                           <p className="mt-1 text-sm text-slate-500">Escolha um município para destacar sua localização e contextualizar os resultados.</p>
                         </div>
-                        <span className="w-fit rounded-full bg-sky-100 px-3 py-1.5 text-xs font-semibold text-sky-800">Visão municipal</span>
+                        
                       </div>
-
                       <div className="grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-6">
-                      <aside className="col-span-1 min-w-0 rounded-3xl border border-slate-200 bg-white p-1 shadow-sm">
-                        <FiltroComponent aoMudarMunicipio={setMunicipio} isFiltrando={setIsFiltroMunicipioAplicado} />
+                      <aside className="col-span-1 min-w-0 h-fit rounded-3xl border border-slate-200 bg-white p-1 shadow-sm">
+                        <FiltroComponent aoMudarMunicipio={atualizarMunicipio} isFiltrando={setIsFiltroMunicipioAplicado} />
                         <div className="mx-5 mb-5 rounded-2xl bg-slate-50 p-4 text-xs leading-5 text-slate-500">
                           O município selecionado será usado como recorte nos gráficos de evolução.
                         </div>
@@ -78,8 +86,8 @@ export default function Educacao(){
                             <h3 className="font-bold text-slate-800">Mapa dos municípios</h3>
                             <p className="text-xs text-slate-500">{municipio || "Maranhão"}</p>
                           </div>
-                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${isFiltroMunicipioAplicado ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
-                            {isFiltroMunicipioAplicado ? "Filtro aplicado" : "Visão estadual"}
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${isFiltroMunicipioAplicado ? "bg-sky-100 text-sky-700" : "bg-slate-100 text-slate-600"}`}>
+                            {isFiltroMunicipioAplicado ? "Visão Municipal" : "Visão Estadual"}
                           </span>
                         </div>
                         <MapaComponent municipio={municipio} isFiltrando={isFiltroMunicipioAplicado} isMostrarApenasMapa={true}/>
@@ -94,11 +102,14 @@ export default function Educacao(){
                         <p className="mt-1 text-sm text-slate-500">Selecione o indicador e a visualização mais adequada para a leitura dos dados.</p>
                       </div>
                       <SeletorIndicadoresComponent
+                        key={municipio || "sem-municipio"}
                         tipoDoIndicador="educacao"
+                        municipioSelecionado={isFiltroMunicipioAplicado && municipio !== ""}
                         setTipoGraficoAtivo={setTipoGraficoAtivo}
                         setIndicadorAtivo={setIndicadorAtivo}
                         setIsFiltroAplicado={setIsFiltroEducacaoAplicado}
                         setMunicipiosComparacao={setMunicipiosComparacao}
+                        setAnoPrevisao={setAnoPrevisao}
                       />
                     </section>
 
@@ -123,11 +134,13 @@ export default function Educacao(){
                         tipoDoIndicador="educacao"
                         municipio={municipio}
                         municipiosComparacao={municipiosComparacao}
+                        anoPrevisao={anoPrevisao ?? undefined}
                       />
                       {isFiltroEducacaoAplicado && (
                         <ClusterizacaoComponent
                           isFiltroAplicado={isFiltroEducacaoAplicado}
                           indicador={indicadorAtivo}
+                          tipoDoIndicador="educacao"
                           municipio={municipio}
                         />
                       )}

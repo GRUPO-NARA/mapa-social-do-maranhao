@@ -13,17 +13,17 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
 
     useEffect(() => {
         if (municipio) {
-            getPopulacao();
-            getQuantidadeHomens();
-            getQuantidadeMulheres();
-            getAreaTerritorial();
-            getDensidadeDemografica();
-            getDadosPrincipais();
+            buscarPopulacao();
+            buscarQuantidadeHomens();
+            buscarQuantidadeMulheres();
+            buscarAreaTerritorial();
+            buscarDensidadeDemografica();
+            buscarDadosPrincipais();
         }
     }, [municipio])
 
     const [populacao, setPopulacao] = useState<any>();
-        async function getPopulacao(){
+        async function buscarPopulacao(){
           try{
             if(municipio != ""){
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/populacao?municipio=${municipio}`);
@@ -48,7 +48,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
         }
     
     const [quantidadeHomens, setQuantidadeHomens] = useState<any>()
-    async function getQuantidadeHomens(){
+    async function buscarQuantidadeHomens(){
         try{
             if(municipio != ""){
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeHomens?municipio=${municipio}`);
@@ -73,7 +73,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
     }
     
     const [quantidadeMulheres, setQuantidadeMulheres] = useState<any>()
-    async function getQuantidadeMulheres(){
+    async function buscarQuantidadeMulheres(){
         try{
             if(municipio != ""){
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeMulheres?municipio=${municipio}`);
@@ -98,7 +98,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
     }
     
     const [areaTerritorial, setAreaTerritorial] = useState<any>()
-    async function getAreaTerritorial(){
+    async function buscarAreaTerritorial(){
         try{
             if(municipio != ""){
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/geograficos/areaTotal?municipio=${municipio}`);
@@ -123,7 +123,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
     }
         
     const[densidadeDemografica, setDensidadeDemografica] = useState<any>()
-    async function getDensidadeDemografica(){
+    async function buscarDensidadeDemografica(){
         try{
             if(municipio != ""){
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/geograficos/densidadeDemografica?municipio=${municipio}`);
@@ -149,7 +149,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
     
     const [dadosPrincipais, setDadosPrincipais] = useState<string>("");
     
-    async function getDadosPrincipais() {
+    async function buscarDadosPrincipais() {
         try {
             if (municipio !== "") {
                 const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/informacoes/dadosPrincipaisMunicipal?municipio=${municipio}`);
@@ -197,7 +197,7 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
 
     return (
         <div className={`absolute m-2 z-10 md:left-4 md:top-4 md:z-10 ${isMostrarApenasMapa ? "hidden" : ""}`}>
-            <div className={`flex flex-col gap-1 w-fit-content rounded-xl border border-indigo-400 bg-white/95 p-4 shadow-lg
+            <div className={`flex flex-col gap-1 w-fit-content rounded-xl border border-sky-700 bg-white/95 p-4 shadow-lg
                 ${isFiltrando && municipio !== "" ? "visible" : "invisible"}`}>
                 <div className="flex gap-2">
                     <p className="text-sm md:text-base font-bold text-gray-700">População:</p>
@@ -219,11 +219,11 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
                     <p className="text-sm md:text-base font-bold text-gray-700">Área Territorial:</p>
                     <p className="text-sm md:text-base text-black">{areaTerritorial}</p>
                 </div>
-                <div className="flex flex-col bg-gray-300 rounded p-2 mt-2">
-                    <a href="https://sidra.ibge.gov.br/" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-800 hover:text-blue-500">
+                <div className="flex flex-col bg-sky-100 rounded p-2 mt-2">
+                    <a href="https://sidra.ibge.gov.br/" target="_blank" rel="noopener noreferrer" className="text-sm text-sky-600 hover:text-blue-500">
                       Fonte: Sistema IBGE de Recuperação Automática (SIDRA)
                     </a>
-                    <a href={dadosPrincipais} download={`Dados Principais do Município de ${municipio}.csv`} className="text-sm text-gray-800 hover:text-blue-500 font-semibold">
+                    <a href={dadosPrincipais} download={`Dados Principais do Município de ${municipio}.csv`} className="text-sm text-sky-600 hover:text-blue-500 font-semibold">
                       Baixar dados
                     </a>
                 </div>

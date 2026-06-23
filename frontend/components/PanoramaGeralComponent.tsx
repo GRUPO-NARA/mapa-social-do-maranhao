@@ -5,20 +5,18 @@ import { formatarPibEmBilhoes } from "../utils/formatarNumeros";
 export default function PanoramaGeralComponent() {
 
     useEffect(() => {
-        getPopulacaoTotalEstado(),
-        getPibAgregadoEstado()
+        buscarPopulacaoTotalEstado(),
+        buscarPibAgregadoEstado()
     }, []);
 
     const [referenciaDadosPopulacaoEstadual, setReferenciaDadosPopulacaoEstadual] = useState("");
     const [populacaoTotalEstadual, setPopulacaoTotalEstadual] = useState("");
     const [fonteDadosPopulacaoEstadual, setFonteDadosPopulacaoEstadual] = useState("");
-    async function getPopulacaoTotalEstado() {
+    async function buscarPopulacaoTotalEstado() {
         try{
             const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/populacaoEstadualRecente`, 
                 {
-                    next: {
-                        revalidate: 60 * 60 * 24,
-                    }
+                    cache: "force-cache" 
                 }
             );
             if (requisicao.ok) {
@@ -47,13 +45,11 @@ export default function PanoramaGeralComponent() {
     const [referenciaPibAgregadoEstado, setReferenciaPibAgregadoEstado] = useState("");
     const [pibAgregadoEstado, setPibAgregadoEstado] = useState("");
     const [fontePibAgregadoEstado, setFontePibAgregadoEstado] = useState("");
-    async function getPibAgregadoEstado() {
+    async function buscarPibAgregadoEstado() {
         try{
             const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/economicos/produtoInternoBrutoAgregadoEstadual`, 
                 {
-                    next: {
-                        revalidate: 60 * 60 * 24, // Revalidar a cada 24 horas
-                    }
+                    cache: "force-cache" 
                 }
             );
             if (requisicao.ok) {
@@ -90,7 +86,7 @@ export default function PanoramaGeralComponent() {
                             </span>
                             <div>
                                 <h1 className="text-lg font-bold text-slate-900">Panorama Geral</h1>
-                                <p className="text-xs text-slate-500">Síntese estadual</p>
+                                <p className="text-xs text-slate-500">Dados Estaduais</p>
                             </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3 ">
@@ -117,24 +113,24 @@ export default function PanoramaGeralComponent() {
                     </div>
                     <div className="group/div flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-center items-center transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:bg-white hover:shadow-md">
                         <span className="rounded bg-sky-100 px-2 py-1 text-xs font-semibold text-sky-800">Economia</span>
-                        <h1 className="text-xs">Média municipal do PIB Per Capita - {referenciaPibAgregadoEstado}</h1>
-                        <p className="text-lg font-bold text-gray-800">{pibAgregadoEstado ? pibAgregadoEstado : "--"}</p>
-                        <p className="text-xs text-gray-600">Bilhões</p>
-                        <p className="text-xs text-gray-600">Fonte: {fontePibAgregadoEstado}</p>
+                        <h1 className="text-xs">Média municipal do PIB Per Capita - --</h1>
+                        <p className="text-lg font-bold text-gray-800">--</p>
+                        <p className="text-xs text-gray-600">--</p>
+                        <p className="text-xs text-gray-600">Fonte: --</p>
                     </div>
                     <div className="group/div flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-center items-center transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:bg-white hover:shadow-md">
                         <span className="rounded bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-800">Educação</span>
-                        <h1 className="text-xs">Média municipal da taxa de analfabetismo - {referenciaPibAgregadoEstado}</h1>
-                        <p className="text-lg font-bold text-gray-800">{pibAgregadoEstado ? pibAgregadoEstado : "--"}</p>
-                        <p className="text-xs text-gray-600">Bilhões</p>
-                        <p className="text-xs text-gray-600">Fonte: {fontePibAgregadoEstado}</p>
+                        <h1 className="text-xs">Média municipal da taxa de analfabetismo - --</h1>
+                        <p className="text-lg font-bold text-gray-800">--</p>
+                        <p className="text-xs text-gray-600">--</p>
+                        <p className="text-xs text-gray-600">Fonte: --</p>
                     </div>
                     <div className="group/div flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-center items-center transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:bg-white hover:shadow-md">
                         <span className="rounded bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-800">Saúde</span>
-                        <h1 className="text-xs">Média Municipal da Mortalidade Infantil - {referenciaPibAgregadoEstado}</h1>
-                        <p className="text-lg font-bold text-gray-800">{pibAgregadoEstado ? pibAgregadoEstado : "--"}</p>
-                        <p className="text-xs text-gray-600">Bilhões</p>
-                        <p className="text-xs text-gray-600">Fonte: {fontePibAgregadoEstado}</p>
+                        <h1 className="text-xs">Média Municipal da Mortalidade Infantil - --</h1>
+                        <p className="text-lg font-bold text-gray-800">--</p>
+                        <p className="text-xs text-gray-600">--</p>
+                        <p className="text-xs text-gray-600">Fonte: --</p>
                     </div>
                     
                 </div>
