@@ -107,23 +107,24 @@ public class EconomicosController {
         return ResponseEntity.ok().body(respostaDaRequisicao);
     }
 
-    @Operation(summary = "Busca a média histórica do Produto Interno Bruto per capita municipal",
-            description = "Retorna a média calculada de toda a série histórica disponível para o Produto Interno Bruto (PIB) per capita do município especificado.")
+    @Operation(summary = "Busca o Produto Interno Bruto per capita do município",
+            description = "Retorna o valor mais recente referente aos dados do Produto Interno Bruto per capita do município.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Média do PIB per capita calculada com sucesso!",
+                    description = "PIB per capita retornado com sucesso!",
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
-                                            name = "Exemplo de requisição bem sucedida para a média do PIB per capita de São Luís",
+                                            name = "Exemplo de requisição bem sucedida do PIB per capita de São Luís",
                                             value = """
                                                     {
-                                                      "Resposta da Requisição": "{\\"Média do PIB Per Capita\\" : 39250.42, \\"Referência dos Dados\\" : \\"Média Histórica\\", \\"Fonte dos Dados\\" : \\"SIDRA\\"}",
                                                       "Status da Requisição": "200",
-                                                      "Indicador da Requisição": "Média do PIB Per Capita do Município de São Luís"
-                                                    }"""
+                                                      "Resposta da Requisição": "{\\"Produto Interno Bruto per Capita\\" : 29135, \\"Referência dos Dados\\" : 2019, \\"Fonte dos Dados\\" : \\"IMESC\\"}",
+                                                      "Indicador da Requisição": "Produto Interno Bruto Per Capita do Município de São Luís"
+                                                    }
+                                                    """
                                     )
                             }
                     )
@@ -143,8 +144,44 @@ public class EconomicosController {
             )
             @Valid @RequestParam("municipio") String municipio) {
         HashMap<String, Object> respostaDaRequisicao = resposta.CorpoDaResposta(
-                "Média do PIB Per Capita do Município de " + municipio,
+                "Produto Interno Bruto Per Capita do Município de " + municipio,
                 economicosService.produtoInternoBrutoPerCapitaMunicipal(municipio),
+                "200"
+        );
+        return ResponseEntity.ok().body(respostaDaRequisicao);
+    }
+
+    @Operation(summary = "Busca o Produto Interno Bruto per capita do estado do Maranhão",
+            description = "Retorna o valor mais recente referente aos dados do Produto Interno Bruto per capita do estado do Maranhão.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "PIB per capita estadual retornado com sucesso!",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Exemplo de requisição bem sucedida do PIB per capita do estado do Maranhão",
+                                            value = """
+                                                    {
+                                                      "Resposta da Requisição": "{\\"Produto Interno Bruto per Capita\\" : 10264.502304147465, \\"Referência dos Dados\\" : 2019, \\"Fonte dos Dados\\" : \\"IMESC\\"}",
+                                                      "Status da Requisição": "200",
+                                                      "Indicador da Requisição": "Produto Interno Bruto Per Capita do Estado do Maranhão"
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            ),
+            @ApiResponse(responseCode = "204", description = "Não foram encontrados dados do estado do Maranhão"),
+            @ApiResponse(responseCode = "404", description = "Endpoint não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados")
+    })
+    @GetMapping("/pibPerCapitaEstadual")
+    public ResponseEntity<HashMap<String, Object>> BuscarPibPerCapitaEstadual(){
+        HashMap<String, Object> respostaDaRequisicao = resposta.CorpoDaResposta(
+                "Produto Interno Bruto Per Capita do Estado do Maranhão",
+                economicosService.produtoInternoBrunoPerCapitaEstadual(),
                 "200"
         );
         return ResponseEntity.ok().body(respostaDaRequisicao);

@@ -220,8 +220,14 @@ public class SaudeService {
             @NotBlank(message = "Municipio não pode ser em branco")
             String municipio){
 
-        return taxaMortalidadeInfantilRepository.buscarMediaDaTaxaMortalidadeInfantilDoMunicipio(municipio);
+        return taxaMortalidadeInfantilRepository.buscarTaxaDeMortalidadeMunicipal(municipio);
     }
+
+    public String taxaMortalidadeInfantilEstadual(){
+
+        return taxaMortalidadeInfantilRepository.buscarTaxaDeMortalidadeEstadual();
+    }
+
 
     public String obitosDoencasIsquemicasCoracaoMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")

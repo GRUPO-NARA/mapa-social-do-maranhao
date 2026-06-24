@@ -3,7 +3,7 @@ package mpma.mapa.service.Economicos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import mpma.mapa.repository.Economicos.ProdutoInternoBrutoMunicipalRepository;
-import mpma.mapa.repository.Economicos.ProdutoInternoBrutoPerCapitaRepository;
+import mpma.mapa.repository.Economicos.ProdutoInternoBrutoPerCapitaMunicipalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +16,7 @@ public class EconomicosService {
     private ProdutoInternoBrutoMunicipalRepository produtoInternoBrutoMunicipalRepository;
 
     @Autowired
-    private ProdutoInternoBrutoPerCapitaRepository produtoInternoBrutoPerCapitaRepository;
+    private ProdutoInternoBrutoPerCapitaMunicipalRepository produtoInternoBrutoPerCapitaMunicipalRepository;
 
     public String produtoInternoBrutoMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
@@ -34,7 +34,11 @@ public class EconomicosService {
             @NotBlank(message = "Municipio não pode ser em branco")
             String municipio){
 
-        return produtoInternoBrutoPerCapitaRepository.buscarMediaDoPibPerCapitaDoMunicipio(municipio);
+        return produtoInternoBrutoPerCapitaMunicipalRepository.buscarProdutoInternoBrutoPerCapitaMunicipal(municipio);
+    }
+
+    public String produtoInternoBrunoPerCapitaEstadual(){
+        return produtoInternoBrutoPerCapitaMunicipalRepository.buscarPibPerCapitaEstadual();
     }
 
 }

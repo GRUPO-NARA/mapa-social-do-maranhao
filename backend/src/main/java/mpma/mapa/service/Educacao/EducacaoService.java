@@ -27,9 +27,13 @@ public class EducacaoService {
             @NotBlank(message = "Municipio não pode ser em branco")
             String municipio) {
 
-        return taxaDeAnalfabetismo15AnosOuMaisRepository.buscarMediaDaTaxaDeAnalfabetismoDoMunicipio(municipio);
+        return taxaDeAnalfabetismo15AnosOuMaisRepository.buscarTaxaDeAnalfabetismo15OuMaisMunicipal(municipio);
     }
-    
+
+    public String taxaDeAnalfabetismo15AnosOuMaisEstadual() {
+        return taxaDeAnalfabetismo15AnosOuMaisRepository.buscarTaxaDeAnalfabetismo15OuMaisEstadual();
+    }
+
     public String taxaDeAprovacaoNoEnsinoFundamentalMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
             @NotBlank(message = "Municipio não pode ser em branco")

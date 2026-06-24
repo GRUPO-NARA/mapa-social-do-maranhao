@@ -33,31 +33,64 @@ public class EducacaoController {
     private EducacaoService educacaoService;
 
     @Operation(
-            summary = "Busca a média histórica da taxa de analfabetismo (15 anos ou mais) do município",
-            description = "Retorna a média consolidada de toda a série histórica disponível para o percentual da população com 15 anos ou mais de idade que não sabe ler e escrever."
+            summary = "Busca a taxa de analfabetismo de 15 anos ou mais do município",
+            description = "Retorna o percentual de pessoas com 15 anos ou mais que são analfabetas no município cadastrado."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Média da taxa de analfabetismo calculada com sucesso",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                    description = "Taxa de analfabetismo encontrada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
                             {
-                              "Resposta da Requisição": "{\\"Média da Taxa de Analfabetismo (15 anos ou mais)\\" : 14.25, \\"Referência dos Dados\\" : \\"Média Histórica\\", \\"Fonte dos Dados\\" : \\"SIDRA\\"}",
+                              "Resposta da Requisição": "{\\"Taxa de Analfabetismo 15 anos ou mais\\" : 12.3, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\" : \\"IBGE\\"}",
                               "Status da Requisição": "200",
-                              "Indicador da Requisição": "Média da Taxa de Analfabetismo (15 anos ou mais) do Município de São Luís"
+                              "Indicador da Requisição": "Taxa de Analfabetismo de 15 anos ou mais do Município de São Luís"
                             }"""))),
             @ApiResponse(responseCode = "400", description = "Requisição inválida"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
+
     @GetMapping("/taxaAnalfabetismo15AnosOuMais")
-    public ResponseEntity<HashMap<String, Object>> BuscarTaxaAnalfabetismo15AnosOuMais(
+    public ResponseEntity<HashMap<String, Object>> BuscarTaxaDeAnalfabetismo15AnosOuMais(
             @Parameter(name = "municipio", description = "nome do município (ex: São Luís)", example = "São Luís", required = true)
             @Valid @RequestParam("municipio") String municipio
     ) {
         return ResponseEntity.ok().body(
                 resposta.CorpoDaResposta(
-                        "Média da Taxa de Analfabetismo (15 anos ou mais) do Município de " + municipio,
+                        "Taxa de Analfabetismo de 15 anos ou mais do Município de " + municipio,
                         educacaoService.taxaDeAnalfabetismo15AnosOuMaisMunicipal(municipio),
+                        "200"
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Busca a taxa de analfabetismo de 15 anos ou mais do estado",
+            description = "Retorna o percentual de pessoas com 15 anos ou mais que são analfabetas no estado do Maranhão."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Taxa de analfabetismo encontrada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                            {
+                              "Resposta da Requisição": "{\\"Taxa de Analfabetismo 15 anos ou mais\\" : 10.5, \\"Referência dos Dados\\" : \\"2023\\", \\"Fonte dos Dados\\" : \\"IBGE\\"}",
+                              "Status da Requisição": "200",
+                              "Indicador da Requisição": "Taxa de Analfabetismo de 15 anos ou mais do Estado do Maranhão"
+                            }"""))),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/taxaAnalfabetismo15AnosOuMaisEstadual")
+    public ResponseEntity<HashMap<String, Object>> BuscarTaxaDeAnalfabetismo15AnosOuMaisEstadual() {
+        return ResponseEntity.ok().body(
+                resposta.CorpoDaResposta(
+                        "Taxa de Analfabetismo de 15 anos ou mais do Estado do Maranhão",
+                        educacaoService.taxaDeAnalfabetismo15AnosOuMaisEstadual(),
                         "200"
                 )
         );
