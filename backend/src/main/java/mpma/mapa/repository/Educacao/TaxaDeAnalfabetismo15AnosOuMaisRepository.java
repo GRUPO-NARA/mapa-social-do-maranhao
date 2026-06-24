@@ -9,20 +9,30 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TaxaDeAnalfabetismo15AnosOuMaisRepository extends JpaRepository<TaxaDeAnalfabetismo15AnosOuMaisEntity, Long> {
 
-    @Query(
-            value = """
-                    SELECT json_build_object(
-                                        'Média da Taxa de Analfabetismo (15 anos ou mais)', ROUND(AVG(t.valor)::numeric, 2),
-                                        'Referência dos Dados', 'Média Histórica',
-                                        'Fonte dos Dados', t.fonte
-                                 )
-                                 FROM educacao.taxa_de_analfabetismo_15_anos_ou_mais as t
-                                 JOIN dados_estadual.referencias_codigos_municipais rcm on t.cod_municipio = rcm.codigo_ibge
-                                 WHERE rcm.municipio = :municipio
-                                 GROUP BY t.fonte;
-                    """
-            , nativeQuery = true
+    @Query(value = """
+        SELECT json_build_object(
+                        'Taxa de Analfabetismo 15 anos ou mais', t.valor,
+                        'Referência dos Dados', t.referencia,
+                        'Fonte dos Dados', t.fonte
+                    )
+            FROM educacao.taxa_de_analfabetismo_15_anos_ou_mais as t
+            JOIN dados_estadual.referencias_codigos_municipais rcm ON t.cod_municipio = rcm.codigo_ibge
+            WHERE rcm.municipio = ?1
+            ORDER BY t.referencia DESC
+            LIMIT 1;""", nativeQuery = true
     )
+    String buscarTaxaDeAnalfabetismo15OuMaisMunicipal(String municipio);
 
-    String buscarMediaDaTaxaDeAnalfabetismoDoMunicipio(@Param("municipio") String municipio);
+    @Query(value = """
+        SELECT json_build_object(
+                        'Taxa de Analfabetismo 15 anos ou mais', AVG(t.valor),
+                        'Referência dos Dados', t.referencia,
+                        'Fonte dos Dados', t.fonte
+                    )
+            FROM educacao.taxa_de_analfabetismo_15_anos_ou_mais as t
+            WHERE t.referencia = (SELECT MAX(referencia) FROM educacao.taxa_de_analfabetismo_15_anos_ou_mais)
+            GROUP BY t.referencia, t.fonte
+            LIMIT 1;""", nativeQuery = true
+    )
+    String buscarTaxaDeAnalfabetismo15OuMaisEstadual();
 }

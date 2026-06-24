@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import AjudaIndicadorComponent from "./AjudaIndicadorComponent";
 
 interface CartaoIndicadorProps {
     titulo: string;
@@ -23,8 +24,9 @@ export default function CartaoIndicadorComponent({
         <article className="group/card flex h-full min-h-48 flex-col justify-between rounded-2xl border border-gray-300 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-sky-600 hover:shadow-lg">
             <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                    <div className="w-fit rounded bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 p-2">
+                    <div className="flex w-fit items-center gap-2 rounded bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 p-2">
                         <h3 className="text-sm font-bold text-white">{titulo}</h3>
+                        {descricao && <AjudaIndicadorComponent titulo={titulo} texto={descricao} variante="escura" />}
                     </div>
                     {descricao && <p className="mt-1 text-sm text-gray-600">{descricao}</p>}
                     <div className="mt-1 h-1 w-full rounded-2xl bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600" />

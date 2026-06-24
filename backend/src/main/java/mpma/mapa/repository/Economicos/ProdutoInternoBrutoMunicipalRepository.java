@@ -39,4 +39,6 @@ public interface ProdutoInternoBrutoMunicipalRepository extends JpaRepository<Pr
             nativeQuery = true
     )
     String buscarProdutoInternoBrutoAgregadoEstadualRecente();
+
+
 }

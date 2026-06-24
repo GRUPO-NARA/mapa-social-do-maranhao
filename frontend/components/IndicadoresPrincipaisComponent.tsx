@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import GraficoCompativoComponent from "./GraficoCompativoComponent";
+import AjudaIndicadorComponent from "./AjudaIndicadorComponent";
 import { formatarPibEmBilhoes } from "../utils/formatarNumeros";
 
 interface IndicadoresPrincipaisProps {
@@ -133,34 +134,30 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
     const [referenciaPopulacaoUrbana, setReferenciaPopulacaoUrbana] = useState("");
     const [fontePopulacaoUrbana, setFontePopulacaoUrbana] = useState("");
     async function buscarPopulacaoUrbana(){
-      try{
-        if(municipio != ""){
-          const requisicaoPopulacao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/populacao?municipio=${municipio}`);
-          const requisicaoPopulacaoRural = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeResidentesRurais?municipio=${municipio}`);
-
-          if(requisicaoPopulacao.ok && requisicaoPopulacaoRural.ok){
-            const respostaPopulacao = await requisicaoPopulacao.json();
-            const respostaPopulacaoRural = await requisicaoPopulacaoRural.json();
-            var dadosPopulacao = respostaPopulacao?.["Resposta da Requisição"];
-            var dadosPopulacaoRural = respostaPopulacaoRural?.["Resposta da Requisição"];
-
-            if(dadosPopulacao && dadosPopulacaoRural){
-              try{
-                var populacaoFormatada = JSON.parse(dadosPopulacao);
-                var populacaoRuralFormatada = JSON.parse(dadosPopulacaoRural);
-                var totalPopulacaoUrbana = populacaoFormatada["Quantidade de Pessoas"] - populacaoRuralFormatada["Quantidade de Residentes Rurais"];
-                setPopulacaoUrbana(totalPopulacaoUrbana);
-                setReferenciaPopulacaoUrbana(populacaoFormatada["Referência dos Dados"]);
-                setFontePopulacaoUrbana(populacaoFormatada["Fonte dos Dados"]);
-              }catch(erro){
-                console.error("Erro ao converter JSON:", erro);
-              }
+        try{
+            if(municipio != ""){
+                const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeResidentesUrbano?municipio=${municipio}`);
+                if(requisicao.ok){
+                    const resposta = await requisicao.json();
+                    var dadosInternos = resposta?.["Resposta da Requisição"];
+                    if(dadosInternos){
+                        try{
+                            var objetoFormatado = JSON.parse(dadosInternos);
+                            var populacaoUrbana = objetoFormatado["Quantidade de Residentes em Área Urbana"].toLocaleString("pt-BR");
+                            setPopulacaoUrbana(populacaoUrbana);
+                            var dataDeColeta = objetoFormatado["Referência dos Dados"];
+                            setReferenciaPopulacaoUrbana(dataDeColeta);
+                            var fonte = objetoFormatado["Fonte dos Dados"];
+                            setFontePopulacaoUrbana(fonte);
+                        }catch(erro){
+                            console.error("Erro ao converter JSON:", erro);
+                        }
+                    }
+                }
             }
-          }
+        }catch(error){
+            console.error("Ocorreu um erro ao buscar dados referentes à população urbana!", error);
         }
-      }catch(error){
-        console.error("Ocorreu um erro ao buscar dados referentes à população urbana!", error);
-      }
     }
 
     const [populacaoEmFavelas, setPopulacaoEmFavelas] = useState(0);
@@ -207,7 +204,7 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                 if(dadosInternos){
                     try{
                         var objetoFormatado = JSON.parse(dadosInternos);
-                        var pibPerCapita = objetoFormatado["PIB Per Capita"];
+                        var pibPerCapita = objetoFormatado["Produto Interno Bruto per Capita"].toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' });
                         setPibPerCapita(pibPerCapita);
                         var dataDeColeta = objetoFormatado["Referência dos Dados"];
                         setReferenciaPibPerCapita(dataDeColeta);
@@ -237,8 +234,9 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
-                                    <div className="bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
+                                    <div className="flex items-center gap-2 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
                                         <h1 className="font-bold text-sm text-white">PIB Municipal</h1>
+                                        <AjudaIndicadorComponent titulo="PIB Municipal" texto="Soma dos bens e serviços produzidos no município em um ano." variante="escura" />
                                     </div>
                                    <span className="text-gray-600 text-sm">Produto Interno Bruto do município</span>
                                     <div className="w-full h-1 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded-2xl"></div>
@@ -255,8 +253,9 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
-                                    <div className="bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
+                                    <div className="flex items-center gap-2 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
                                         <h1 className="font-bold text-sm text-white">PIB Per Capita</h1>
+                                        <AjudaIndicadorComponent titulo="PIB Per Capita" texto="PIB do município dividido pelo número de habitantes." variante="escura" />
                                     </div>
                                     <span className="text-gray-600 text-sm">Produto Interno Bruto per capita do município</span>
                                     <div className="w-full h-1 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded-2xl"></div>
@@ -273,8 +272,9 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
-                                    <div className="bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
+                                    <div className="flex items-center gap-2 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
                                         <h1 className="font-bold text-sm text-white">Índice de Desenvolvimento Humano</h1>
+                                        <AjudaIndicadorComponent titulo="Índice de Desenvolvimento Humano" texto="Índice que reúne informações de renda, educação e longevidade." variante="escura" />
                                     </div>
                                     <span className="text-gray-600 text-sm">Desenvolvimento Humano</span>
                                     <div className="w-full h-1 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded-2xl"></div>
@@ -306,8 +306,9 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
-                                    <div className="bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
+                                    <div className="flex items-center gap-2 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
                                         <h1 className="font-bold text-sm text-white">População Urbana</h1>
+                                        <AjudaIndicadorComponent titulo="População Urbana" texto="Número de pessoas residentes em áreas urbanas do município." variante="escura" />
                                     </div>
                                     <span className="text-gray-600 text-sm">População residente em áreas urbanas</span>
                                     <div className="w-full h-1 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded-2xl"></div>
@@ -323,8 +324,9 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
-                                    <div className="bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
+                                    <div className="flex items-center gap-2 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
                                         <h1 className="font-bold text-sm text-white">População Rural</h1>
+                                        <AjudaIndicadorComponent titulo="População Rural" texto="Número de pessoas residentes em áreas rurais do município." variante="escura" />
                                     </div>
                                     <span className="text-gray-600 text-sm">População residente em áreas rurais</span>
                                     <div className="w-full h-1 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded-2xl"></div>
@@ -332,7 +334,7 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                                 </div>
                                 <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
                             </div>
-                            <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600">{populacaoRural ? populacaoRural : "--"}</h1>
+                            <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600">{populacaoRural ? populacaoRural.toLocaleString("pt-BR") : "--"}</h1>
                             
                         </div>
                     </div>  
@@ -340,8 +342,9 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                         <div className="flex flex-col gap-8">
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
-                                    <div className="bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
+                                    <div className="flex items-center gap-2 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 w-fit h-fit">
                                         <h1 className="font-bold text-sm text-white">População em Favelas</h1>
+                                        <AjudaIndicadorComponent titulo="População em Favelas" texto="Número de pessoas residentes em favelas e comunidades urbanas." variante="escura" />
                                     </div>
                                     <span className="text-gray-600 text-sm">População residente em favelas</span>
                                     <div className="w-full h-1 bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded-2xl"></div>
@@ -349,7 +352,7 @@ export default function IndicadoresPrincipaisComponent({municipio, isFiltrando} 
                                 </div>
                                 <span className="rounded bg-cyan-100 p-2 text-xs font-semibold w-fit h-fit text-cyan-800">Demografia</span>
                             </div>
-                            <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600">{populacaoEmFavelas ? populacaoEmFavelas : "--"}</h1>
+                            <h1 className="font-bold text-2xl text-gray-800 group-hover:text-sky-600">{populacaoEmFavelas ? populacaoEmFavelas.toLocaleString("pt-BR") : "--"}</h1>
                             
                         </div>
                     </div>  
