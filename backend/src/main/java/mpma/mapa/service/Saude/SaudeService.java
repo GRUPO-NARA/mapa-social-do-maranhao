@@ -65,6 +65,21 @@ public class SaudeService {
     @Autowired
     private TaxaMortalidadeInfantilRepository taxaMortalidadeInfantilRepository;
 
+    @Autowired
+    private ObitosDoencasIsquemicasCoracaoRepository obitosDoencasIsquemicasCoracaoRepository;
+
+    @Autowired
+    private PercentualDeEnvelhecimentoRepository percentualDeEnvelhecimentoRepository;
+
+    @Autowired
+    private PessoasDe2AnosOuMaisComDeficienciaRepository pessoasDe2AnosOuMaisComDeficienciaRepository;
+
+    @Autowired
+    private RazaoMortalidadeMaternaRepository razaoMortalidadeMaternaRepository;
+
+    @Autowired
+    private TaxaMortalidadeNeoplasiaMalignaRepository taxaMortalidadeNeoplasiaMalignaRepository;
+
     public String idadeMedianaMunicipal(
             @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
             @NotBlank(message = "Municipio não pode ser em branco")
@@ -207,4 +222,45 @@ public class SaudeService {
 
         return taxaMortalidadeInfantilRepository.buscarMediaDaTaxaMortalidadeInfantilDoMunicipio(municipio);
     }
+
+    public String obitosDoencasIsquemicasCoracaoMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+
+        return obitosDoencasIsquemicasCoracaoRepository.buscarObitosDoencasIsquemicasCoracaoDoMunicipio(municipio);
+    }
+
+    public String percentualDeEnvelhecimentoMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+
+        return percentualDeEnvelhecimentoRepository.buscarPercentualDeEnvelhecimentoDoMunicipio(municipio);
+    }
+
+    public String pessoasDe2AnosOuMaisComDeficienciaMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+
+        return pessoasDe2AnosOuMaisComDeficienciaRepository.buscarPessoasDe2AnosOuMaisComDeficienciaDoMunicipio(municipio);
+    }
+
+    public String razaoMortalidadeMaternaMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+
+        return razaoMortalidadeMaternaRepository.buscarRazaoMortalidadeMaternaDoMunicipio(municipio);
+    }
+
+    public String taxaMortalidadeNeoplasiaMalignaMunicipal(
+            @Size(min = 1, max = 100, message = "Municipio deve conter entre 1 e 100 caracteres")
+            @NotBlank(message = "Municipio não pode ser em branco")
+            String municipio){
+
+        return taxaMortalidadeNeoplasiaMalignaRepository.buscarMortalidadeNeoplasiaMalignaDoMunicipio(municipio);
+    }
+
 }
