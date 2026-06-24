@@ -1,4 +1,28 @@
 package mpma.mapa.repository.Saude;
 
-public interface PessoasDe2AnosOuMaisComDeficienciaRepository {
+import mpma.mapa.entity.Saude.PessoasDe2AnosOuMaisComDeficienciaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PessoasDe2AnosOuMaisComDeficienciaRepository extends JpaRepository<PessoasDe2AnosOuMaisComDeficienciaEntity , Long> {
+    @Query(
+            value = """
+                    SELECT json_build_object(
+                                        'Pessoas de 2 anos ou mais com deficiencia', t.valor,
+                                        'Referência dos Dados', t.referencia,
+                                        'Fonte dos Dados', t.fonte
+                                 )
+                                 FROM saude.pessoas_de_2_anos_ou_mais_com_deficiencia as t
+                                 JOIN dados_estadual.referencias_codigos_municipais rcm on t.cod_municipio = rcm.codigo_ibge
+                                 WHERE rcm.municipio = :municipio
+                                 GROUP BY t.valor, t.referencia, t.fonte
+                                 ORDER BY t.referencia DESC
+                                 LIMIT 1;
+                    """
+            , nativeQuery = true
+    )
+    String buscarPessoasDe2AnosOuMaisComDeficienciaDoMunicipio(String municipio);
 }
