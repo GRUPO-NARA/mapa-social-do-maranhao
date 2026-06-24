@@ -1,92 +1,174 @@
+"use client";
 
-export default function IndicadoresSociaisComponent(){
+import { useEffect, useState } from "react";
+import CartaoIndicadorComponent from "./CartaoIndicadorComponent";
+
+interface IndicadoresSociaisProps {
+    municipio: string;
+    isFiltrando?: boolean;
+}
+
+export default function IndicadoresSociaisComponent({ municipio, isFiltrando }: IndicadoresSociaisProps) {
+    const [taxaAnalfabetismo, setTaxaAnalfabetismo] = useState<number>();
+    const [referenciaTaxaAnalfabetismo, setReferenciaTaxaAnalfabetismo] = useState("");
+    const [fonteTaxaAnalfabetismo, setFonteTaxaAnalfabetismo] = useState("");
+    const [aprovacaoEnsinoFundamental, setAprovacaoEnsinoFundamental] = useState<number>();
+    const [referenciaAprovacaoFundamental, setReferenciaAprovacaoFundamental] = useState("");
+    const [fonteAprovacaoFundamental, setFonteAprovacaoFundamental] = useState("");
+    const [aprovacaoEnsinoMedio, setAprovacaoEnsinoMedio] = useState<number>();
+    const [referenciaAprovacaoMedio, setReferenciaAprovacaoMedio] = useState("");
+    const [fonteAprovacaoMedio, setFonteAprovacaoMedio] = useState("");
+    const [mortalidadeInfantil, setMortalidadeInfantil] = useState<number>();
+    const [referenciaMortalidadeInfantil, setReferenciaMortalidadeInfantil] = useState("");
+    const [fonteMortalidadeInfantil, setFonteMortalidadeInfantil] = useState("");
+    const [nascidosVivosMaesAdolescentes, setNascidosVivosMaesAdolescentes] = useState<number>();
+    const [referenciaNascidosVivos, setReferenciaNascidosVivos] = useState("");
+    const [fonteNascidosVivos, setFonteNascidosVivos] = useState("");
+    const [razaoMortalidadeMaterna, setRazaoMortalidadeMaterna] = useState<number>();
+    const [referenciaMortalidadeMaterna, setReferenciaMortalidadeMaterna] = useState("");
+    const [fonteMortalidadeMaterna, setFonteMortalidadeMaterna] = useState("");
+
+    useEffect(() => {
+        if (municipio !== "") {
+            buscarTaxaAnalfabetismo();
+            buscarAprovacaoEnsinoFundamental();
+            buscarAprovacaoEnsinoMedio();
+            buscarMortalidadeInfantil();
+            buscarNascidosVivosMaesAdolescentes();
+            buscarRazaoMortalidadeMaterna();
+        }
+    }, [municipio]);
+
+    async function buscarTaxaAnalfabetismo() {
+        try {
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/educacao/taxaAnalfabetismo15AnosOuMais?municipio=${municipio}`);
+            if (requisicao.ok) {
+                const resposta = await requisicao.json();
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                if (dadosInternos) {
+                    const objetoFormatado = JSON.parse(dadosInternos);
+                    setTaxaAnalfabetismo(objetoFormatado["Taxa de Analfabetismo (15 anos ou mais)"]);
+                    setReferenciaTaxaAnalfabetismo(objetoFormatado["Referência dos Dados"]);
+                    setFonteTaxaAnalfabetismo(objetoFormatado["Fonte dos Dados"]);
+                }
+            }
+        } catch (error) {
+            console.error("Ocorreu um erro ao buscar a taxa de analfabetismo!", error);
+        }
+    }
+
+    async function buscarAprovacaoEnsinoFundamental() {
+        try {
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/educacao/taxaAprovacaoEnsinoFundamental?municipio=${municipio}`);
+            if (requisicao.ok) {
+                const resposta = await requisicao.json();
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                if (dadosInternos) {
+                    const objetoFormatado = JSON.parse(dadosInternos);
+                    setAprovacaoEnsinoFundamental(objetoFormatado["Taxa de Aprovação no Ensino Fundamental"]);
+                    setReferenciaAprovacaoFundamental(objetoFormatado["Referência dos Dados"]);
+                    setFonteAprovacaoFundamental(objetoFormatado["Fonte dos Dados"]);
+                }
+            }
+        } catch (error) {
+            console.error("Ocorreu um erro ao buscar a aprovação no Ensino Fundamental!", error);
+        }
+    }
+
+    async function buscarAprovacaoEnsinoMedio() {
+        try {
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/educacao/taxaAprovacaoEnsinoMedio?municipio=${municipio}`);
+            if (requisicao.ok) {
+                const resposta = await requisicao.json();
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                if (dadosInternos) {
+                    const objetoFormatado = JSON.parse(dadosInternos);
+                    setAprovacaoEnsinoMedio(objetoFormatado["Taxa de Aprovação no Ensino Médio"]);
+                    setReferenciaAprovacaoMedio(objetoFormatado["Referência dos Dados"]);
+                    setFonteAprovacaoMedio(objetoFormatado["Fonte dos Dados"]);
+                }
+            }
+        } catch (error) {
+            console.error("Ocorreu um erro ao buscar a aprovação no Ensino Médio!", error);
+        }
+    }
+
+    async function buscarMortalidadeInfantil() {
+        try {
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saude/taxaMortalidadeInfantil?municipio=${municipio}`);
+            if (requisicao.ok) {
+                const resposta = await requisicao.json();
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                if (dadosInternos) {
+                    const objetoFormatado = JSON.parse(dadosInternos);
+                    setMortalidadeInfantil(objetoFormatado["Taxa de Mortalidade Infantil"]);
+                    setReferenciaMortalidadeInfantil(objetoFormatado["Referência dos Dados"]);
+                    setFonteMortalidadeInfantil(objetoFormatado["Fonte dos Dados"]);
+                }
+            }
+        } catch (error) {
+            console.error("Ocorreu um erro ao buscar a mortalidade infantil!", error);
+        }
+    }
+
+    async function buscarNascidosVivosMaesAdolescentes() {
+        try {
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saude/nascidosVivosMaesAdolescentes?municipio=${municipio}`);
+            if (requisicao.ok) {
+                const resposta = await requisicao.json();
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                if (dadosInternos) {
+                    const objetoFormatado = JSON.parse(dadosInternos);
+                    setNascidosVivosMaesAdolescentes(objetoFormatado["Nascidos Vivos de Mães Adolescentes"]);
+                    setReferenciaNascidosVivos(objetoFormatado["Referência dos Dados"]);
+                    setFonteNascidosVivos(objetoFormatado["Fonte dos Dados"]);
+                }
+            }
+        } catch (error) {
+            console.error("Ocorreu um erro ao buscar nascidos vivos de mães adolescentes!", error);
+        }
+    }
+
+    async function buscarRazaoMortalidadeMaterna() {
+        try {
+            const parametros = new URLSearchParams({
+                schema: "saude",
+                indicador: "razao_mortalidade_materna",
+                municipio,
+            });
+            const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/informacoes/resumoDoIndicador?${parametros.toString()}`);
+            if (requisicao.ok) {
+                const resposta = await requisicao.json();
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                if (dadosInternos) {
+                    const objetoFormatado = typeof dadosInternos === "string" ? JSON.parse(dadosInternos) : dadosInternos;
+                    setRazaoMortalidadeMaterna(objetoFormatado["VALOR MAIS RECENTE"]);
+                    setReferenciaMortalidadeMaterna(objetoFormatado["Referência"]);
+                    setFonteMortalidadeMaterna(objetoFormatado["Fonte dos Dados"]);
+                }
+            }
+        } catch (error) {
+            console.error("Ocorreu um erro ao buscar a razão de mortalidade materna!", error);
+        }
+    }
+
     return (
-         <div className="group">
+        <section className="group">
             <div className="flex flex-col gap-6">
                 <div className="flex items-center gap-2">
-                            <p className="w-1 h-6 rounded bg-sky-600 "></p>
-                            <h1 className="text-lg font-bold group-hover:text-sky-800 transition-colors duration-300">Indicadores Sociais</h1>
+                    <span className="h-6 w-1 rounded bg-sky-600" />
+                    <h2 className="text-lg font-bold transition-colors duration-300 group-hover:text-sky-800">Indicadores Sociais</h2>
                 </div>
-                <div className="grid sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-4 ">
-                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
-                        <div className="flex flex-col gap-8">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h1 className="font-bold text-sm">Taxa de Analfabetismo 15+</h1>
-                                    <p className="text-gray-600 text-sm">por mil habitantes</p>
-                                </div>
-                                <span className="rounded bg-gray-100 p-2 text-xs font-semibold w-fit h-fit text-gray-800">Educação</span>
-                            </div>
-                            <h1 className="font-bold text-2xl">
-                                --
-                            </h1>
-                        </div>
-                    </div>
-                     <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
-                        <div className="flex flex-col gap-8">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h1 className="font-bold text-sm">Aprovação no Ensino Fundamental</h1>
-                                    <p className="text-gray-600 text-sm">por mil habitantes nascidos vivos</p>
-                                </div>
-                                <span className="rounded bg-gray-100 p-2 text-xs font-semibold w-fit h-fit text-gray-800">Educação</span>
-                            </div>
-                            <h1 className="font-bold text-2xl">--</h1>
-                        </div>
-                    </div>
-                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
-                        <div className="flex flex-col gap-8">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h1 className="font-bold text-sm">Aprovação no Ensino Médio</h1>
-                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
-                                </div>
-                                <span className="rounded bg-gray-100 p-2 text-xs font-semibold w-fit h-fit text-gray-800">Educação</span>
-                            </div>
-                            <h1 className="font-bold text-2xl">--</h1>
-                        </div>
-                    </div>  
-                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
-                        <div className="flex flex-col gap-8">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h1 className="font-bold text-sm">Mortalidade Infantil</h1>
-                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
-                                </div>
-                                <span className="rounded bg-red-100 p-2 text-xs font-semibold w-fit h-fit text-red-800">Saúde</span>
-                            </div>
-                            <h1 className="font-bold text-2xl">--</h1>
-                        </div>
-                    </div>  
-                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
-                        <div className="flex flex-col gap-8">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h1 className="font-bold text-sm">Nascidos Vivos de Mães Adolescentes</h1>
-                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
-                                </div>
-                                <span className="rounded bg-red-100 p-2 text-xs font-semibold w-fit h-fit text-red-800">Saúde</span>
-                            </div>
-                            <h1 className="font-bold text-2xl">--</h1>
-                        </div>
-                    </div>  
-                    <div className="bg-white rounded-2xl p-7 shadow-2x border border-gray-300 hover:border-sky-600 transition-all duration-300 hover:-translate-y-1">
-                        <div className="flex flex-col gap-8">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h1 className="font-bold text-sm">Razão de Mortalidade Materna</h1>
-                                    <p className="text-gray-600 text-sm">Ensino fundamental completo</p>
-                                </div>
-                                <span className="rounded bg-red-100 p-2 text-xs font-semibold w-fit h-fit text-red-800">Saúde</span>
-                            </div>
-                            <h1 className="font-bold text-2xl">--</h1>
-                        </div>
-                    </div>  
 
-                    
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <CartaoIndicadorComponent titulo="Taxa de Analfabetismo 15+" descricao="Percentual da população com 15 anos ou mais" detalhes={isFiltrando ? `Referência: ${referenciaTaxaAnalfabetismo || "--"} - Fonte: ${fonteTaxaAnalfabetismo || "--"}` : undefined} categoria="Educação" categoriaClassName="bg-gray-100 text-gray-800" valor={taxaAnalfabetismo !== undefined && isFiltrando ? `${taxaAnalfabetismo.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent titulo="Aprovação no Ensino Fundamental" descricao="Percentual de alunos aprovados" detalhes={isFiltrando ? `Referência: ${referenciaAprovacaoFundamental || "--"} - Fonte: ${fonteAprovacaoFundamental || "--"}` : undefined} categoria="Educação" categoriaClassName="bg-gray-100 text-gray-800" valor={aprovacaoEnsinoFundamental !== undefined && isFiltrando ? `${aprovacaoEnsinoFundamental.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent titulo="Aprovação no Ensino Médio" descricao="Percentual de alunos aprovados" detalhes={isFiltrando ? `Referência: ${referenciaAprovacaoMedio || "--"} - Fonte: ${fonteAprovacaoMedio || "--"}` : undefined} categoria="Educação" categoriaClassName="bg-gray-100 text-gray-800" valor={aprovacaoEnsinoMedio !== undefined && isFiltrando ? `${aprovacaoEnsinoMedio.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent titulo="Mortalidade Infantil" descricao="Por mil nascidos vivos" detalhes={isFiltrando ? `Referência: ${referenciaMortalidadeInfantil || "--"} - Fonte: ${fonteMortalidadeInfantil || "--"}` : undefined} categoria="Saúde" categoriaClassName="bg-red-100 text-red-800" valor={mortalidadeInfantil !== undefined && isFiltrando ? mortalidadeInfantil.toLocaleString("pt-BR") : "--"} />
+                    <CartaoIndicadorComponent titulo="Nascidos Vivos de Mães Adolescentes" descricao="Total registrado no município" detalhes={isFiltrando ? `Referência: ${referenciaNascidosVivos || "--"} - Fonte: ${fonteNascidosVivos || "--"}` : undefined} categoria="Saúde" categoriaClassName="bg-red-100 text-red-800" valor={nascidosVivosMaesAdolescentes !== undefined && isFiltrando ? nascidosVivosMaesAdolescentes.toLocaleString("pt-BR") : "--"} />
+                    <CartaoIndicadorComponent titulo="Razão de Mortalidade Materna" descricao="Indicador municipal mais recente" detalhes={isFiltrando ? `Referência: ${referenciaMortalidadeMaterna || "--"} - Fonte: ${fonteMortalidadeMaterna || "--"}` : undefined} categoria="Saúde" categoriaClassName="bg-red-100 text-red-800" valor={razaoMortalidadeMaterna !== undefined && isFiltrando ? razaoMortalidadeMaterna.toLocaleString("pt-BR") : "--"} />
                 </div>
             </div>
-            
-        </div>
-    )
+        </section>
+    );
 }
