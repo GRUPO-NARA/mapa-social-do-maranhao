@@ -80,6 +80,7 @@ public class InformacoesService {
                         "        x.referencia, " +
                         "        FIRST_VALUE(x.valor) OVER (ORDER BY x.referencia DESC) as valor_recente, " +
                         "        FIRST_VALUE(x.referencia) OVER (ORDER BY x.referencia DESC) as ref_recente, " +
+                        "        FIRST_VALUE(x.fonte) OVER (ORDER BY x.referencia DESC) as fonte_recente, " +
                         "        FIRST_VALUE(x.referencia) OVER (ORDER BY x.valor DESC, x.referencia DESC) as melhor_ano, " +
                         "        MAX(x.valor) OVER () as maior_valor, " +
                         "        FIRST_VALUE(x.referencia) OVER (ORDER BY x.valor ASC, x.referencia DESC) as pior_ano, " +
@@ -93,6 +94,7 @@ public class InformacoesService {
                         "SELECT json_build_object(" +
                         "    'VALOR MAIS RECENTE', d.valor_recente," +
                         "    'Referência', d.ref_recente," +
+                        "    'Fonte dos Dados', d.fonte_recente," +
                         "    'MELHOR RESULTADO', d.melhor_ano," +
                         "    'Maior valor', d.maior_valor," +
                         "    'PONTO DE ATENÇÃO', d.pior_ano," +

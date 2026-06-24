@@ -69,8 +69,8 @@ export default function MapaComponent({municipio, isFiltrando, isMostrarApenasMa
     }
 
     const alturaResponsiva = isMostrarApenasMapa
-      ? "h-[22rem] sm:h-[28rem] md:min-h-[30rem]"
-      : "h-full sm:h-[28rem] md:min-h-[50rem] lg:h-[32rem] xl:h-[36rem] 2xl:h-[40rem]";
+      ? "h-screen sm:h-[28rem] md:min-h-[30rem]"
+      : "h-screen sm:h-[28rem] md:min-h-[50rem] lg:h-[32rem] xl:h-[36rem] 2xl:h-[40rem]";
 
     return (
         <div className={`group min-w-0 overflow-hidden rounded-2xl ${alturaResponsiva}`}>
