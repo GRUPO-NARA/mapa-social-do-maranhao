@@ -1,7 +1,7 @@
 name: mapa-social-do-maranhao
 
 services:
-  db:
+  banco_de_dados:
     image: postgres:14.23-trixie
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -21,16 +21,40 @@ services:
     build:
       context: ./pipeline
     environment:
-      SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}
+      SQLALCHEMY_URI: ${SQLALCHEMY_URI}
+      PIPELINE_HOSTS_INSEGUROS: ${PIPELINE_HOSTS_INSEGUROS:-dataimesc.imesc.ma.gov.br}
+      PIPELINE_AGENDADOR_ATIVADO: "false"
+      PIPELINE_AGENDADOR_INTERVALO: ${PIPELINE_AGENDADOR_INTERVALO:-2}
+      PIPELINE_EXECUCAO_AUTOMATICA: "true"
     networks:
       - rede-mapa
     depends_on:
-      db:
+      banco_de_dados:
         condition: service_healthy
+
+  pipeline-agendador:
+    build:
+      context: ./pipeline
+    environment:
+      SQLALCHEMY_URI: ${SQLALCHEMY_URI}
+      PIPELINE_HOSTS_INSEGUROS: ${PIPELINE_HOSTS_INSEGUROS:-dataimesc.imesc.ma.gov.br}
+      PIPELINE_AGENDADOR_ATIVADO: "true"
+      PIPELINE_AGENDADOR_INTERVALO: ${PIPELINE_AGENDADOR_INTERVALO:-60}
+      PIPELINE_EXECUCAO_AUTOMATICA: "false"
+    restart: unless-stopped
+    networks:
+      - rede-mapa
+    depends_on:
+      banco_de_dados:
+        condition: service_healthy
+      pipeline:
+        condition: service_completed_successfully
 
   api-python:
     build:
       context: ./api_python
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     networks:
@@ -41,6 +65,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    depends_on:
+      pipeline:
+        condition: service_completed_successfully
 
   backend:
     build:
@@ -51,8 +78,10 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       BACKEND_PORT: ${BACKEND_PORT}
       BACKEND_HOST: ${BACKEND_HOST}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
-      PYTHON_API_URL: ${PYTHON_API_URL:-http://api-python:8000}
+      ENDERECOS_PERMITIDOS: ${ENDERECOS_PERMITIDOS:-http://localhost:3000}
+      HABILITAR_DOCUMENTACAO_SWAGGER: ${HABILITAR_DOCUMENTACAO_SWAGGER:-false}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-validate}
+      PYTHON_API_URL: http://api-python:8000
     ports:
       - "8080:8080"
     networks:
@@ -64,7 +93,7 @@ services:
       retries: 10
       start_period: 20s
     depends_on:
-      db:
+      banco_de_dados:
         condition: service_healthy
       pipeline:
         condition: service_completed_successfully

@@ -1,12 +1,10 @@
 import type { ReactNode } from "react";
-import AjudaIndicadorComponent from "./AjudaIndicadorComponent";
+import AjudaIndicadorComponent from "../componentes_principais/AjudaIndicador";
 
 interface CartaoIndicadorProps {
     titulo: string;
     descricao?: string;
     detalhes?: string;
-    categoria: string;
-    categoriaClassName: string;
     valor: ReactNode;
     acao?: ReactNode;
 }
@@ -15,10 +13,8 @@ export default function CartaoIndicadorComponent({
     titulo,
     descricao,
     detalhes,
-    categoria,
-    categoriaClassName,
     valor,
-    acao,
+    acao
 }: CartaoIndicadorProps) {
     return (
         <article className="group/card flex h-full min-h-48 flex-col justify-between rounded-2xl border border-gray-300 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-sky-600 hover:shadow-lg">
@@ -32,9 +28,6 @@ export default function CartaoIndicadorComponent({
                     <div className="mt-1 h-1 w-full rounded-2xl bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600" />
                     {detalhes && <p className="mt-2 text-xs leading-5 text-gray-500">{detalhes}</p>}
                 </div>
-                <span className={`h-fit w-fit shrink-0 rounded p-2 text-xs font-semibold ${categoriaClassName}`}>
-                    {categoria}
-                </span>
             </div>
 
             <div className="mt-8 flex items-end justify-between gap-3">

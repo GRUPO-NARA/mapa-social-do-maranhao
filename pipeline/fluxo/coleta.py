@@ -2,7 +2,9 @@ import asyncio
 from aiohttp import ClientSession, TCPConnector, ClientPayloadError
 from configuracoes.config import LoggerParaColeta, MapeamentoDiretoriosEArquivos
 import json
+import os
 import ssl
+from urllib.parse import urlparse
 
 class FluxoDeColeta:
     def __init__(self):
@@ -15,6 +17,7 @@ class FluxoDeColeta:
         self.dados_coletados = []
         # Define o limite de requisições simultâneas (ex: 5 por vez)
         self.semaforo = asyncio.Semaphore(5)
+        self.hosts_tls_inseguro = self._carregar_hosts_tls_inseguro()
 
     def LeituraDosDadosParaColeta(self) -> list:
         """Realiza a leitura do arquivo JSON que contém as URLs para coleta."""
@@ -60,8 +63,6 @@ class FluxoDeColeta:
         self.logger_coleta.info("Definindo requisições para coleta.")
         
         ssl_context = ssl.create_default_context()
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
         
         # Headers globais para simular um navegador comum
         headers = {
@@ -91,7 +92,7 @@ class FluxoDeColeta:
         async with self.semaforo:
             for tentativa in range(1, tentativas + 1):
                 try:
-                    async with sessao.get(url, timeout=30) as resposta:
+                    async with sessao.get(url, timeout=30, ssl=self._ssl_para_url(url)) as resposta:
                         if resposta.status == 200:
                             # .read() pode disparar ClientPayloadError se a conexão cair no meio
                             return await resposta.read()
@@ -110,6 +111,26 @@ class FluxoDeColeta:
             
             self.logger_coleta.error(f"Falha definitiva na coleta para a URL: {url}")
             return b""
+
+    def _carregar_hosts_tls_inseguro(self) -> set[str]:
+        hosts = os.getenv(
+            "PIPELINE_HOSTS_INSEGUROS",
+            "dataimesc.imesc.ma.gov.br"
+        )
+        return {
+            host.strip().lower()
+            for host in hosts.split(",")
+            if host.strip()
+        }
+
+    def _ssl_para_url(self, url: str):
+        host = urlparse(url).hostname
+        if host and host.lower() in self.hosts_tls_inseguro:
+            self.logger_coleta.warning(
+                f"Validação TLS desativada apenas para o host permitido: {host}"
+            )
+            return False
+        return None
 
     async def RespostaDaRequisicao(self):
         if not self.tarefas_realizadas:

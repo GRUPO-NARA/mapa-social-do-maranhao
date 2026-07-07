@@ -42,6 +42,15 @@ def test_clusters_sao_ordenados_pela_media():
     assert medias == sorted(medias)
 
 
+def test_aceita_referencia_mensal_como_texto():
+    resposta = realizar_clusterizacao(
+        RequisicaoClusterizacao(referencia="2025-3", dados=DADOS)
+    )
+
+    assert resposta.referencia == "2025-3"
+    assert resposta.totalMunicipios == len(DADOS)
+
+
 def test_rejeita_valores_sem_variacao():
     dados_iguais = [
         DadoMunicipio(municipio=f"Município {indice}", valor=10)

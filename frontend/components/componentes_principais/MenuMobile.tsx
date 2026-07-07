@@ -24,7 +24,7 @@ export default function MenuMobileComponent({ menuAberto, setMenuAberto }: MenuM
             <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none" aria-label="Fechar menu de navegação" onClick={() => setMenuAberto(!menuAberto)}>
                 &times;
             </button>
-            <Image className="h-20 w-[120px] object-contain" src="/logo.png" width={120} height={80} alt="Logotipo do Mapa Social do Maranhão" />
+            <Image className="h-20 w-30 object-contain" src="/logo.png" width={120} height={80} alt="Logotipo do Mapa Social do Maranhão" />
             <div className="flex flex-col items-center">
                 <h1 className="text-2xl font-bold text-[#061F56]">Mapa Social do Maranhão</h1>
                 <p className="text-sm text-[#061F56]">Plataforma de mapeamento social</p>

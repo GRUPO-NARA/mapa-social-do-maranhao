@@ -13,12 +13,13 @@ Analíticos**, em colaboração com o **Ministério Público do Maranhão (MPMA)
 
 ## Visão geral
 
-A aplicação é formada por quatro serviços:
+A aplicação é formada por cinco serviços principais:
 
 | Serviço | Tecnologia | Responsabilidade |
 | --- | --- | --- |
 | Frontend | Next.js e TypeScript | Interface para visualização dos indicadores |
 | Backend | Spring Boot e Java | API REST que consulta os dados |
+| API Python | FastAPI, scikit-learn e NumPy | Predição e clusterização dos indicadores com algoritmos de aprendizado de máquina |
 | Pipeline | Python e Pandas | Coleta, tratamento e carga dos dados |
 | Banco de dados | PostgreSQL | Armazenamento dos indicadores processados |
 
@@ -28,15 +29,70 @@ flowchart LR
     pipeline["Pipeline Python"]
     banco["PostgreSQL"]
     backend["API Spring Boot"]
+    apiPython["API Python"]
     frontend["Frontend Next.js"]
     usuario["Usuário"]
 
     fontes -->|"coleta"| pipeline
     pipeline -->|"tratamento e carga"| banco
     banco -->|"consulta"| backend
+    backend -->|"predição e clusterização"| apiPython
     backend -->|"API REST"| frontend
     frontend --> usuario
 ```
+
+## Recursos da aplicação
+
+A interface permite selecionar um município, escolher uma área temática e
+analisar indicadores por meio de cards, gráficos e agrupamentos municipais.
+
+Principais recursos:
+
+- resumo do indicador selecionado, com valor mais recente, melhor resultado,
+  ponto de atenção e variação no período;
+- gráfico de evolução histórica quando há série temporal suficiente;
+- comparação territorial por barras entre municípios selecionados;
+- projeção de valores futuros por meio da API Python;
+- clusterização dos municípios com resultados semelhantes;
+- tratamento visual para dados indisponíveis, valores inválidos ou indicadores
+  com apenas uma referência.
+
+### Serviço Python de análise
+
+O serviço `api-python` concentra os algoritmos de aprendizado de máquina usados
+pela aplicação. O backend Spring Boot consulta esse serviço internamente sempre
+que o usuário solicita previsão ou clusterização.
+
+Na predição, a API Python avalia:
+
+- Regressão Linear;
+- Random Forest Regressor.
+
+Os modelos são comparados pelo erro médio absoluto (`MAE`) em uma separação
+temporal simples da série histórica. O modelo com menor erro é usado para gerar
+a projeção final. Quando o indicador é percentual, o backend envia limites para
+evitar previsões abaixo de 0 ou acima de 100.
+
+Na clusterização, a API Python avalia:
+
+- K-Means;
+- Agrupamento Hierárquico Aglomerativo.
+
+As combinações de algoritmo e quantidade de grupos são comparadas pelo índice
+`silhouette`. A resposta retorna o algoritmo selecionado, os municípios de cada
+grupo, valores mínimo e máximo, média do grupo e as métricas avaliadas.
+
+Quando não há dados históricos suficientes, valores distintos ou municípios em
+quantidade mínima, a interface mostra uma mensagem informativa em vez de exibir
+erro técnico no console.
+
+Alguns indicadores públicos possuem apenas uma fotografia de referência, como
+`idade_mediana`, `percentual_de_envelhecimento` e
+`pessoas_de_2_anos_ou_mais_com_deficiencia`. Nesses casos, a aplicação prioriza
+a comparação territorial e não tenta gerar evolução histórica ou previsão.
+
+Referências mensais, como `2025-3`, também são aceitas nas análises. O backend
+ordena essas referências cronologicamente para encontrar o dado mais recente.
 
 ## Início rápido com Docker
 
@@ -77,20 +133,30 @@ POSTGRES_PASSWORD=minha_senha
 POSTGRES_DB=postgres
 
 SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://postgres:minha_senha@db:5432/postgres
+SQLALCHEMY_URI=postgresql+psycopg2://postgres:minha_senha@db:5432/postgres
+PIPELINE_HOSTS_INSEGUROS=dataimesc.imesc.ma.gov.br
+PIPELINE_AGENDADOR_INTERVALO=60
 
 SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
 SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=minha_senha
+SPRING_JPA_HIBERNATE_DDL_AUTO=validate
 
 BACKEND_PORT=8080
 BACKEND_HOST=0.0.0.0
 NEXT_PUBLIC_API_URL=http://localhost:8080
-CORS_ALLOWED_ORIGINS=http://localhost:3000
+ENDERECOS_PERMITIDOS=http://localhost:3000
+HABILITAR_DOCUMENTACAO_SWAGGER=false
+PYTHON_API_URL=http://localhost:8000
 ```
 
 > Se a senha contiver caracteres especiais, eles podem precisar ser
 > codificados na URL de `SQLALCHEMY_DATABASE_URI`. Para evitar esse problema no
 > ambiente de desenvolvimento, prefira uma senha alfanumérica.
+>
+> `PIPELINE_HOSTS_INSEGUROS` deve conter apenas hosts conhecidos cujo
+> certificado TLS não valida corretamente. Atualmente o IMESC exige essa
+> exceção; os demais hosts continuam com validação TLS normal.
 
 ### 3. Suba a aplicação
 
@@ -102,14 +168,23 @@ Na primeira execução, o Docker precisa baixar as imagens e instalar as
 dependências. Além disso, o pipeline coleta e processa os indicadores antes de
 liberar o backend. Por isso, a inicialização pode levar alguns minutos.
 
+Depois da carga inicial, o serviço `pipeline-scheduler` permanece em execução
+e atualiza os dados periodicamente. O intervalo é definido por
+`PIPELINE_AGENDADOR_INTERVALO`.
+
 Quando a aplicação estiver pronta:
 
 | Recurso | Endereço |
 | --- | --- |
 | Frontend | http://localhost:3000 |
 | API | http://localhost:8080 |
-| Swagger UI | http://localhost:8080/swagger-ui/index.html |
+| API Python | http://localhost:8000 |
 | Saúde da API | http://localhost:8080/actuator/health |
+| Saúde da API Python | http://localhost:8000/health |
+
+Por segurança, a documentação interativa da API fica desativada por padrão.
+Para habilitar o Swagger UI somente em ambiente local, use `HABILITAR_DOCUMENTACAO_SWAGGER=true`
+e acesse `http://localhost:8080/swagger-ui/index.html`.
 
 O PostgreSQL fica disponível apenas para os serviços da rede Docker e não é
 publicado diretamente em uma porta do computador.
@@ -162,6 +237,10 @@ carga termina com sucesso, seu estado aparece como `Exited (0)`. Isso é
 esperado: o backend só inicia depois que o pipeline termina, e o frontend só
 inicia quando a API está saudável.
 
+O serviço `pipeline-scheduler` usa a mesma imagem, mas permanece em execução
+para atualizar os dados periodicamente. Ele começa depois da carga inicial e
+aguarda o primeiro intervalo antes de rodar novamente.
+
 ## Execução local para desenvolvimento
 
 Neste modo, cada parte da aplicação roda diretamente no computador. É útil
@@ -196,8 +275,9 @@ No modo local, execute os componentes nesta ordem:
 
 1. PostgreSQL
 2. Pipeline
-3. Backend
-4. Frontend
+3. API Python
+4. Backend
+5. Frontend
 
 O pipeline cria e alimenta as tabelas consumidas pelo backend.
 
@@ -231,9 +311,42 @@ export SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres:minha_senha@local
 python main.py
 ```
 
-Aguarde a mensagem `ETL concluído com sucesso!` antes de iniciar o backend.
+Aguarde a mensagem `ETL concluído com sucesso!` antes de iniciar os demais
+serviços.
 
-### 2. Execute o backend
+### 2. Execute a API Python
+
+Abra outro terminal na raiz do projeto.
+
+No PowerShell:
+
+```powershell
+cd api_python
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+uvicorn api_python.main:apiPython --app-dir .. --host 0.0.0.0 --port 8000
+```
+
+No Linux ou macOS:
+
+```bash
+cd api_python
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+uvicorn api_python.main:apiPython --app-dir .. --host 0.0.0.0 --port 8000
+```
+
+Confirme que o serviço está disponível:
+
+```bash
+curl http://localhost:8000/health
+```
+
+### 3. Execute o backend
 
 Abra outro terminal na raiz do projeto.
 
@@ -245,7 +358,8 @@ $env:SPRING_DATASOURCE_USERNAME="postgres"
 $env:SPRING_DATASOURCE_PASSWORD="minha_senha"
 $env:BACKEND_PORT="8080"
 $env:BACKEND_HOST="0.0.0.0"
-$env:CORS_ALLOWED_ORIGINS="http://localhost:3000"
+$env:ENDERECOS_PERMITIDOS="http://localhost:3000"
+$env:PYTHON_API_URL="http://localhost:8000"
 
 cd backend
 .\mvnw.cmd spring-boot:run
@@ -259,7 +373,8 @@ export SPRING_DATASOURCE_USERNAME="postgres"
 export SPRING_DATASOURCE_PASSWORD="minha_senha"
 export BACKEND_PORT="8080"
 export BACKEND_HOST="0.0.0.0"
-export CORS_ALLOWED_ORIGINS="http://localhost:3000"
+export ENDERECOS_PERMITIDOS="http://localhost:3000"
+export PYTHON_API_URL="http://localhost:8000"
 
 cd backend
 ./mvnw spring-boot:run
@@ -277,7 +392,7 @@ A resposta esperada é:
 {"status":"UP"}
 ```
 
-### 3. Execute o frontend
+### 4. Execute o frontend
 
 Abra um terceiro terminal na raiz do projeto.
 
@@ -309,7 +424,8 @@ Acesse http://localhost:3000.
 
 ## Testando a API
 
-A documentação interativa está disponível no
+A documentação interativa fica desativada por padrão. Em ambiente local,
+defina `HABILITAR_DOCUMENTACAO_SWAGGER=true` para usar o
 [Swagger UI](http://localhost:8080/swagger-ui/index.html).
 
 Alguns exemplos:
@@ -346,6 +462,10 @@ curl "http://localhost:8080/informacoes/dadosPrincipaisMunicipal?municipio=S%C3%
 | GET | `/economicos/produtoInternoBrutoAgregadoEstadual` | Nenhum |
 | GET | `/saude/idadeMediana` | `municipio` |
 | GET | `/informacoes/dadosPrincipaisMunicipal` | `municipio` |
+| GET | `/informacoes/evolucaoDoIndicador` | `schema`, `indicador`, `municipio` |
+| GET | `/informacoes/comparacaoTerritorial` | `schema`, `indicador`, `municipios` |
+| GET | `/predicoes` | `schema`, `indicador`, `municipio`, `ano` |
+| GET | `/clusterizacoes` | `schema`, `indicador` |
 
 ## Fontes e indicadores
 
@@ -365,13 +485,19 @@ Atualmente, o projeto trabalha com indicadores como:
 - idade mediana e indicadores relacionados à saúde;
 - famílias e pessoas inscritas no Cadastro Único;
 - acesso domiciliar à água encanada e energia elétrica.
-
-Indicadores de educação ainda estão em desenvolvimento.
+- indicadores de educação, como aprovação, analfabetismo, docentes e evasão.
 
 ## Estrutura do projeto
 
 ```text
 mapa-social-do-maranhao/
+|-- api_python/              API FastAPI para predição e clusterização
+|   |-- main.py
+|   |-- predicoes.py
+|   |-- clusterizacao.py
+|   |-- tests/
+|   |-- requirements.txt
+|   `-- Dockerfile
 |-- backend/                 API Spring Boot
 |   |-- src/main/java/       controllers, services, repositories e entidades
 |   |-- src/main/resources/  configuração da aplicação
@@ -379,9 +505,9 @@ mapa-social-do-maranhao/
 |   `-- Dockerfile
 |-- frontend/                aplicação Next.js
 |   |-- app/                 páginas e layout
-|   |-- components/          componentes React
+|   |-- components/          cards, gráficos, indicadores e componentes principais
 |   |-- public/              imagens e ícones
-|   |-- utils/               funções auxiliares
+|   |-- tratamento/          funções auxiliares de formatação
 |   |-- package.json
 |   `-- Dockerfile
 |-- pipeline/                processo de ETL em Python
@@ -422,6 +548,24 @@ Depois confirme que `NEXT_PUBLIC_API_URL` aponta para
 `http://localhost:8080`. Como variáveis `NEXT_PUBLIC_*` são incorporadas
 durante o build do Next.js, reconstrua o frontend após alterar esse valor.
 
+### A previsão ou clusterização aparece como indisponível
+
+Isso pode acontecer mesmo com a aplicação funcionando corretamente. A previsão
+precisa de uma série histórica mínima, e a clusterização precisa de dados
+municipais suficientes e valores distintos para formar grupos.
+
+Indicadores com apenas uma referência, como idade mediana, percentual de
+envelhecimento e pessoas de 2 anos ou mais com deficiência, devem ser lidos
+principalmente por comparação territorial. A interface exibe uma mensagem
+amigável quando não há dados suficientes para gerar previsão ou grupos.
+
+Se a mensagem aparecer para muitos indicadores ao mesmo tempo, confirme a saúde
+da API Python:
+
+```bash
+curl http://localhost:8000/health
+```
+
 ### O backend não conecta ao banco
 
 Confira usuário, senha, host e nome do banco. No Docker, o host deve ser `db`.
@@ -444,6 +588,12 @@ investigar uma saída com erro:
 
 ```bash
 docker compose logs pipeline
+```
+
+Para acompanhar as atualizações recorrentes:
+
+```bash
+docker compose logs -f pipeline-scheduler
 ```
 
 ## Desenvolvimento e contato

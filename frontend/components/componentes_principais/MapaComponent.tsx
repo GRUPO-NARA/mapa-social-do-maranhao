@@ -2,7 +2,7 @@
 
 import { Map, GeoJsonLoader } from "pigeon-maps"
 import { useEffect, useState } from "react"
-import IndicadoresMapaComponent from "./IndicadoresMapaComponent"
+import IndicadoresMapaComponent from "../componentes_indicadores/IndicadoresMapa"
 
 interface GeoJsonData {
     features: Array<{
@@ -58,9 +58,8 @@ export default function MapaComponent({municipio, isFiltrando, isMostrarApenasMa
         if(isFiltrando){
             coordenadasMunicipais.features.forEach((feature: GeoJsonData['features'][0]) => {
             if(feature.properties?.name?.trim() === municipio.trim()){
-                let novasCoordenadas: [number, number]
                 const [lon, lat] = feature.geometry.coordinates[0][0]
-                novasCoordenadas = [lat, lon]
+                const novasCoordenadas: [number, number] = [lat, lon]
                 setCoordenadasMunicipio(novasCoordenadas)
                 setZoom(7.5) 
             }

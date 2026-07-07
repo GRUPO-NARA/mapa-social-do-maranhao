@@ -14,7 +14,7 @@ public final class ClusterizacaoDTO {
     }
 
     public record Requisicao(
-            Integer referencia,
+            String referencia,
             List<PontoMunicipal> dados,
             Integer minimoClusters,
             Integer maximoClusters
@@ -43,7 +43,7 @@ public final class ClusterizacaoDTO {
             String algoritmoSelecionado,
             Integer quantidadeClusters,
             Double silhouette,
-            Integer referencia,
+            String referencia,
             Integer totalMunicipios,
             List<MetricaModelo> modelosAvaliados,
             List<ClusterMunicipal> clusters

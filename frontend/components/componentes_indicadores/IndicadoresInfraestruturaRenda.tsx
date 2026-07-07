@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CartaoIndicadorComponent from "./CartaoIndicadorComponent";
+import CartaoIndicadorComponent  from "@/components/cards/CardIndicador";
 
 interface IndicadoresInfraestruturaRendaProps {
     municipio: string;
@@ -162,13 +162,33 @@ export default function IndicadoresInfraestruturaRendaComponent({ municipio, isF
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <CartaoIndicadorComponent titulo="Domicílios com Água Encanada" descricao="Percentual de domicílios com acesso à água canalizada." detalhes={isFiltrando ? `Referência: ${referenciaAguaEncanada || "--"} - Fonte: ${fonteAguaEncanada || "--"}` : undefined} categoria="Infraestrutura" categoriaClassName="bg-teal-100 text-teal-800" valor={domiciliosAguaEncanada !== undefined && isFiltrando ? `${domiciliosAguaEncanada.toLocaleString("pt-BR")}%` : "--"} />
-                    <CartaoIndicadorComponent titulo="Domicílios com Energia Elétrica" descricao="Percentual de domicílios com acesso à energia elétrica." detalhes={isFiltrando ? `Referência: ${referenciaEnergiaEletrica || "--"} - Fonte: ${fonteEnergiaEletrica || "--"}` : undefined} categoria="Infraestrutura" categoriaClassName="bg-teal-100 text-teal-800" valor={domiciliosEnergiaEletrica !== undefined && isFiltrando ? `${domiciliosEnergiaEletrica.toLocaleString("pt-BR")}%` : "--"} />
-                    <CartaoIndicadorComponent titulo="Famílias no Cadastro Único" descricao="Total de famílias inscritas no Cadastro Único para programas sociais." detalhes={isFiltrando ? `Referência: ${referenciaCadastroUnico || "--"} - Fonte: ${fonteCadastroUnico || "--"}` : undefined} categoria="Assistência" categoriaClassName="bg-amber-100 text-amber-800" valor={familiasCadastroUnico !== undefined && isFiltrando ? familiasCadastroUnico.toLocaleString("pt-BR") : "--"} />
-                    <CartaoIndicadorComponent titulo="Famílias em Situação de Rua" descricao="Famílias em situação de rua identificadas no Cadastro Único." detalhes={isFiltrando ? `Referência: ${referenciaSituacaoRua || "--"} - Fonte: ${fonteSituacaoRua || "--"}` : undefined} categoria="Assistência" categoriaClassName="bg-amber-100 text-amber-800" valor={familiasSituacaoRua !== undefined && isFiltrando ? familiasSituacaoRua.toLocaleString("pt-BR") : "--"} />
-                    <CartaoIndicadorComponent titulo="Famílias com Trabalho Infantil" descricao="Famílias com ocorrência de trabalho infantil registradas no Cadastro Único." detalhes={isFiltrando ? `Referência: ${referenciaTrabalhoInfantil || "--"} - Fonte: ${fonteTrabalhoInfantil || "--"}` : undefined} categoria="Assistência" categoriaClassName="bg-amber-100 text-amber-800" valor=
-                    {familiasTrabalhoInfantil !== undefined && isFiltrando ? familiasTrabalhoInfantil == -1 ? "Dados não disponíveis" : familiasTrabalhoInfantil.toLocaleString("pt-BR") : "--"} />
-                    <CartaoIndicadorComponent titulo="Auxílio Gás para Brasileiros" descricao="Percentual de famílias atendidas pelo benefício Auxílio Gás." detalhes={isFiltrando ? `Referência: ${referenciaAuxilioGas || "--"} - Fonte: ${fonteAuxilioGas || "--"}` : undefined} categoria="Assistência" categoriaClassName="bg-amber-100 text-amber-800" valor={auxilioGas !== undefined && isFiltrando ? `${auxilioGas.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Domicílios com Água Encanada" descricao="Percentual de domicílios com acesso à água canalizada."
+                        detalhes={isFiltrando ? `Referência: ${referenciaAguaEncanada || "--"} - Fonte: ${fonteAguaEncanada || "--"}` : undefined} 
+                        valor={domiciliosAguaEncanada !== undefined && isFiltrando ? `${domiciliosAguaEncanada.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Domicílios com Energia Elétrica" descricao="Percentual de domicílios com acesso à energia elétrica." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaEnergiaEletrica || "--"} - Fonte: ${fonteEnergiaEletrica || "--"}` : undefined} 
+                        valor={domiciliosEnergiaEletrica !== undefined && isFiltrando ? `${domiciliosEnergiaEletrica.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Famílias no Cadastro Único" descricao="Total de famílias inscritas no Cadastro Único para programas sociais." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaCadastroUnico || "--"} - Fonte: ${fonteCadastroUnico || "--"}` : undefined} 
+                        valor={familiasCadastroUnico !== undefined && isFiltrando ? familiasCadastroUnico.toLocaleString("pt-BR") : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Famílias em Situação de Rua" 
+                        descricao="Famílias em situação de rua identificadas no Cadastro Único." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaSituacaoRua || "--"} - Fonte: ${fonteSituacaoRua || "--"}` : undefined} 
+                        valor={familiasSituacaoRua !== undefined && isFiltrando ? familiasSituacaoRua.toLocaleString("pt-BR") : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Famílias com Trabalho Infantil" 
+                        descricao="Famílias com ocorrência de trabalho infantil registradas no Cadastro Único." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaTrabalhoInfantil || "--"} - Fonte: ${fonteTrabalhoInfantil || "--"}` : undefined} 
+                        valor={familiasTrabalhoInfantil !== undefined && isFiltrando ? familiasTrabalhoInfantil == -1 ? "Dados não disponíveis" : familiasTrabalhoInfantil.toLocaleString("pt-BR") : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Auxílio Gás para Brasileiros" 
+                        descricao="Percentual de famílias atendidas pelo benefício Auxílio Gás." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaAuxilioGas || "--"} - Fonte: ${fonteAuxilioGas || "--"}` : undefined} 
+                        valor={auxilioGas !== undefined && isFiltrando ? `${auxilioGas.toLocaleString("pt-BR")}%` : "--"} />
                 </div>
             </div>
         </section>

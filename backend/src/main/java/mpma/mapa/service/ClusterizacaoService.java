@@ -41,7 +41,7 @@ public class ClusterizacaoService {
     public ClusterizacaoDTO.Resposta clusterizar(String schema, String indicador) {
         List<ClusterizacaoDTO.PontoMunicipal> dados = informacoesService
                 .buscarDadosParaClusterizacao(schema, indicador);
-        Integer referencia = informacoesService.buscarReferenciaMaisRecente(schema, indicador);
+        String referencia = informacoesService.buscarReferenciaMaisRecente(schema, indicador);
 
         if (referencia == null || dados.size() < QUANTIDADE_MINIMA_MUNICIPIOS) {
             throw new IllegalArgumentException(

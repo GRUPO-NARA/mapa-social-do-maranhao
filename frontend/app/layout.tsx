@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cal_Sans, Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +13,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const calSans = Cal_Sans({
+  variable: "--font-cal-sans",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 const scriptAcessibilidade = `
@@ -119,7 +128,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${calSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <a href="#conteudo-principal" className="fixed left-4 top-4 z-[200] -translate-y-24 rounded-xl bg-[#061F56] px-4 py-3 font-semibold text-white shadow-xl transition focus:translate-y-0">

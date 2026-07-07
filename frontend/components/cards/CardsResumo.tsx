@@ -1,4 +1,4 @@
-import { formatarNomeIndicador } from "@/utils/formatarIndicador";
+import { formatarNomeIndicador } from "@/tratamento/formatarIndicador";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -27,42 +27,92 @@ function formatarVariacaoNoPeriodo(valor: unknown) {
     return `${sinal}${numeroFormatado} p.p.`;
 }
 
+function indicadorQuantoMenorMelhor(indicador?: string) {
+    if (!indicador) return false;
+
+    return [
+        "analfabetismo",
+        "abandono",
+        "distorcao",
+        "distorção",
+        "evasao",
+        "evasão",
+        "mortalidade",
+        "obito",
+        "óbito",
+        "reprovacao",
+        "reprovação",
+    ].some((termo) => indicador.toLocaleLowerCase("pt-BR").includes(termo));
+}
+
+function indicadorPercentual(indicador?: string) {
+    if (!indicador) return false;
+
+    return [
+        "cobertura",
+        "domicilios_com_agua_encanada",
+        "domicilios_com_energia_eletrica",
+        "percentual",
+        "programa_auxilio_gas",
+        "taxa",
+    ].some((termo) => indicador.toLocaleLowerCase("pt-BR").includes(termo));
+}
+
+function formatarPercentual(valor: unknown) {
+    if (valor === null || valor === undefined || valor === "") return "--";
+    const texto = String(valor);
+    return texto.includes("%") ? texto : `${texto}%`;
+}
+
 
 
 export default function CardsResumoComponent({ isFiltroAplicado, indicador, municipio, tipo_do_indicador }: CardsResumoComponentProps) {
     
-    const [valorMaisRecente, setValorMaisRecente] = useState(null);
-    const [referenciaValorMaisRecente, setReferenciaValorMaisRecente] = useState(null);
-    const [anoMelhorResultado, setAnoMelhorResultado] = useState(null);
-    const [melhorResultado, setMelhorResultado] = useState(null);
-    const [anoPontoDeAtencao, setAnoPontoDeAtencao] = useState(null);
-    const [pontoDeAtencao, setPontoDeAtencao] = useState(null);
+    const [valorMaisRecente, setValorMaisRecente] = useState<string | number | null>(null);
+    const [referenciaValorMaisRecente, setReferenciaValorMaisRecente] = useState<string | number | null>(null);
+    const [anoMelhorResultado, setAnoMelhorResultado] = useState<string | number | null>(null);
+    const [melhorResultado, setMelhorResultado] = useState<string | number | null>(null);
+    const [anoPontoDeAtencao, setAnoPontoDeAtencao] = useState<string | number | null>(null);
+    const [pontoDeAtencao, setPontoDeAtencao] = useState<string | number | null>(null);
     const [variacaoNoPeriodo, setVariacaoNoPeriodo] = useState<string | null>(null);
-    const [evolucaoHistorica, setEvolucaoHistorica] = useState(null);
+    const [evolucaoHistorica, setEvolucaoHistorica] = useState<string | number | null>(null);
 
     async function buscarResumoIndicador(){
         const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/informacoes/resumoDoIndicador?schema=${tipo_do_indicador}&indicador=${indicador}&municipio=${municipio}`);
         const resposta = await requisicao.json();
+        const dadosResumo = resposta?.['Resposta da Requisição'];
+
+        if (!dadosResumo) {
+            setValorMaisRecente('--');
+            setReferenciaValorMaisRecente('--');
+            setAnoMelhorResultado('--');
+            setMelhorResultado('--');
+            setAnoPontoDeAtencao('--');
+            setPontoDeAtencao('--');
+            setVariacaoNoPeriodo('--');
+            setEvolucaoHistorica('--');
+            return;
+        }
         
-        if (indicador?.startsWith('taxa')){
-            resposta['Resposta da Requisição']['VALOR MAIS RECENTE'] = resposta['Resposta da Requisição']['VALOR MAIS RECENTE'] ? `${resposta['Resposta da Requisição']['VALOR MAIS RECENTE']}%` : '--';
-            resposta['Resposta da Requisição']['Maior valor'] = resposta['Resposta da Requisição']['Maior valor'] ? `${resposta['Resposta da Requisição']['Maior valor']}%` : '--';
-            resposta['Resposta da Requisição']['Menor valor'] = resposta['Resposta da Requisição']['Menor valor'] ? `${resposta['Resposta da Requisição']['Menor valor']}%` : '--';
+        if (indicadorPercentual(indicador)){
+            dadosResumo['VALOR MAIS RECENTE'] = formatarPercentual(dadosResumo['VALOR MAIS RECENTE']);
+            dadosResumo['Maior valor'] = formatarPercentual(dadosResumo['Maior valor']);
+            dadosResumo['Menor valor'] = formatarPercentual(dadosResumo['Menor valor']);
         }
 
-        setValorMaisRecente(resposta?.['Resposta da Requisição']?.['VALOR MAIS RECENTE'] || '--');
-        setReferenciaValorMaisRecente(resposta?.['Resposta da Requisição']?.['Referência'] || '--');
+        setValorMaisRecente(dadosResumo?.['VALOR MAIS RECENTE'] || '--');
+        setReferenciaValorMaisRecente(dadosResumo?.['Referência'] || '--');
 
-        setAnoMelhorResultado(resposta?.['Resposta da Requisição']?.['MELHOR RESULTADO'] || '--');''
-        setMelhorResultado(resposta?.['Resposta da Requisição']?.['Maior valor'] || '--');
+        setAnoMelhorResultado(dadosResumo?.['MELHOR RESULTADO'] || '--');
+        setMelhorResultado(dadosResumo?.['Maior valor'] || '--');
 
-        setAnoPontoDeAtencao(resposta?.['Resposta da Requisição']?.['PONTO DE ATENÇÃO'] || '--');
-        setPontoDeAtencao(resposta?.['Resposta da Requisição']?.['Menor valor'] || '--');
+        setAnoPontoDeAtencao(dadosResumo?.['PONTO DE ATENÇÃO'] || '--');
+        setPontoDeAtencao(dadosResumo?.['Menor valor'] || '--');
 
         setVariacaoNoPeriodo(formatarVariacaoNoPeriodo(
-            resposta?.['Resposta da Requisição']?.['VARIAÇÃO NO PERÍODO']
+            dadosResumo?.['VARIAÇÃO NO PERÍODO']
         ));
-        setEvolucaoHistorica(resposta?.['Resposta da Requisição']?.['Evolução'] || '--');
+        setEvolucaoHistorica(dadosResumo?.['Evolução'] || '--');
     }
 
     useEffect(() => {
@@ -75,6 +125,7 @@ export default function CardsResumoComponent({ isFiltroAplicado, indicador, muni
         return null;
     }
 
+    const menorValorEhMelhor = indicadorQuantoMenorMelhor(indicador);
 
     const cardsResumo = [
         {
@@ -87,16 +138,16 @@ export default function CardsResumoComponent({ isFiltroAplicado, indicador, muni
         },
         {
             titulo: "Melhor resultado",
-            valor: anoMelhorResultado,
-            detalhe: `Maior valor: ${melhorResultado}`,
+            valor: menorValorEhMelhor ? anoPontoDeAtencao : anoMelhorResultado,
+            detalhe: menorValorEhMelhor ? `Menor valor: ${pontoDeAtencao}` : `Maior valor: ${melhorResultado}`,
             cor: "bg-sky-700",
             fundo: "bg-sky-50",
             texto: "text-sky-700",
         },
         {
             titulo: "Ponto de atenção",
-            valor: anoPontoDeAtencao,
-            detalhe: `Menor valor: ${pontoDeAtencao}`,
+            valor: menorValorEhMelhor ? anoMelhorResultado : anoPontoDeAtencao,
+            detalhe: menorValorEhMelhor ? `Maior valor: ${melhorResultado}` : `Menor valor: ${pontoDeAtencao}`,
             cor: "bg-sky-700",
             fundo: "bg-sky-50",
             texto: "text-sky-700",
@@ -105,7 +156,9 @@ export default function CardsResumoComponent({ isFiltroAplicado, indicador, muni
             titulo: "Variação no período",
             valor: variacaoNoPeriodo,
             detalhe: `Evolução: ${evolucaoHistorica}`,
-            descricao: "Diferença entre o primeiro e o último resultado da série, medida em pontos percentuais.",
+            descricao: menorValorEhMelhor
+                ? "Diferença entre o primeiro e o último resultado da série. Para este indicador, redução representa melhora."
+                : "Diferença entre o primeiro e o último resultado da série, medida em pontos percentuais.",
             cor: "bg-sky-700",
             fundo: "bg-sky-50",
             texto: "text-sky-700",

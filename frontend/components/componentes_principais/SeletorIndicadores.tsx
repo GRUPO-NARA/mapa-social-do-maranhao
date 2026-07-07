@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatarNomeIndicador } from "@/utils/formatarIndicador";
+import { formatarNomeIndicador } from "@/tratamento/formatarIndicador";
 
 type TipoGrafico = "linha" | "barra";
+
+const INDICADORES_SEM_SERIE_HISTORICA = new Set([
+    "idade_mediana",
+    "percentual_de_envelhecimento",
+    "pessoas_de_2_anos_ou_mais_com_deficiencia",
+]);
 
 interface SeletorIndicadoresProps {
     tipoDoIndicador: string;
@@ -38,6 +44,7 @@ export default function SeletorIndicadoresComponent({
     const [anoPrevisaoSelecionado, setAnoPrevisaoSelecionado] = useState(2030);
 
     const isIndicadorSelecionado = indicadorSelecionado !== "";
+    const indicadorSemSerieHistorica = INDICADORES_SEM_SERIE_HISTORICA.has(indicadorSelecionado);
     const isComparacaoValida = tipoGraficoSelecionado !== "barra" || municipiosSelecionados.length >= 2;
     const nomeArea = tipoDoIndicador === "educacao"
         ? "educacional"
@@ -122,6 +129,10 @@ export default function SeletorIndicadoresComponent({
     }, []);
 
     function selecionarTipoGrafico(tipo: TipoGrafico) {
+        if (tipo === "linha" && indicadorSemSerieHistorica) {
+            return;
+        }
+
         setTipoGraficoSelecionado(tipo);
         setAnoPrevisao?.(null);
         setIsFiltroAplicado?.(false);
@@ -151,6 +162,8 @@ export default function SeletorIndicadoresComponent({
         setAnoPrevisao?.(null);
 
         if (novoIndicador === "") {
+            setTipoGraficoSelecionado(null);
+        } else if (INDICADORES_SEM_SERIE_HISTORICA.has(novoIndicador) && tipoGraficoSelecionado === "linha") {
             setTipoGraficoSelecionado(null);
         }
     }
@@ -236,13 +249,15 @@ export default function SeletorIndicadoresComponent({
                     <div className="grid grid-cols-2 gap-3">
                         {(["linha", "barra"] as TipoGrafico[]).map((tipo) => {
                             const selecionado = tipoGraficoSelecionado === tipo;
+                            const bloqueadoPorSerieHistorica = tipo === "linha" && indicadorSemSerieHistorica;
                             return (
                                 <button
                                     key={tipo}
                                     type="button"
-                                    disabled={!municipioSelecionado || !isIndicadorSelecionado}
+                                    disabled={!municipioSelecionado || !isIndicadorSelecionado || bloqueadoPorSerieHistorica}
                                     className={`flex min-h-12 items-center justify-center rounded-2xl border px-3 py-3 text-sm font-semibold capitalize transition disabled:cursor-not-allowed disabled:opacity-45 ${selecionado ? "border-sky-700 bg-sky-700 text-white shadow-md shadow-sky-700/20" : "border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:bg-sky-50"}`}
                                     onClick={() => selecionarTipoGrafico(tipo)}
+                                    title={bloqueadoPorSerieHistorica ? "Este indicador tem apenas uma referência disponível; use comparação territorial." : undefined}
                                 >
                                     {tipo}
                                 </button>
@@ -251,6 +266,12 @@ export default function SeletorIndicadoresComponent({
                     </div>
                 </fieldset>
             </div>
+
+            {indicadorSemSerieHistorica && (
+                <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    Este indicador tem apenas uma referência disponível. Use o gráfico de barras para comparar municípios.
+                </p>
+            )}
 
             {isIndicadorSelecionado && tipoGraficoSelecionado === "barra" && (
                 <fieldset className="mt-6 rounded-2xl border border-sky-100 bg-sky-50/60 p-4 sm:p-5">

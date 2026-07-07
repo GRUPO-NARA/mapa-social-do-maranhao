@@ -95,3 +95,9 @@ html.a11y-alto-contraste textarea {
   }
 }
 
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-cal-sans);
+  --font-serif: "Times New Roman", Times, Georgia, serif;
+}

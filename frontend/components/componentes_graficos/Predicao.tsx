@@ -14,7 +14,7 @@ import {
     Tooltip,
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
-import { formatarNomeIndicador } from "@/utils/formatarIndicador";
+import { formatarNomeIndicador } from "@/tratamento/formatarIndicador";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Filler, Tooltip, Legend, Title);
 
@@ -51,6 +51,11 @@ interface RespostaPredicao {
     modelosAvaliados: ModeloPredicao[];
 }
 
+function valorNumericoValido(valor: unknown) {
+    const numero = Number(valor);
+    return Number.isFinite(numero) && numero >= 0 ? numero : null;
+}
+
 export default function GraficosComponent({
     tipoGrafico,
     isFiltroAplicado,
@@ -66,6 +71,7 @@ export default function GraficosComponent({
     const [dadosDaPrevisao, setDadosDaPrevisao] = useState<RespostaPredicao | null>(null);
     const [isCarregandoPrevisao, setIsCarregandoPrevisao] = useState(false);
     const [erroPrevisao, setErroPrevisao] = useState(false);
+    const [mensagemPrevisao, setMensagemPrevisao] = useState("Não foi possível gerar a projeção para este recorte.");
     const [referenciaComparacao, setReferenciaComparacao] = useState<string | number | null>(null);
     const [isCarregando, setIsCarregando] = useState(false);
     const [erro, setErro] = useState(false);
@@ -83,6 +89,7 @@ export default function GraficosComponent({
         try {
             setIsCarregandoPrevisao(true);
             setErroPrevisao(false);
+            setMensagemPrevisao("Não foi possível gerar a projeção para este recorte.");
             setDadosDaPrevisao(null);
             const parametros = new URLSearchParams({
                 schema: tipoDoIndicador || "educacao",
@@ -97,7 +104,22 @@ export default function GraficosComponent({
             );
 
             if (!requisicao.ok) {
-                throw new Error("Falha ao buscar dados de previsão");
+                let mensagem = "Não há dados históricos suficientes para gerar uma projeção para este indicador.";
+                try {
+                    const respostaErro = await requisicao.json();
+                    mensagem = respostaErro?.["Mensagem da Requisição"]
+                        || respostaErro?.["Resposta da Requisição"]
+                        || respostaErro?.message
+                        || mensagem;
+                } catch {
+                    // Mantém a mensagem padrão quando a API não retorna JSON.
+                }
+
+                setMensagemPrevisao(mensagem);
+                setErroPrevisao(true);
+                setValorDaPrevisao(null);
+                setDadosDaPrevisao(null);
+                return;
             }
 
             const resposta: RespostaPredicao = await requisicao.json();
@@ -105,7 +127,7 @@ export default function GraficosComponent({
             setDadosDaPrevisao(resposta);
         }catch (error) {
             if ((error as Error).name !== "AbortError") {
-            console.error("Erro ao buscar dados de previsão:", error);
+            setMensagemPrevisao("Não foi possível carregar a projeção agora. Tente novamente em instantes.");
             setErroPrevisao(true);
             setValorDaPrevisao(null);
             setDadosDaPrevisao(null);
@@ -162,13 +184,24 @@ export default function GraficosComponent({
                 );
 
                 if (tipoGrafico === "barra") {
-                    const dadosComparacao = dados as PontoComparacao[];
+                    const dadosComparacao = (dados as PontoComparacao[])
+                        .map((dado) => ({
+                            ...dado,
+                            Valor: valorNumericoValido(dado.Valor),
+                        }))
+                        .filter((dado): dado is PontoComparacao & { Valor: number } => dado.Valor !== null);
                     setLegendas(dadosComparacao.map((dado) => dado.Município));
-                    setValores(dadosComparacao.map((dado) => Number(dado.Valor)));
+                    setValores(dadosComparacao.map((dado) => dado.Valor));
                     setReferenciaComparacao(dadosComparacao[0]?.Referência ?? null);
                 } else {
-                    setLegendas(dados.map((dado) => String(dado.Referência)));
-                    setValores(dados.map((dado) => Number(dado.Valor)));
+                    const dadosValidos = dados
+                        .map((dado) => ({
+                            ...dado,
+                            Valor: valorNumericoValido(dado.Valor),
+                        }))
+                        .filter((dado): dado is PontoIndicador & { Valor: number } => dado.Valor !== null);
+                    setLegendas(dadosValidos.map((dado) => String(dado.Referência)));
+                    setValores(dadosValidos.map((dado) => dado.Valor));
                 }
             } catch (error) {
                 if ((error as Error).name !== "AbortError") {
@@ -333,7 +366,7 @@ export default function GraficosComponent({
                     {isCarregandoPrevisao ? (
                         "Calculando projeção..."
                     ) : erroPrevisao ? (
-                        "Não foi possível gerar a projeção para este recorte."
+                        mensagemPrevisao
                     ) : valorDaPrevisao !== null ? (
                         <>
                             <p className="font-semibold">

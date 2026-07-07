@@ -4,7 +4,7 @@ import {useState, useEffect} from "react";
 import Papa from "papaparse"
 
 interface IndicadoresMapaProps{
-    municipio: String,
+    municipio: string,
     isFiltrando?: boolean,
     isMostrarApenasMapa?: boolean
 }
@@ -29,11 +29,11 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/populacao?municipio=${municipio}`);
               if (requisicao.ok) {
                 const resposta = await requisicao.json();
-                var dadosInternos = resposta?.["Resposta da Requisição"];
-                var populacaoMunicipal = "--"
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                let populacaoMunicipal = "--"
                 if (dadosInternos) {
                   try {
-                      var objetoFormatado = JSON.parse(dadosInternos);     
+                      const objetoFormatado = JSON.parse(dadosInternos);     
                       populacaoMunicipal = objetoFormatado["Quantidade de Pessoas"].toLocaleString("pt-BR") + " habitantes";
                   } catch (erro) {
                       console.error("Erro ao converter JSON:", erro);
@@ -54,11 +54,11 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeHomens?municipio=${municipio}`);
               if (requisicao.ok) {
                 const resposta = await requisicao.json();
-                var dadosInternos = resposta?.["Resposta da Requisição"];
-                var quantidadeHomensMunicipal = "--"
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                let quantidadeHomensMunicipal = "--"
                 if (dadosInternos) {
                   try {
-                      var objetoFormatado = JSON.parse(dadosInternos);     
+                      const objetoFormatado = JSON.parse(dadosInternos);     
                       quantidadeHomensMunicipal = objetoFormatado["Quantidade de Homens"].toLocaleString("pt-BR") + " homens";
                   } catch (erro) {
                       console.error("Erro ao converter JSON:", erro);
@@ -79,11 +79,11 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/demograficos/quantidadeDeMulheres?municipio=${municipio}`);
               if (requisicao.ok) {
                 const resposta = await requisicao.json();
-                var dadosInternos = resposta?.["Resposta da Requisição"];
-                var quantidadeMulheresMunicipal = "--"
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                let quantidadeMulheresMunicipal = "--"
                 if (dadosInternos) {
                   try {
-                      var objetoFormatado = JSON.parse(dadosInternos);     
+                      const objetoFormatado = JSON.parse(dadosInternos);     
                       quantidadeMulheresMunicipal = objetoFormatado["Quantidade de Mulheres"].toLocaleString("pt-BR") + " mulheres";
                   } catch (erro) {
                       console.error("Erro ao converter JSON:", erro);
@@ -104,11 +104,11 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/geograficos/areaTotal?municipio=${municipio}`);
               if (requisicao.ok) {
                 const resposta = await requisicao.json();
-                var dadosInternos = resposta?.["Resposta da Requisição"];
-                var areaTerritorialMunicipal = "--"
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                let areaTerritorialMunicipal = "--"
                 if (dadosInternos) {
                   try {
-                      var objetoFormatado = JSON.parse(dadosInternos);     
+                      const objetoFormatado = JSON.parse(dadosInternos);     
                       areaTerritorialMunicipal = objetoFormatado["Área Territorial"].toLocaleString("pt-BR") + " km²";
                   } catch (erro) {
                       console.error("Erro ao converter JSON:", erro);
@@ -129,11 +129,11 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
               const requisicao = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/geograficos/densidadeDemografica?municipio=${municipio}`);
               if (requisicao.ok) {
                 const resposta = await requisicao.json();
-                var dadosInternos = resposta?.["Resposta da Requisição"];
-                var densidadeDemograficaMunicipal = "--"
+                const dadosInternos = resposta?.["Resposta da Requisição"];
+                let densidadeDemograficaMunicipal = "--"
                 if (dadosInternos) {
                   try {
-                      var objetoFormatado = JSON.parse(dadosInternos);     
+                      const objetoFormatado = JSON.parse(dadosInternos);     
                       densidadeDemograficaMunicipal = objetoFormatado["Densidade Demográfica"] + " hab/km²";
                   } catch (erro) {
                       console.error("Erro ao converter JSON:", erro);
@@ -197,33 +197,33 @@ export default function IndicadoresMapaComponent({municipio, isFiltrando, isMost
 
     return (
         <div className={`absolute m-2 z-10 md:left-4 md:top-4 md:z-10 ${isMostrarApenasMapa ? "hidden" : ""}`}>
-            <div className={`flex flex-col gap-1 w-fit-content rounded-xl border border-sky-700 bg-white/95 p-4 shadow-lg
+            <div className={`flex flex-col gap-1 rounded-xl bg-white p-4 border-slate-200 shadow-md
                 ${isFiltrando && municipio !== "" ? "visible" : "invisible"}`}>
                 <div className="flex gap-2">
-                    <p className="text-sm md:text-base font-bold text-gray-700">População:</p>
+                    <p className="text-sm md:text-base font-bold text-black">População:</p>
                     <p className="text-sm md:text-base text-black">{populacao}</p>
                 </div>
                 <div className="flex gap-2">
-                    <p className="text-sm md:text-base font-bold text-gray-700">Quantidade de Homens:</p>
+                    <p className="text-sm md:text-base font-bold text-black">Quantidade de Homens:</p>
                     <p className="text-sm md:text-base text-black">{quantidadeHomens}</p>
                 </div>
                 <div className="flex gap-2">
-                    <p className="text-sm md:text-base font-bold text-gray-700">Quantidade de Mulheres:</p>
+                    <p className="text-sm md:text-base font-bold text-black">Quantidade de Mulheres:</p>
                     <p className="text-sm md:text-base text-black">{quantidadeMulheres}</p>
                 </div>
                 <div className="flex gap-2">
-                    <p className="text-sm md:text-base font-bold text-gray-700">Densidade Demográfica:</p>
+                    <p className="text-sm md:text-base font-bold text-black">Densidade Demográfica:</p>
                     <p className="text-sm md:text-base text-black">{densidadeDemografica}</p>
                 </div>
                 <div className="flex gap-2">
-                    <p className="text-sm md:text-base font-bold text-gray-700">Área Territorial:</p>
+                    <p className="text-sm md:text-base font-bold text-black">Área Territorial:</p>
                     <p className="text-sm md:text-base text-black">{areaTerritorial}</p>
                 </div>
-                <div className="flex flex-col bg-sky-100 rounded p-2 mt-2">
-                    <a href="https://sidra.ibge.gov.br/" target="_blank" rel="noopener noreferrer" className="text-sm text-sky-600 hover:text-blue-500">
+                <div className="flex flex-col bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 rounded p-2 mt-2">
+                    <a href="https://sidra.ibge.gov.br/" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:text-blue-700">
                       Fonte: Sistema IBGE de Recuperação Automática (SIDRA)
                     </a>
-                    <a href={dadosPrincipais} download={`Dados Principais do Município de ${municipio}.csv`} className="text-sm text-sky-600 hover:text-blue-500 font-semibold">
+                    <a href={dadosPrincipais} download={`Dados Principais do Município de ${municipio}.csv`} className="text-sm text-white hover:text-blue-700 font-semibold">
                       Baixar dados
                     </a>
                 </div>
