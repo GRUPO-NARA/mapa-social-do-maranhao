@@ -158,7 +158,7 @@ public class DemograficosController {
             @ApiResponse(responseCode = "400", description = "Parâmetro município inválido!"),
             @ApiResponse(responseCode = "500", description = "Erro na requisição dos dados!")
     })
-    @GetMapping("/quantidadeDeResidentesUrbano")
+    @GetMapping("/quantidadeDeResidentesUrbanos")
     public ResponseEntity<HashMap<String, Object>> BuscarQuantidadeDeResidentesUrbanoDoMunicipio(
             @Parameter(name = "municipio", description = "nome do município (ex: São Luís)", example = "São Luís", required = true)
             @Valid @RequestParam("municipio") String municipio

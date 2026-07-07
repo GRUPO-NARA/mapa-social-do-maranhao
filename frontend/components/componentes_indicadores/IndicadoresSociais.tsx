@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CartaoIndicadorComponent from "./CartaoIndicadorComponent";
+import CartaoIndicadorComponent  from "@/components/cards/CardIndicador";
 
 interface IndicadoresSociaisProps {
     municipio: string;
@@ -161,12 +161,30 @@ export default function IndicadoresSociaisComponent({ municipio, isFiltrando }: 
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <CartaoIndicadorComponent titulo="Taxa de Analfabetismo 15+" descricao="Percentual de pessoas com 15 anos ou mais que não sabem ler e escrever." detalhes={isFiltrando ? `Referência: ${referenciaTaxaAnalfabetismo || "--"} - Fonte: ${fonteTaxaAnalfabetismo || "--"}` : undefined} categoria="Educação" categoriaClassName="bg-gray-100 text-gray-800" valor={taxaAnalfabetismo !== undefined && isFiltrando ? `${taxaAnalfabetismo.toLocaleString("pt-BR")}%` : "--"} />
-                    <CartaoIndicadorComponent titulo="Aprovação no Ensino Fundamental" descricao="Percentual de alunos aprovados ao final do ensino fundamental." detalhes={isFiltrando ? `Referência: ${referenciaAprovacaoFundamental || "--"} - Fonte: ${fonteAprovacaoFundamental || "--"}` : undefined} categoria="Educação" categoriaClassName="bg-gray-100 text-gray-800" valor={aprovacaoEnsinoFundamental !== undefined && isFiltrando ? `${aprovacaoEnsinoFundamental.toLocaleString("pt-BR")}%` : "--"} />
-                    <CartaoIndicadorComponent titulo="Aprovação no Ensino Médio" descricao="Percentual de alunos aprovados ao final do ensino médio." detalhes={isFiltrando ? `Referência: ${referenciaAprovacaoMedio || "--"} - Fonte: ${fonteAprovacaoMedio || "--"}` : undefined} categoria="Educação" categoriaClassName="bg-gray-100 text-gray-800" valor={aprovacaoEnsinoMedio !== undefined && isFiltrando ? `${aprovacaoEnsinoMedio.toLocaleString("pt-BR")}%` : "--"} />
-                    <CartaoIndicadorComponent titulo="Mortalidade Infantil" descricao="Óbitos de crianças menores de um ano por mil nascidos vivos." detalhes={isFiltrando ? `Referência: ${referenciaMortalidadeInfantil || "--"} - Fonte: ${fonteMortalidadeInfantil || "--"}` : undefined} categoria="Saúde" categoriaClassName="bg-red-100 text-red-800" valor={mortalidadeInfantil !== undefined && isFiltrando ? mortalidadeInfantil.toLocaleString("pt-BR") + "%" : "--"} />
-                    <CartaoIndicadorComponent titulo="Nascidos Vivos de Mães Adolescentes" descricao="Nascimentos registrados de mães com idade entre 10 e 19 anos." detalhes={isFiltrando ? `Referência: ${referenciaNascidosVivos || "--"} - Fonte: ${fonteNascidosVivos || "--"}` : undefined} categoria="Saúde" categoriaClassName="bg-red-100 text-red-800" valor={nascidosVivosMaesAdolescentes !== undefined && isFiltrando ? nascidosVivosMaesAdolescentes.toLocaleString("pt-BR") + "%" : "--"} />
-                    <CartaoIndicadorComponent titulo="Razão de Mortalidade Materna" descricao="Óbitos maternos por 100 mil nascidos vivos." detalhes={isFiltrando ? `Referência: ${referenciaMortalidadeMaterna || "--"} - Fonte: ${fonteMortalidadeMaterna || "--"}` : undefined} categoria="Saúde" categoriaClassName="bg-red-100 text-red-800" valor={razaoMortalidadeMaterna !== undefined && isFiltrando ? razaoMortalidadeMaterna.toLocaleString("pt-BR") + "%" : "--"} />
+                    <CartaoIndicadorComponent
+                        titulo="Taxa de Analfabetismo 15+" descricao="Percentual de pessoas com 15 anos ou mais que não sabem ler e escrever." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaTaxaAnalfabetismo || "--"} - Fonte: ${fonteTaxaAnalfabetismo || "--"}` : undefined} 
+                        valor={taxaAnalfabetismo !== undefined && isFiltrando ? `${taxaAnalfabetismo.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Aprovação no Ensino Fundamental" descricao="Percentual de alunos aprovados ao final do ensino fundamental." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaAprovacaoFundamental || "--"} - Fonte: ${fonteAprovacaoFundamental || "--"}` : undefined} 
+                        valor={aprovacaoEnsinoFundamental !== undefined && isFiltrando ? `${aprovacaoEnsinoFundamental.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Aprovação no Ensino Médio" descricao="Percentual de alunos aprovados ao final do ensino médio." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaAprovacaoMedio || "--"} - Fonte: ${fonteAprovacaoMedio || "--"}` : undefined} 
+                        valor={aprovacaoEnsinoMedio !== undefined && isFiltrando ? `${aprovacaoEnsinoMedio.toLocaleString("pt-BR")}%` : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Mortalidade Infantil" descricao="Óbitos de crianças menores de um ano por mil nascidos vivos." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaMortalidadeInfantil || "--"} - Fonte: ${fonteMortalidadeInfantil || "--"}` : undefined} 
+                        valor={mortalidadeInfantil !== undefined && isFiltrando ? mortalidadeInfantil.toLocaleString("pt-BR") + "%" : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Nascidos Vivos de Mães Adolescentes" descricao="Nascimentos registrados de mães com idade entre 10 e 19 anos." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaNascidosVivos || "--"} - Fonte: ${fonteNascidosVivos || "--"}` : undefined} 
+                        valor={nascidosVivosMaesAdolescentes !== undefined && isFiltrando ? nascidosVivosMaesAdolescentes.toLocaleString("pt-BR") + "%" : "--"} />
+                    <CartaoIndicadorComponent 
+                        titulo="Razão de Mortalidade Materna" descricao="Óbitos maternos por 100 mil nascidos vivos." 
+                        detalhes={isFiltrando ? `Referência: ${referenciaMortalidadeMaterna || "--"} - Fonte: ${fonteMortalidadeMaterna || "--"}` : undefined} 
+                        valor={razaoMortalidadeMaterna !== undefined && isFiltrando ? razaoMortalidadeMaterna.toLocaleString("pt-BR") + "%" : "--"} />
                 </div>
             </div>
         </section>

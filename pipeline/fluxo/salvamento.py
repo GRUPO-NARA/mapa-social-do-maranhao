@@ -22,7 +22,7 @@ class FluxoDeSalvamento:
     def EstabelecerConexao(self) -> Engine:
         """Cria uma conexão com o banco de dados usando SQLAlchemy."""
         # colocar variável de ambiente para senha e usuário do banco de dados
-        URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+        URI = os.getenv("SQLALCHEMY_URI")
         try:
             conexao = create_engine(URI)
             return conexao

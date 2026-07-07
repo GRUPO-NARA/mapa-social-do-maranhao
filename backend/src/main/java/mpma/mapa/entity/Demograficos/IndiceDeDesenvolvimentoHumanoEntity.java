@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import mpma.mapa.entity.Estadual.ReferenciaCodigosMunicipaisEntity;
 
 @Entity
-@Table(name = "indice_de_desenvolvimento_humano", schema = "assistencia_social")
+@Table(name = "indice_de_desenvolvimento_humano", schema = "demograficos")
 public class IndiceDeDesenvolvimentoHumanoEntity {
     @Id
     @Column(name = "id", nullable = false)

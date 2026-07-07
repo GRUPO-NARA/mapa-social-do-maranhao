@@ -30,7 +30,7 @@ export default function AjudaIndicadorComponent({ titulo, texto, variante = "cla
             <span
                 id={tooltipId}
                 role="tooltip"
-                className={`pointer-events-none invisible absolute bottom-full z-30 mb-2 w-60 max-w-[calc(100vw-2rem)] rounded-xl bg-slate-900 px-3 py-2 text-left text-xs font-normal leading-5 text-white opacity-0 shadow-xl transition-opacity group-hover/info:visible group-hover/info:opacity-100 group-focus-within/info:visible group-focus-within/info:opacity-100 ${posicaoTooltip}`}
+                className={`pointer-events-none invisible absolute bottom-full z-10000 mb-2 w-60 max-w-[calc(100vw-2rem)] rounded-xl bg-slate-900 px-3 py-2 text-left text-xs font-normal leading-5 text-white opacity-0 shadow-xl transition-opacity group-hover/info:visible group-hover/info:opacity-100 group-focus-within/info:visible group-focus-within/info:opacity-100 ${posicaoTooltip}`}
             >
                 {texto}
                 <span aria-hidden="true" className={`absolute top-full border-4 border-transparent border-t-slate-900 ${posicaoSeta}`} />

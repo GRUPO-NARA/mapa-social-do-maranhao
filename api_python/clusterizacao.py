@@ -17,7 +17,7 @@ class DadoMunicipio(BaseModel):
 
 
 class RequisicaoClusterizacao(BaseModel):
-    referencia: int
+    referencia: str | int
     dados: list[DadoMunicipio] = Field(min_length=4)
     minimoClusters: int = Field(default=2, ge=2, le=5)
     maximoClusters: int = Field(default=5, ge=2, le=5)
@@ -55,7 +55,7 @@ class RespostaClusterizacao(BaseModel):
     algoritmoSelecionado: str
     quantidadeClusters: int
     silhouette: float
-    referencia: int
+    referencia: str | int
     totalMunicipios: int
     modelosAvaliados: list[MetricaModelo]
     clusters: list[ClusterMunicipal]

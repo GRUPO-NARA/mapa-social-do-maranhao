@@ -11,7 +11,7 @@ import {
     Tooltip,
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
-import { formatarNomeIndicador } from "@/utils/formatarIndicador";
+import { formatarNomeIndicador } from "@/tratamento/formatarIndicador";
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Legend, Tooltip);
 
@@ -35,7 +35,7 @@ interface RespostaClusterizacao {
     algoritmoSelecionado: string;
     quantidadeClusters: number;
     silhouette: number;
-    referencia: number;
+    referencia: string | number;
     totalMunicipios: number;
     modelosAvaliados: MetricaModelo[];
     clusters: ClusterMunicipal[];
@@ -70,6 +70,9 @@ export default function ClusterizacaoComponent({
     const [resposta, setResposta] = useState<RespostaClusterizacao | null>(null);
     const [isCarregandoApi, setIsCarregandoApi] = useState(false);
     const [erro, setErro] = useState(false);
+    const [mensagemIndisponivel, setMensagemIndisponivel] = useState(
+        "Não foi possível formar grupos para o indicador e a referência selecionados."
+    );
     const [tipoGrafico, setTipoGrafico] = useState<"pizza" | "barras">("pizza");
 
     useEffect(() => {
@@ -83,6 +86,7 @@ export default function ClusterizacaoComponent({
             try {
                 setIsCarregandoApi(true);
                 setErro(false);
+                setMensagemIndisponivel("Não foi possível formar grupos para o indicador e a referência selecionados.");
                 setResposta(null);
 
                 const parametros = new URLSearchParams({
@@ -95,13 +99,26 @@ export default function ClusterizacaoComponent({
                 );
 
                 if (!requisicao.ok) {
-                    throw new Error("Falha ao buscar os dados de clusterização");
+                    let mensagem = "Não há dados suficientes ou valores distintos para formar grupos neste indicador.";
+                    try {
+                        const respostaErro = await requisicao.json();
+                        mensagem = respostaErro?.["Mensagem da Requisição"]
+                            || respostaErro?.["Resposta da Requisição"]
+                            || respostaErro?.message
+                            || mensagem;
+                    } catch {
+                        // Mantém a mensagem padrão quando a API não retorna JSON.
+                    }
+
+                    setMensagemIndisponivel(mensagem);
+                    setErro(true);
+                    return;
                 }
 
                 setResposta(await requisicao.json());
             } catch (error) {
                 if ((error as Error).name !== "AbortError") {
-                    console.error("Erro ao buscar dados de clusterização:", error);
+                    setMensagemIndisponivel("Não foi possível carregar a clusterização agora. Tente novamente em instantes.");
                     setErro(true);
                 }
             } finally {
@@ -120,10 +137,17 @@ export default function ClusterizacaoComponent({
     }
 
     const dadosClusters = dadosClustersRecebidos ?? resposta?.clusters ?? [];
+    const dadosClustersValidos = dadosClusters.filter(
+        (cluster) =>
+            Number.isFinite(cluster.quantidadeMunicipios) &&
+            Number.isFinite(cluster.media) &&
+            cluster.quantidadeMunicipios > 0 &&
+            cluster.media >= 0
+    );
     const carregando = isCarregando || isCarregandoApi;
     const tituloIndicador = formatarNomeIndicador(indicador);
-    const possuiDados = dadosClusters.length > 0;
-    const totalMunicipios = resposta?.totalMunicipios ?? dadosClusters.reduce(
+    const possuiDados = dadosClustersValidos.length > 0;
+    const totalMunicipios = resposta?.totalMunicipios ?? dadosClustersValidos.reduce(
         (total, cluster) => total + cluster.quantidadeMunicipios,
         0
     );
@@ -148,28 +172,28 @@ export default function ClusterizacaoComponent({
         []
     ) ?? [];
     const indiceClusterMunicipio = municipio
-        ? dadosClusters.findIndex((cluster) =>
+        ? dadosClustersValidos.findIndex((cluster) =>
             cluster.municipios.some(
                 (item) => item.localeCompare(municipio, "pt-BR", { sensitivity: "base" }) === 0
             )
         )
         : -1;
     const clusterMunicipio = indiceClusterMunicipio >= 0
-        ? dadosClusters[indiceClusterMunicipio]
+        ? dadosClustersValidos[indiceClusterMunicipio]
         : null;
     const posicaoMunicipio = indiceClusterMunicipio === 0
         ? "entre os municípios com os valores mais baixos"
-        : indiceClusterMunicipio === dadosClusters.length - 1
+        : indiceClusterMunicipio === dadosClustersValidos.length - 1
             ? "entre os municípios com os valores mais altos"
             : "entre os municípios com valores intermediários";
 
     const dadosGrafico = {
-        labels: dadosClusters.map((cluster) => cluster.nome),
+        labels: dadosClustersValidos.map((cluster) => cluster.nome),
         datasets: [
             {
                 label: "Municípios",
-                data: dadosClusters.map((cluster) => cluster.quantidadeMunicipios),
-                backgroundColor: dadosClusters.map(
+                data: dadosClustersValidos.map((cluster) => cluster.quantidadeMunicipios),
+                backgroundColor: dadosClustersValidos.map(
                     (_, indice) => CORES_CLUSTERS[indice % CORES_CLUSTERS.length]
                 ),
                 borderColor: "#FFFFFF",
@@ -271,7 +295,7 @@ export default function ClusterizacaoComponent({
                     </div>
                     <h3 className="mt-4 font-bold text-slate-800">Clusterização indisponível</h3>
                     <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
-                        Não foi possível formar grupos para o indicador e a referência selecionados.
+                        {mensagemIndisponivel}
                     </p>
                 </div>
             ) : (
@@ -375,7 +399,7 @@ export default function ClusterizacaoComponent({
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            {dadosClusters.map((cluster, indice) => {
+                            {dadosClustersValidos.map((cluster, indice) => {
                                 const percentual = totalMunicipios > 0
                                     ? Math.round((cluster.quantidadeMunicipios / totalMunicipios) * 100)
                                     : 0;

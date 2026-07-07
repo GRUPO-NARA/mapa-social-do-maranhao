@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import mpma.mapa.entity.Estadual.ReferenciaCodigosMunicipaisEntity;
 
 @Entity
-@Table(name = "\"população_residente\"", schema = "demograficos")
+@Table(name = "populacao_residente", schema = "demograficos")
 public class PopulacaoResidenteEntity {
     @Id
     @Column(name = "id", nullable = false)

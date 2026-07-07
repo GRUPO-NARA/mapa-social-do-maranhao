@@ -1,6 +1,6 @@
-import IndicadoresInfraestruturaRendaComponent from "./IndicadoresInfraestruturaRendaComponent";
-import IndicadoresPrincipaisComponent from "./IndicadoresPrincipaisComponent";
-import IndicadoresSociaisComponent from "./IndicadoresSociaisComponent";
+import IndicadoresInfraestruturaRendaComponent from "./IndicadoresInfraestruturaRenda";
+import IndicadoresPrincipaisComponent from "./IndicadoresPrincipais";
+import IndicadoresSociaisComponent from "./IndicadoresSociais";
 
 interface AgrupamentoIndicadoresMunicipaisProps {
     municipio: string

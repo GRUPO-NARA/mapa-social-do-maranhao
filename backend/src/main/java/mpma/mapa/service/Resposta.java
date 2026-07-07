@@ -12,11 +12,11 @@ public class Resposta {
 
     public HashMap<String, Object> CorpoDaResposta(String indicador, Object mensagem, String statusDaRequisicao) {
 
-        return new HashMap<>(Map.of(
-                "Indicador da Requisição", indicador,
-                "Resposta da Requisição", mensagem,
-                "Status da Requisição", statusDaRequisicao
-        ));
+        HashMap<String, Object> corpoDaResposta = new HashMap<>();
+        corpoDaResposta.put("Indicador da Requisição", indicador);
+        corpoDaResposta.put("Resposta da Requisição", mensagem);
+        corpoDaResposta.put("Status da Requisição", statusDaRequisicao);
+        return corpoDaResposta;
     }
 
     public HashMap<String, Object> CorpoDaRespostaError(String indicador, String erro, String statusDaRequisicao) {
