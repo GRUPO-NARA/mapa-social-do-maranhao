@@ -1,5 +1,5 @@
 import asyncio
-from aiohttp import ClientSession, TCPConnector, ClientPayloadError
+from aiohttp import ClientSession, TCPConnector, ClientPayloadError, ClientTimeout
 from configuracoes.config import LoggerParaColeta, MapeamentoDiretoriosEArquivos
 import json
 import os
@@ -16,8 +16,24 @@ class FluxoDeColeta:
         self.tarefas_realizadas = False
         self.dados_coletados = []
         # Define o limite de requisições simultâneas (ex: 5 por vez)
-        self.semaforo = asyncio.Semaphore(5)
+        self.concorrencia = self._ler_inteiro_env("PIPELINE_COLETA_CONCORRENCIA", 5, minimo=1)
+        self.tentativas = self._ler_inteiro_env("PIPELINE_COLETA_TENTATIVAS", 3, minimo=1)
+        self.timeout_segundos = self._ler_inteiro_env("PIPELINE_COLETA_TIMEOUT_SEGUNDOS", 30, minimo=1)
+        self.backoff_base_segundos = self._ler_inteiro_env("PIPELINE_COLETA_BACKOFF_BASE_SEGUNDOS", 2, minimo=0)
+        self.semaforo = asyncio.Semaphore(self.concorrencia)
         self.hosts_tls_inseguro = self._carregar_hosts_tls_inseguro()
+        if self.hosts_tls_inseguro:
+            self.logger_coleta.warning(
+                "Validacao TLS desativada apenas para hosts permitidos: "
+                + ", ".join(sorted(self.hosts_tls_inseguro))
+            )
+        self.logger_coleta.info(
+            "Configuracao da coleta: "
+            f"concorrencia={self.concorrencia}, "
+            f"tentativas={self.tentativas}, "
+            f"timeout={self.timeout_segundos}s, "
+            f"backoff_base={self.backoff_base_segundos}s"
+        )
 
     def LeituraDosDadosParaColeta(self) -> list:
         """Realiza a leitura do arquivo JSON que contém as URLs para coleta."""
@@ -70,9 +86,18 @@ class FluxoDeColeta:
             "Accept-Encoding": "gzip, deflate"
         }
         
-        connector = TCPConnector(ssl=ssl_context)
+        timeout = ClientTimeout(
+            total=self.timeout_segundos,
+            sock_connect=min(self.timeout_segundos, 10),
+            sock_read=self.timeout_segundos,
+        )
+        connector = TCPConnector(
+            ssl=ssl_context,
+            limit=self.concorrencia,
+            ttl_dns_cache=300,
+        )
         try:
-            async with ClientSession(connector=connector, headers=headers) as sessao:
+            async with ClientSession(connector=connector, headers=headers, timeout=timeout) as sessao:
                 tarefas = [self.Coleta(url, sessao) for url in self.urls_para_requisicao]
                 self.tarefas_realizadas = True
                 self.logger_coleta.info("Tarefas de coleta definidas.")
@@ -86,28 +111,27 @@ class FluxoDeColeta:
     
     async def Coleta(self, url, sessao: ClientSession) -> bytes:
         """Realiza a requisição com controle de concorrência e tratamento robusto de erro."""
-        tentativas = 3
         
         # O semáforo garante que apenas X requisições rodem em paralelo
         async with self.semaforo:
-            for tentativa in range(1, tentativas + 1):
+            for tentativa in range(1, self.tentativas + 1):
                 try:
-                    async with sessao.get(url, timeout=30, ssl=self._ssl_para_url(url)) as resposta:
+                    async with sessao.get(url, ssl=self._ssl_para_url(url)) as resposta:
                         if resposta.status == 200:
                             # .read() pode disparar ClientPayloadError se a conexão cair no meio
                             return await resposta.read()
                         
                         self.logger_coleta.warning(
-                            f"Falha na coleta: {url} - Status: {resposta.status} - Tentativa {tentativa}/{tentativas}"
+                            f"Falha na coleta: {url} - Status: {resposta.status} - Tentativa {tentativa}/{self.tentativas}"
                         )
                 except (ClientPayloadError, asyncio.TimeoutError, Exception) as e:
                     self.logger_coleta.warning(
-                        f"Erro de rede/payload em {url}: {str(e)} - Tentativa {tentativa}/{tentativas}"
+                        f"Erro de rede/payload em {url}: {str(e)} - Tentativa {tentativa}/{self.tentativas}"
                     )
                 
                 # Se não foi a última tentativa, aguarda antes de tentar novamente (Backoff)
-                if tentativa < tentativas:
-                    await asyncio.sleep(2 ** tentativa)
+                if tentativa < self.tentativas and self.backoff_base_segundos > 0:
+                    await asyncio.sleep(self.backoff_base_segundos ** tentativa)
             
             self.logger_coleta.error(f"Falha definitiva na coleta para a URL: {url}")
             return b""
@@ -126,11 +150,29 @@ class FluxoDeColeta:
     def _ssl_para_url(self, url: str):
         host = urlparse(url).hostname
         if host and host.lower() in self.hosts_tls_inseguro:
-            self.logger_coleta.warning(
-                f"Validação TLS desativada apenas para o host permitido: {host}"
-            )
             return False
         return None
+
+    def _ler_inteiro_env(self, nome: str, padrao: int, minimo: int) -> int:
+        valor = os.getenv(nome)
+        if valor is None or valor.strip() == "":
+            return padrao
+
+        try:
+            numero = int(valor)
+        except ValueError:
+            self.logger_coleta.warning(
+                f"{nome} invalido: {valor}. Usando valor padrao {padrao}."
+            )
+            return padrao
+
+        if numero < minimo:
+            self.logger_coleta.warning(
+                f"{nome} deve ser maior ou igual a {minimo}. Usando valor padrao {padrao}."
+            )
+            return padrao
+
+        return numero
 
     async def RespostaDaRequisicao(self):
         if not self.tarefas_realizadas:
