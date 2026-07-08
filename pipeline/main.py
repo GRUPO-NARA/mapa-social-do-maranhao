@@ -125,4 +125,4 @@ if __name__ == "__main__":
         sys.exit(1)
     termino_pipeline = time.time()
     duracao_do_pipeline = termino_pipeline - tempo_inicio_pipeline
-    print(f"\nTempo de execução do pipeline: {duracao_do_pipeline:.2f} segundos\n")
+    print(f"Tempo de execução do pipeline: {duracao_do_pipeline:.2f} segundos\n")

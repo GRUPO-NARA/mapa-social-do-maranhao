@@ -12,6 +12,8 @@ logger_tratamento = LoggerParaTratamento()
 def TratamentoIMESC(arquivo: BinaryIO, informacoes_do_arquivo: dict):
     """Realiza o tratamento dos dados coletados da fonte IMESC."""
 
+    logger_tratamento.info(f"Iniciando tratamento do indicador: {informacoes_do_arquivo.get('indicador')} da fonte IMESC.")
+
     if not arquivo:
         logger_tratamento.error("Arquivo para tratamento não encontrado.")
         return None
