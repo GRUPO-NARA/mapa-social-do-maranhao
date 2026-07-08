@@ -49,25 +49,30 @@ class FluxoDeTratamento:
                     tabela = TratamentoSIDRA(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
+                    print("-"*150)
 
                    
                 elif fonte_dos_dados == "SAGICAD":
                     tabela = TratamentoSAGICAD(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
+                    print("-"*150)
 
                 elif fonte_dos_dados == "IPEADATA":
                     tabela = TratamentoIPEADATA(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
+                    print("-"*150)
 
                 elif fonte_dos_dados == "IMESC":
                     tabela = TratamentoIMESC(arquivo, informacoes_do_indicador)
                     self.tabelas_tratadas[indice] = tabela
                     logger_tratamento.info(f"Indicador '{indicador}' (índice {indice}) tratado com sucesso")
+                    print("-"*150)
                 else:
                     logger_tratamento.warning(f"Fonte '{fonte_dos_dados}' não reconhecida para {indicador}")
                     self.tabelas_tratadas[indice] = None
+
             except Exception as e:
                 logger_tratamento.error(f"Erro ao tratar indicador '{indicador}': {e}")
                 self.tabelas_tratadas[indice] = None
