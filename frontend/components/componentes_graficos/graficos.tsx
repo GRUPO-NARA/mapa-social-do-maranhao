@@ -260,6 +260,10 @@ export default function GraficosComponent({
     };
 
     const coresBarras = ["#075985", "#0284C7", "#0EA5E9", "#38BDF8", "#0369A1", "#7DD3FC"];
+    const maiorValorGrafico = Math.max(...valores.filter(Number.isFinite), 0);
+    const limiteSuperiorEixoY = tipoGrafico === "barra" && maiorValorGrafico > 0
+        ? maiorValorGrafico * 1.15
+        : undefined;
 
     const dadosBarra = {
         labels: legendas,
@@ -297,6 +301,7 @@ export default function GraficosComponent({
             },
             y: {
                 beginAtZero: tipoGrafico === "barra",
+                suggestedMax: limiteSuperiorEixoY,
                 grid: { color: "rgba(148, 163, 184, 0.18)" },
                 ticks: { color: "#64748B" },
                 border: { display: false },
@@ -340,7 +345,7 @@ export default function GraficosComponent({
                 </div>
             </div>
 
-            <div className="relative h-72 w-full min-w-0 rounded-2xl bg-slate-50/60 p-2 sm:h-96 sm:p-4">
+            <div className="relative h-72 w-full min-w-0 overflow-hidden rounded-2xl bg-slate-50/60 p-2 sm:h-96 sm:p-4">
                 {isCarregando ? (
                     <div className="flex h-full items-center justify-center">
                         <div className="h-10 w-10 animate-spin rounded-full border-4 border-sky-100 border-t-sky-600" aria-label="Carregando gráfico" />

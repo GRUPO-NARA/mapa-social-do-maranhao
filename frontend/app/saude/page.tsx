@@ -1,15 +1,16 @@
 "use client"
 
-import HeaderComponent from "@/components/componentes_principais/Cabecalho"
-import FooterComponent from "@/components/componentes_principais/Rodape"
-import FiltroComponent from "@/components/componentes_principais/FiltroMunicipal"
-import MapaComponent from "@/components/componentes_principais/MapaComponent"
-import ClusterizacaoComponent from "@/components/componentes_graficos/Clusterizacao"
-import SeletorIndicadoresComponent from "@/components/componentes_principais/SeletorIndicadores"
-import GraficoLinhaComponent from "@/components/componentes_graficos/Predicao"
+import Cabecalho from "@/components/componentes_principais/Cabecalho"
+import Rodape from "@/components/componentes_principais/Rodape"
+import Mapa from "@/components/componentes_principais/Mapa"
+import Clusterizacao from "@/components/componentes_graficos/Clusterizacao"
+import SeletorIndicadores from "@/components/componentes_principais/SeletorIndicadores"
+import SeletorMunicipiosComparacao from "@/components/componentes_principais/SeletorMunicipiosComparacao"
+import Graficos from "@/components/componentes_graficos/graficos"
 import { useState } from "react"
-import CardsResumoComponent from "@/components/cards/CardsResumo"
-import CardInformativoComponent from "@/components/componentes_principais/CardInformativo"
+import CardsResumo from "@/components/cards/CardsResumo"
+import CardInformativo from "@/components/componentes_principais/CardInformativo"
+import FiltroMunicipal from "@/components/componentes_principais/FiltroMunicipal"
 
 type TipoGrafico = "linha" | "barra";
 
@@ -33,10 +34,11 @@ export default function Saude(){
     }
 
     return (
-        <div className="flex min-h-screen justify-center bg-slate-50">
-                <main className="h-full w-full min-w-0 px-4 sm:px-6 lg:w-[88%] lg:max-w-360 lg:px-0">
-                    <HeaderComponent />
-                    <CardInformativoComponent titulo="Saúde no Maranhão" descricao="Indicadores que ajudam a enxergar o cenário da saúde" />
+        <div className="flex min-h-dvh justify-center bg-slate-50">
+            <div className="flex w-full min-w-0 flex-col px-4 sm:px-6 lg:w-[88%] lg:max-w-360 lg:px-0">
+                <main className="min-w-0 flex-1">
+                    <Cabecalho />
+                    <CardInformativo titulo="Saúde no Maranhão" descricao="Indicadores que ajudam a enxergar o cenário da saúde" />
 
 
                     <section className="mb-8">
@@ -50,7 +52,7 @@ export default function Saude(){
 
                       <div className="grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-6">
                       <aside className="col-span-1 min-w-0 h-fit rounded-3xl border border-slate-200 bg-white p-1 shadow-sm">
-                        <FiltroComponent aoMudarMunicipio={atualizarMunicipio} isFiltrando={setIsFiltroMunicipioAplicado} />
+                        <FiltroMunicipal aoMudarMunicipio={atualizarMunicipio} isFiltrando={setIsFiltroMunicipioAplicado} />
                         <div className="mx-5 mb-5 rounded-2xl bg-slate-50 p-4 text-xs leading-5 text-slate-500">
                           O município selecionado será usado como recorte nos gráficos de evolução.
                         </div>
@@ -65,7 +67,7 @@ export default function Saude(){
                             {isFiltroMunicipioAplicado ? "Visão Municipal" : "Visão Estadual"}
                           </span>
                         </div>
-                        <MapaComponent municipio={municipio} isFiltrando={isFiltroMunicipioAplicado} isMostrarApenasMapa={true}/>
+                        <Mapa municipio={municipio} isFiltrando={isFiltroMunicipioAplicado} isMostrarApenasMapa={true}/>
                       </article>
                       </div>
                     </section>
@@ -76,10 +78,11 @@ export default function Saude(){
                         <h2 className="mt-1 text-2xl font-bold text-slate-900">Configure sua análise</h2>
                         <p className="mt-1 text-sm text-slate-500">Selecione o indicador e a visualização mais adequada para a leitura dos dados.</p>
                       </div>
-                      <SeletorIndicadoresComponent
+                      <SeletorIndicadores
                         key={municipio || "sem-municipio"}
                         tipoDoIndicador="saude"
                         municipioSelecionado={isFiltroMunicipioAplicado && municipio !== ""}
+                        municipioAtual={municipio}
                         setTipoGraficoAtivo={setTipoGraficoAtivo}
                         setIndicadorAtivo={setIndicadorAtivo}
                         setIsFiltroAplicado={setIsFiltroSaudeAplicado}
@@ -88,6 +91,7 @@ export default function Saude(){
                       />
                     </section>
 
+                    {isFiltroSaudeAplicado && (
                     <section className="mb-8 flex flex-col gap-5">
                       <div>
                         <span className="text-xs font-bold uppercase tracking-[0.16em] text-sky-700">Etapa 3</span>
@@ -95,36 +99,45 @@ export default function Saude(){
                         <p className="mt-1 text-sm text-slate-500">Resumo, evolução histórica e agrupamentos municipais aparecem após a aplicação dos filtros.</p>
                       </div>
                       {tipoGraficoAtivo !== "barra" && (
-                        <CardsResumoComponent
+                        <CardsResumo
                           municipio={municipio}
                           tipo_do_indicador="saude"
                           isFiltroAplicado={isFiltroSaudeAplicado}
                           indicador={indicadorAtivo}
                         />
                       )}
-                      <GraficoLinhaComponent
-                        tipoGrafico={tipoGraficoAtivo}
-                        isFiltroAplicado={isFiltroSaudeAplicado}
-                        indicador={indicadorAtivo}
-                        tipoDoIndicador="saude"
-                        municipio={municipio}
-                        municipiosComparacao={municipiosComparacao}
-                        anoPrevisao={anoPrevisao ?? undefined}
-                      />
-                      {isFiltroSaudeAplicado && (
-                        <ClusterizacaoComponent
+                      {tipoGraficoAtivo === "barra" && (
+                        <SeletorMunicipiosComparacao
+                          municipioAtual={municipio}
+                          municipiosSelecionados={municipiosComparacao}
+                          setMunicipiosComparacao={setMunicipiosComparacao}
+                        />
+                      )}
+                      {(tipoGraficoAtivo !== "barra" || municipiosComparacao.length >= 2) && (
+                        <Graficos
+                          tipoGrafico={tipoGraficoAtivo}
                           isFiltroAplicado={isFiltroSaudeAplicado}
                           indicador={indicadorAtivo}
                           tipoDoIndicador="saude"
                           municipio={municipio}
+                          municipiosComparacao={municipiosComparacao}
+                          anoPrevisao={anoPrevisao ?? undefined}
                         />
                       )}
+                      <Clusterizacao
+                        isFiltroAplicado={isFiltroSaudeAplicado}
+                        indicador={indicadorAtivo}
+                        tipoDoIndicador="saude"
+                        municipio={municipio}
+                      />
                     </section>
+                    )}
 
-                    <div className="mt-12 border-t border-slate-200 pt-4">
-                      <FooterComponent />
-                    </div>
                 </main>
+                <div className="mt-auto border-t border-slate-200 pt-4">
+                  <Rodape />
+                </div>
+            </div>
         </div>
     )
 }

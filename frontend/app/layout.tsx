@@ -130,11 +130,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${calSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-screen flex-col bg-slate-50">
         <a href="#conteudo-principal" className="fixed left-4 top-4 z-[200] -translate-y-24 rounded-xl bg-[#061F56] px-4 py-3 font-semibold text-white shadow-xl transition focus:translate-y-0">
           Pular para o conteúdo principal
         </a>
-        <div id="conteudo-principal" tabIndex={-1} className="min-h-full">
+        <div id="conteudo-principal" tabIndex={-1} className="flex flex-1 flex-col bg-slate-50">
           {children}
         </div>
         <script

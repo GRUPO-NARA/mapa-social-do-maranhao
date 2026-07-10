@@ -122,10 +122,10 @@ export default function PanoramaGeralComponent() {
                         alinhamento="inicio"
                     />   
                     <CartaoIndicadorPanoramaGeral
-                        titulo="PIB per Capita"
-                        descricao="Renda média por pessoa no estado"
+                        titulo="Média municipal do PIB per capita"
+                        descricao="Média dos municípios do estado"
                         categoria="Economia"
-                        texto="Renda média por pessoa no estado em um ano."
+                        texto="Média simples do PIB per capita dos municípios do Maranhão no ano de referência."
                         valor={produtoInternoBrutoPerCapitaEstadual ? produtoInternoBrutoPerCapitaEstadual : "--"}
                         referencia={referenciaProdutoInternoBrutoPerCapitaEstadual}
                         fonte={fonteProdutoInternoBrutoPerCapitaEstadual}

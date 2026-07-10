@@ -203,6 +203,10 @@ export default function ClusterizacaoComponent({
             },
         ],
     };
+    const maiorQuantidadeMunicipios = Math.max(
+        ...dadosClustersValidos.map((cluster) => cluster.quantidadeMunicipios).filter(Number.isFinite),
+        0
+    );
 
     const configuracaoGrafico = {
         responsive: true,
@@ -218,6 +222,7 @@ export default function ClusterizacaoComponent({
             },
             y: {
                 beginAtZero: true,
+                suggestedMax: maiorQuantidadeMunicipios > 0 ? maiorQuantidadeMunicipios * 1.15 : undefined,
                 grid: { color: "rgba(148, 163, 184, 0.18)" },
                 border: { display: false },
                 ticks: { color: "#64748B", precision: 0 },
@@ -379,7 +384,7 @@ export default function ClusterizacaoComponent({
                                     </button>
                                 </div>
                             </div>
-                            <div className="h-72">
+                            <div className="h-72 min-w-0 overflow-hidden">
                                 {tipoGrafico === "pizza" ? (
                                     <Pie
                                         data={dadosGrafico}

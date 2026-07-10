@@ -22,13 +22,13 @@ export default function CartaoIndicadorPanoramaGeral({
     categoria
 }: CartaoIndicadorPanoramaGeralProps) {
     return (
-        <div className="group/div flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-center items-center transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:bg-white hover:shadow-md">
+        <div className="group/div flex min-w-0 flex-col items-center gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-center transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:bg-white hover:shadow-md">
                 <span className="rounded bg-linear-to-br from-[#061F56] via-[#0A3A7A] to-sky-600 p-1 text-white text-sm w-full">{categoria}</span>
                 <div className="flex items-center justify-center gap-1.5">
-                    <h1 className="text-xs">{titulo}</h1>
+                    <h1 className="min-w-0 text-xs leading-tight">{titulo}</h1>
                     <AjudaIndicadorComponent titulo={titulo} texto={texto} alinhamento={alinhamento} />
                 </div>
-                <p className="text-lg font-bold text-gray-800">{valor}</p>
+                <p className="max-w-full break-words text-lg font-bold leading-tight text-gray-800">{valor}</p>
                 <p className="text-xs text-gray-600">{descricao}</p>
                 <p className="text-xs text-gray-500">Referência: {referencia}</p>
                 <p className="text-xs text-gray-500">Fonte: {fonte}</p> 

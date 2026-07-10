@@ -2,6 +2,23 @@
 
 html {
   scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #f8fafc !important;
+}
+
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #f8fafc !important;
+}
+
+#conteudo-principal {
+  background-color: #f8fafc !important;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 *:focus-visible {
