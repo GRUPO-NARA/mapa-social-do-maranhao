@@ -162,7 +162,7 @@ export default function IndicadoresSociaisComponent({ municipio, isFiltrando }: 
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <CartaoIndicadorComponent
-                        titulo="Taxa de Analfabetismo 15+" descricao="Percentual de pessoas com 15 anos ou mais que não sabem ler e escrever." 
+                        titulo="Analfabetismo 15+" descricao="Percentual de pessoas com 15 anos ou mais que não sabem ler e escrever." 
                         detalhes={isFiltrando ? `Referência: ${referenciaTaxaAnalfabetismo || "--"} - Fonte: ${fonteTaxaAnalfabetismo || "--"}` : undefined} 
                         valor={taxaAnalfabetismo !== undefined && isFiltrando ? `${taxaAnalfabetismo.toLocaleString("pt-BR")}%` : "--"} />
                     <CartaoIndicadorComponent 

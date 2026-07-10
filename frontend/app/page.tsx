@@ -4,7 +4,7 @@ import AgrupamentoIndicadoresMunicipaisComponent from "@/components/componentes_
 import FiltroComponent from "@/components/componentes_principais/FiltroMunicipal"
 import FooterComponent from "@/components/componentes_principais/Rodape"
 import HeaderComponent from "@/components/componentes_principais/Cabecalho"
-import MapaComponent from "@/components/componentes_principais/MapaComponent"
+import MapaComponent from "@/components/componentes_principais/Mapa"
 import PanoramaGeralComponent from "@/components/componentes_indicadores/PanoramaGeral"
 import CardInformativoComponent from "@/components/componentes_principais/CardInformativo"
 import { useState } from "react"
